@@ -9,7 +9,7 @@ public class KeySprite {
         try {
             Robot r = new Robot();
             // press put buying
-            r.mouseMove(60, 860);
+            r.mouseMove(260, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(2000);
@@ -27,7 +27,7 @@ public class KeySprite {
         try {
             Robot r = new Robot();
             // press put buying
-            r.mouseMove(170, 860);
+            r.mouseMove(370, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(2000);
@@ -46,7 +46,7 @@ public class KeySprite {
         try {
             Robot r = new Robot();
             // press put buying
-            r.mouseMove(280, 860);
+            r.mouseMove(480, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(2000);
@@ -68,7 +68,7 @@ public class KeySprite {
         try {
             Robot r = new Robot();
             // press put buying
-            r.mouseMove(430, 975);
+            r.mouseMove(660, 955);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(2000);
@@ -87,7 +87,7 @@ public class KeySprite {
         try {
             Robot r = new Robot();
             // press put buying
-            r.mouseMove(1040, 600);
+            r.mouseMove(1040, 580);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (AWTException e) {
@@ -98,7 +98,7 @@ public class KeySprite {
     private static void Confirm() {
         try {
             Robot r = new Robot();
-            r.mouseMove(960, 605);
+            r.mouseMove(960, 587);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (AWTException e) {
