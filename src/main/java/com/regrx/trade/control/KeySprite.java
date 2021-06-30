@@ -67,8 +67,13 @@ public class KeySprite {
     public static void Follow() {
         try {
             Robot r = new Robot();
-            // press put buying
+            // select the possible stacked
             r.mouseMove(660, 955);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(2000);
+            // press follow button
+            r.mouseMove(1813, 993);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(2000);
@@ -86,7 +91,7 @@ public class KeySprite {
     private static void CloseWarning() {
         try {
             Robot r = new Robot();
-            // press put buying
+            // press warning
             r.mouseMove(1040, 580);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
