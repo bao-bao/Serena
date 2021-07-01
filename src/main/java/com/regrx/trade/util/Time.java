@@ -62,4 +62,14 @@ public class Time {
             return null;
         }
     }
+
+    public static Date getClosetMinute(Date date) {
+        long time = date.getTime();
+        long rest = time % 60000;
+        if(rest > 30000) {
+            return new Date(time + (60000 - rest));
+        } else {
+            return new Date(time - rest);
+        }
+    }
 }

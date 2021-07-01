@@ -9,7 +9,7 @@ import java.io.*;
 public class CsvWriter {
 
     public static void newFile(String filename) {
-        try (PrintWriter writer = new PrintWriter(new File(filename + ".csv"))) {
+        try (PrintWriter writer = new PrintWriter(filename + ".csv")) {
             System.out.println("new file compete!");
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
@@ -18,6 +18,8 @@ public class CsvWriter {
 
     public static void write(String filename, MinutesData data) {
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+
+            System.out.println(data.getCurrentTime());
 
             String formattedDate = Time.getFormattedTime(data.getCurrentTime());
             writer.append(formattedDate).append(',');

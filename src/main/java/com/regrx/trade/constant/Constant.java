@@ -5,6 +5,8 @@ public class Constant {
 
     public static final int MIN_1 = 1;
 
+    public static final int MIN_3 = 3;
+
     public static final int MIN_5 = 5;
 
     public static final int MIN_15 = 15;

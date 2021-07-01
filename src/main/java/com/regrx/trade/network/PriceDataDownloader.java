@@ -1,6 +1,7 @@
 package com.regrx.trade.network;
 
 import com.regrx.trade.data.PriceData;
+import com.regrx.trade.util.Time;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayOutputStream;
@@ -50,7 +51,7 @@ public class PriceDataDownloader {
             try {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 Date date = simpleDateFormat.parse(timeString);
-                newPrice.setDate(date);
+                newPrice.setDate(Time.getClosetMinute(date));
             } catch (ParseException e) {
                 e.printStackTrace();
                 return newPrice;
