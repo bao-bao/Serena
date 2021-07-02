@@ -64,12 +64,14 @@ public class Time {
     }
 
     public static Date getClosetMinute(Date date) {
-        long time = date.getTime();
-        long rest = time % 60000;
-        if(rest > 30000) {
-            return new Date(time + (60000 - rest));
+        Calendar calendar = getBaseTime(date);
+        int second = calendar.get(Calendar.SECOND);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        if(second > 30) {
+            return DateUtils.addMinutes(calendar.getTime(), 1);
         } else {
-            return new Date(time - rest);
+            return calendar.getTime();
         }
     }
 }

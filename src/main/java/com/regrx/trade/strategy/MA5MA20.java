@@ -88,11 +88,11 @@ public class MA5MA20 implements Callable<Status> {
 //            ShortSellingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
             return status;
         }
-//        else if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus == Constant.EMPTY) {
-//            if (PutBuyingByThreshold(cMA5, cMA20, currPrice)) return status;
-//        } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus == Constant.EMPTY) {
-//            if (ShortSellingByThreshold(cMA5, cMA20, currPrice)) return status;
-//        }
+        else if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus == Constant.EMPTY) {
+            if (PutBuyingByThreshold(cMA5, cMA20, currPrice)) return status;
+        } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus == Constant.EMPTY) {
+            if (ShortSellingByThreshold(cMA5, cMA20, currPrice)) return status;
+        }
         return status;
     }
 
