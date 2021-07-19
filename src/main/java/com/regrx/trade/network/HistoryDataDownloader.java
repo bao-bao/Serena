@@ -19,7 +19,8 @@ public class HistoryDataDownloader {
                 "type=" + interval.toString();
         MinutesData records = new MinutesData(interval);
         String originString = Util.downloadFromGZIPFormat(urlString);
-        if (originString == null) {
+        if (originString == null || StringUtils.ordinalIndexOf(originString, "(null)", 1) != -1) {
+            System.out.println("Read Error");
             return records;
         }
         String jsonString = originString.substring(
@@ -41,7 +42,7 @@ public class HistoryDataDownloader {
             }
             records.update(newData, false);
         }
-
+        System.out.println("Read Success");
         return records;
     }
 }
