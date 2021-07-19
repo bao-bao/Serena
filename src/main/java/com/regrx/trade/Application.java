@@ -5,7 +5,7 @@ import com.regrx.trade.data.DataTrack;
 
 public class Application {
     public static void main(String[] args) {
-        DataTrack dataTrack = new DataTrack(Constant.MIN_5);
-        dataTrack.track("https://hq.sinajs.cn/list=nf_IF2107");
+        DataTrack dataTrack = new DataTrack("IF2107", Constant.MIN_5);
+        dataTrack.track();
     }
 }

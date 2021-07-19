@@ -2,6 +2,7 @@ package com.regrx.trade.data;
 
 import com.regrx.trade.constant.Constant;
 import com.regrx.trade.file.CsvReader;
+import com.regrx.trade.network.HistoryDataDownloader;
 import com.regrx.trade.network.PriceDataDownloader;
 import com.regrx.trade.statistic.MovingAverage;
 import com.regrx.trade.strategy.MA5MA20;
@@ -20,18 +21,25 @@ import static java.lang.Thread.sleep;
 
 public class DataTrack {
     public int interval;
+    public String type;
     public MinutesData minutesData;
     public Status status;
 
-    public DataTrack(int interval) {
+    public DataTrack(String type, int interval) {
+        this.type = type;
         this.interval = interval;
         minutesData = new MinutesData(interval);
         status = new Status(0, Constant.EMPTY);
     }
 
-    public void track(String url) {
+    public void track() {
         System.out.println("Start tracking for an interval of " + interval + " minute(s)");
-        minutesData = CsvReader.readFromCsv("Minute_" + interval);
+
+        String url = "https://hq.sinajs.cn/list=nf_" + type;
+
+        // read data from csv
+//        minutesData = CsvReader.readFromCsv("Minute_" + interval);
+        minutesData = HistoryDataDownloader.getHistoryData(type, interval);
         status = CsvReader.readTradeHistory("520Trade_" + interval);
         while(true) {
             Date date = new Date();
