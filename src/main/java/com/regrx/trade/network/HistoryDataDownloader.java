@@ -43,6 +43,7 @@ public class HistoryDataDownloader {
             records.update(newData, false);
         }
         System.out.println("Read Success");
+        System.out.println("Last record time is " + records.getCurrentTime().toString());
         return records;
     }
 }

@@ -9,8 +9,8 @@ import java.io.*;
 public class CsvWriter {
 
     public static void newFile(String filename) {
-        try (PrintWriter writer = new PrintWriter(filename + ".csv")) {
-            System.out.println("new file compete!");
+        try (PrintWriter writer = new PrintWriter(filename)) {
+            System.out.println("new file \"" + filename + "\" compete!");
         } catch (FileNotFoundException e) {
             System.out.println(e.getMessage());
         }
@@ -39,7 +39,7 @@ public class CsvWriter {
             writer.close();
             System.out.println("Success to write data for " + data.getCurrentTime().toString());
         } catch (FileNotFoundException e) {
-            CsvWriter.newFile(filename);
+            CsvWriter.newFile(filename + ".csv");
             write(filename + ".csv", data);
         } catch (IOException e) {
             System.out.println(e.getMessage());

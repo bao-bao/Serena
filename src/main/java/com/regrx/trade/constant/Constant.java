@@ -1,6 +1,15 @@
 package com.regrx.trade.constant;
 
 public class Constant {
+
+    public static final double TRADE_THRESHOLD = 0.7;
+
+    public static final double KEEP_THRESHOLD = 5;
+
+    public static final int SHAKE_THRESHOLD = 10;
+
+
+    //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
     public static final int MAX_LENGTH = 1000;
 
     public static final int MIN_1 = 1;
@@ -30,12 +39,6 @@ public class Constant {
     public static final int MA120 = 6;
 
     public static final int MA250 = 7;
-
-    public static final double TRADE_THRESHOLD = 0.7;
-
-    public static final double KEEP_THRESHOLD = 5;
-
-    public static final int SHAKE_THRESHOLD = 10;
 
     public static final int SHORT_SELLING = 100;
 

@@ -20,6 +20,7 @@ public class Utils {
             }
         } catch (FileNotFoundException e) {
             System.out.println("No such file.");
+            CsvWriter.newFile(file.getName());
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -33,14 +33,14 @@ public class DataTrack {
     }
 
     public void track() {
-        System.out.println("Start tracking for an interval of " + interval + " minute(s)");
+        System.out.println("Start tracking " + type + " for an interval of " + interval + " minute(s)");
 
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
         // read data from csv
 //        minutesData = CsvReader.readFromCsv("Minute_" + interval);
         minutesData = HistoryDataDownloader.getHistoryData(type, interval);
-        status = CsvReader.readTradeHistory("520Trade_" + interval);
+        status = CsvReader.readTradeHistory("Trade_" + type + "_" + interval);
         while(true) {
             Date date = new Date();
             Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
