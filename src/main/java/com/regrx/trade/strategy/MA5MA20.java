@@ -55,7 +55,7 @@ public class MA5MA20 implements Callable<Status> {
         calendar.setTime(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        if(hour == 14 && minute >= 54) {
+        if((hour == 14 && minute >= 54) || hour == 15) {
             if(currStatus == Constant.PUT_BUYING || currStatus == Constant.SHORT_SELLING) {
                 status.setStatus(Constant.EMPTY);
                 KeySprite.Empty();
