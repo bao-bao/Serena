@@ -22,13 +22,15 @@ public class MA5MA20 implements Callable<Status> {
     private final String type;
     private final String url;
     private final int interval;
+    private final int breed;
 
-    public MA5MA20(LinkedList<MovingAverage> ma, Status status, String url, int interval) {
+    public MA5MA20(LinkedList<MovingAverage> ma, Status status, String url, int interval, int breed) {
         this.movingAverages = ma;
         this.status = status;
         this.url = url;
         this.type = url.split("_")[1];
         this.interval = interval;
+        this.breed = breed;
     }
 
     @Override
@@ -47,7 +49,12 @@ public class MA5MA20 implements Callable<Status> {
         //TODO: 开盘尾盘不拿单
         int currStatus = this.status.getStatus();
         System.out.println("" + cMA5 + " " + cMA20 + " " + lMA5 + " " + lMA20 + "\n");
-        PriceData currPrice = PriceDataDownloader.getPriceData(url);
+        PriceData currPrice;
+        if(breed == Constant.STOCK) {
+            currPrice = PriceDataDownloader.getPriceDataForStockFutures(url);
+        } else {
+            currPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
+        }
 
         // current time > 14:55, empty
         Date date = new Date();
@@ -55,7 +62,7 @@ public class MA5MA20 implements Callable<Status> {
         calendar.setTime(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        if((hour == 14 && minute >= 54) || hour == 15) {
+        if(Utils.fiveMinutesLeft(breed)) {
             if(currStatus == Constant.PUT_BUYING || currStatus == Constant.SHORT_SELLING) {
                 status.setStatus(Constant.EMPTY);
                 KeySprite.Empty();

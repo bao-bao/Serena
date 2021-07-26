@@ -1,7 +1,5 @@
 package com.regrx.trade.network;
 
-import com.regrx.trade.data.PriceData;
-
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;

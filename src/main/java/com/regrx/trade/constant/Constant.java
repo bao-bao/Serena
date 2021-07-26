@@ -47,4 +47,14 @@ public class Constant {
     public static final int BOTH = 300;
 
     public static final int EMPTY = 0;
+
+    public static final int STOCK = 0;
+
+    public static final int FUTURE_NO_NIGHT = 1;
+
+    public static final int FUTURE_NIGHT_2300 = 2;
+
+    public static final int FUTURE_NIGHT_0100 = 3;
+
+    public static final int FUTURE_NIGHT_0230 = 4;
 }
