@@ -45,19 +45,20 @@ public class DataTrack {
 
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
-        System.out.println("Start fetching 1 minute data...");
-        everyMinuteData = HistoryDataDownloader.getHistoryData(type, 1, breed);
         System.out.println("Start fetching " + interval + " minute data...");
         minutesData = HistoryDataDownloader.getHistoryData(type, interval, breed);
-
         status = CsvReader.readTradeHistory("Trade_" + type + "_" + interval);
 
-        // if last record is using 1 min data and is not empty, then the lock should be true.
-        if(status.getInterval() == 1 && status.getStatus() != Constant.EMPTY) {
-            tradeIntervalLock = true;
-        }
+        if(interval != 1) {
+            System.out.println("Start fetching 1 minute data...");
+            everyMinuteData = HistoryDataDownloader.getHistoryData(type, 1, breed);
 
-        System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)");
+            // if last record is using 1 min data and is not empty, then the lock should be true.
+            if(status.getInterval() == 1 && status.getStatus() != Constant.EMPTY) {
+                tradeIntervalLock = true;
+            }
+            System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)");
+        }
 
         while(true) {
             if(Utils.isTrading(breed)) {
@@ -76,32 +77,39 @@ public class DataTrack {
                 } else {
                     newPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
                 }
-                everyMinuteData.update(newPrice, type, false);
 
-                // time instance of last fetch
-                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-                calendar.setTime(everyMinuteData.getCurrentTime());
-                int hour = calendar.get(Calendar.HOUR_OF_DAY);
-                int minute = calendar.get(Calendar.MINUTE);
+                if(interval != 1) {
+                    everyMinuteData.update(newPrice, type, false);
 
-                // special trade at the beginning using 1 min data
-                if(fastTradeCount > 0 || tradeIntervalLock) {
-                    status.setInterval(1);
-                    boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
-                    // if success traded, change lock status
-                    if(success) {
-                        tradeIntervalLock = !tradeIntervalLock;
-                        fastTradeCount--;
-                        System.out.println("1 min trade remaining: " + fastTradeCount + " time");
+                    // time instance of last fetch
+                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                    calendar.setTime(everyMinuteData.getCurrentTime());
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+
+                    // special trade at the beginning using 1 min data
+                    if(fastTradeCount > 0 || tradeIntervalLock) {
+                        status.setInterval(1);
+                        boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                        // if success traded, change lock status
+                        if(success) {
+                            tradeIntervalLock = !tradeIntervalLock;
+                            fastTradeCount--;
+                            System.out.println("1 min trade remaining: " + fastTradeCount + " time");
+                        }
+                        continue;
                     }
-                    continue;
-                }
 
-                // normal trade if the minute matches the interval
-                if(minute % interval == 0) {
+                    // normal trade if the minute matches the interval
+                    if(minute % interval == 0) {
+                        minutesData.update(newPrice, type, true);
+                        this.trade(minutesData.getMovingAverages(), status, interval, url);
+                    }
+                } else {
                     minutesData.update(newPrice, type, true);
                     this.trade(minutesData.getMovingAverages(), status, interval, url);
                 }
+
             } else {
                 try {
                     sleep(30000);
