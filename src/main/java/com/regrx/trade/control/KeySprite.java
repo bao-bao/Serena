@@ -1,5 +1,7 @@
 package com.regrx.trade.control;
 
+import com.regrx.trade.constant.Constant;
+
 import java.awt.*;
 import java.awt.event.InputEvent;
 
@@ -12,12 +14,11 @@ public class KeySprite {
             r.mouseMove(260, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(2000);
+            r.delay(1000);
             // press confirm
             Confirm();
-            r.delay(10000);
-            // try follow
-            Follow();
+            // follow
+            FollowNTime();
         } catch (AWTException e) {
             e.printStackTrace();
         }
@@ -30,12 +31,11 @@ public class KeySprite {
             r.mouseMove(370, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(2000);
+            r.delay(1000);
             // press confirm
             Confirm();
-            r.delay(10000);
-            // try follow
-            Follow();
+            // follow
+            FollowNTime();
         } catch (AWTException e) {
             e.printStackTrace();
         }
@@ -49,15 +49,14 @@ public class KeySprite {
             r.mouseMove(480, 870);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(2000);
+            r.delay(1000);
             // press confirm
             Confirm();
-            r.delay(2000);
+            r.delay(1000);
             // try close warning
             CloseWarning();
-            r.delay(10000);
-            // try follow
-            Follow();
+            // follow
+            FollowNTime();
         } catch (AWTException e) {
             e.printStackTrace();
         }
@@ -71,15 +70,15 @@ public class KeySprite {
             r.mouseMove(660, 955);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(2000);
+            r.delay(1000);
             // press follow button
             r.mouseMove(1813, 993);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(2000);
+            r.delay(1000);
             // press confirm
             Confirm();
-            r.delay(2000);
+            r.delay(1000);
             // try close warning
             CloseWarning();
         } catch (AWTException e) {
@@ -108,6 +107,18 @@ public class KeySprite {
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (AWTException e) {
             e.printStackTrace();
+        }
+    }
+
+    private static void FollowNTime() {
+        for (int i = 0; i < Constant.FOLLOW_TIME; i++) {
+            try {
+                Robot r = new Robot();
+                r.delay(10000);
+                Follow();
+            } catch (AWTException e) {
+                e.printStackTrace();
+            }
         }
     }
 }

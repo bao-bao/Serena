@@ -24,15 +24,20 @@ public class DataTrack {
     public int interval;
     public String type;
     public MinutesData minutesData;
+    public MinutesData everyMinuteData;
     public Status status;
     public int breed;
+    public boolean tradeIntervalLock;
+    public int fastTradeCount;
 
     public DataTrack(String type, int interval) {
         this.type = type;
         this.interval = interval;
         minutesData = new MinutesData(interval);
-        status = new Status(0, Constant.EMPTY);
+        status = new Status();
         breed = Utils.getBreed(type);
+        tradeIntervalLock = false;
+        fastTradeCount = Constant.START_FAST_TRADE;
     }
 
     public void track() {
@@ -40,15 +45,26 @@ public class DataTrack {
 
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
-        // read data from csv
-//        minutesData = CsvReader.readFromCsv("Minute_" + interval);
-        minutesData = HistoryDataDownloader.getHistoryData(type, interval);
+        System.out.println("Start fetching 1 minute data...");
+        everyMinuteData = HistoryDataDownloader.getHistoryData(type, 1, breed);
+        System.out.println("Start fetching " + interval + " minute data...");
+        minutesData = HistoryDataDownloader.getHistoryData(type, interval, breed);
+
         status = CsvReader.readTradeHistory("Trade_" + type + "_" + interval);
+
+        // if last record is using 1 min data and is not empty, then the lock should be true.
+        if(status.getInterval() == 1 && status.getStatus() != Constant.EMPTY) {
+            tradeIntervalLock = true;
+        }
+
+        System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)");
+
         while(true) {
             if(Utils.isTrading(breed)) {
+                // update price data every minute
                 long current = System.currentTimeMillis();
                 Date currentDate = new Date(System.currentTimeMillis());
-                long nextPoint = Time.getNextMillisEveryNMinutes(currentDate, interval);
+                long nextPoint = Time.getNextMillisEveryNMinutes(currentDate, 1);
                 try {
                     sleep(nextPoint - current);
                 } catch (Exception e) {
@@ -60,11 +76,44 @@ public class DataTrack {
                 } else {
                     newPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
                 }
-                minutesData.update(newPrice, true);
-                this.trade(minutesData.getMovingAverages(), status, url);
+                everyMinuteData.update(newPrice, type, false);
+
+                // time instance of last fetch
+                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                calendar.setTime(everyMinuteData.getCurrentTime());
+                int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                int minute = calendar.get(Calendar.MINUTE);
+
+                // special trade at the beginning using 1 min data
+                if(fastTradeCount > 0 || tradeIntervalLock) {
+                    status.setInterval(1);
+                    boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                    // if success traded, change lock status
+                    if(success) {
+                        tradeIntervalLock = !tradeIntervalLock;
+                        fastTradeCount--;
+                        System.out.println("1 min trade remaining: " + fastTradeCount + " time");
+                    }
+                    continue;
+                }
+
+                // normal trade if the minute matches the interval
+                if(minute % interval == 0) {
+                    minutesData.update(newPrice, type, true);
+                    this.trade(minutesData.getMovingAverages(), status, interval, url);
+                }
             } else {
                 try {
-                    sleep(60000);
+                    sleep(30000);
+                    Date currentDate = new Date(System.currentTimeMillis());
+                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                    calendar.setTime(currentDate);
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    // reset fast trade time at 3:00 and 16:00
+                    if((hour == 3 || hour == 16) && minute == 0) {
+                        fastTradeCount = Constant.START_FAST_TRADE;
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -72,15 +121,20 @@ public class DataTrack {
         }
     }
 
-    private void trade(LinkedList<MovingAverage> ma, Status status, String url) {
+    private boolean trade(LinkedList<MovingAverage> ma, Status status, int interval, String url) {
+        int before = status.getStatus();
         ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
         Future<Status> future = newCachedThreadPool.submit(new MA5MA20(ma, status, url, interval, breed));
         try {
             System.out.println("Trade Status: " + future.get());
+            int after = future.get().getStatus();
+            return before != after;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
         } finally {
             newCachedThreadPool.shutdown();
         }
+        System.out.println("Error when try to trade");
+        return false;
     }
 }

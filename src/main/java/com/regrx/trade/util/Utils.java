@@ -60,8 +60,17 @@ public class Utils {
         calendar.setTime(date);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
-        if(breed == Constant.STOCK) {
-            return ((hour == 14 && minute >= 54) || hour > 14); // 14:54:59 - 23:59:59
+
+        boolean dayTime = ((hour == 14 && minute >= 54) || hour == 15);     // 14:54:00 - 15:59:59
+
+        if(breed == Constant.STOCK || breed == Constant.FUTURE_NO_NIGHT) {
+            return dayTime;
+        } else if (breed == Constant.FUTURE_NIGHT_2300) {
+            return dayTime || ((hour == 22 && minute >= 54) || hour == 23); // daytime || 22:54:00 - 23:59:59
+        } else if (breed == Constant.FUTURE_NIGHT_0100) {
+            return dayTime || ((hour == 0 && minute >= 54) || hour == 1);   // daytime || 00:54:00 - 01:59:59
+        } else if (breed == Constant.FUTURE_NIGHT_0230) {
+            return dayTime || ((hour == 2 && minute >= 24));                // daytime || 02:24:00 - 02:59:59
         }
         return false;
     }
@@ -73,7 +82,7 @@ public class Utils {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if(breed == Constant.STOCK) {
-            return hour >= 9 && (hour != 9 || minute >= 30) && (hour != 11 || minute <= 30)     // (9:30 - 11:30)
+            return hour >= 9 && (hour != 9 || minute >= 29) && (hour != 11 || minute <= 30)     // (9:29 - 11:30)
                     && hour != 12 && hour <= 14;                                                // (13:00 - 15:00)
         } else {
             final boolean dayTimeRange =

@@ -5,15 +5,18 @@ import com.regrx.trade.constant.Constant;
 public class Status {
     private int count;
     private int status;
+    private int interval;
 
     public Status() {
         count = 0;
         status = Constant.EMPTY;
+        interval = 0;
     }
 
-    public Status(int count, int status) {
+    public Status(int count, int status, int interval) {
         this.count = count;
         this.status = status;
+        this.interval = interval;
     }
 
     public int getCount() {
@@ -30,6 +33,14 @@ public class Status {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public int getInterval() {
+        return interval;
+    }
+
+    public void setInterval(int interval) {
+        this.interval = interval;
     }
 
     @Override

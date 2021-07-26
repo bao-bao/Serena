@@ -4,14 +4,16 @@ import com.google.gson.*;
 import com.regrx.trade.data.HistoryData;
 import com.regrx.trade.data.MinutesData;
 import com.regrx.trade.data.PriceData;
+import com.regrx.trade.util.Utils;
 import org.apache.commons.lang3.StringUtils;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 
 public class HistoryDataDownloader {
 
-    public static MinutesData getHistoryData(String type, Integer interval) {
+    public static MinutesData getHistoryData(String type, Integer interval, int breed) {
         String urlString = "https://stock2.finance.sina.com.cn/futures/api/jsonp.php" +
                 "/var%20list=" +
                 "/InnerFuturesNewService.getFewMinLine?" +
@@ -30,6 +32,10 @@ public class HistoryDataDownloader {
         Gson gson = new Gson();
         HistoryData[] historyData = gson.fromJson(jsonString, HistoryData[].class);
 
+        if(Utils.isTrading(breed)) {
+            historyData = Arrays.copyOf(historyData, historyData.length - 1);
+        }
+
         String pattern = "yyyy-MM-dd HH:mm:ss";
         for (HistoryData data : historyData) {
             PriceData newData = new PriceData();
@@ -40,7 +46,7 @@ public class HistoryDataDownloader {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            records.update(newData, false);
+            records.update(newData, type, false);
         }
         System.out.println("Read Success");
         System.out.println("Last record time is " + records.getCurrentTime().toString());

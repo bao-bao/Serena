@@ -11,15 +11,15 @@ import java.util.List;
 
 
 public class CsvReader {
-    public static MinutesData readFromCsv(String filename) {
-        MinutesData records = new MinutesData(Integer.parseInt(filename.substring(filename.indexOf('_') + 1)));
-        try (BufferedReader br = new BufferedReader(new FileReader(filename + ".csv"))) {
+    public static MinutesData readFromCsv(String type, int interval) {
+        MinutesData records = new MinutesData(interval);
+        try (BufferedReader br = new BufferedReader(new FileReader("Minute_" + type + "_" + String.valueOf(interval) + ".csv"))) {
             String line;
             int count = 0;
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(",");
                 PriceData newPrice = new PriceData(Double.parseDouble(values[1]), Time.getDateFromString(values[0]));
-                records.update(newPrice, false);
+                records.update(newPrice, type, false);
                 count++;
             }
             System.out.println("Success, " + count + " price record(s) loaded.");
@@ -45,6 +45,10 @@ public class CsvReader {
             case "Selling": status.setStatus(Constant.SHORT_SELLING); break;
             case "Both": status.setStatus(Constant.BOTH); break;
         }
+
+        // load interval
+        status.setInterval(Integer.parseInt(lastHistory[11]));
+
         System.out.println("Success, trading status loaded as " + status + ".");
         return status;
     }

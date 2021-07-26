@@ -8,7 +8,7 @@ import java.util.Date;
 import java.util.LinkedList;
 
 public class MinutesData {
-    private int interval;
+    private final int interval;
     private final LinkedList<Double> prices;
     private final LinkedList<MovingAverage> movingAverages;
     private Date currentTime;
@@ -33,7 +33,7 @@ public class MinutesData {
         movingAverages.add(new MovingAverage(prices));
     }
 
-    public void update(PriceData newPrice, boolean write) {
+    public void update(PriceData newPrice, String type, boolean write) {
         long priceTime = newPrice.getDate().getTime();
         if(currentTime != null && currentTime.getTime() == priceTime) {
             return;
@@ -42,7 +42,7 @@ public class MinutesData {
         this.updatePrice(newPrice.getPrice());
         this.updateMovingAverage();
         if(write) {
-            CsvWriter.write("Minute_" + interval, this);
+            CsvWriter.write("Minute_" + type + "_" + interval, this);
         }
     }
 

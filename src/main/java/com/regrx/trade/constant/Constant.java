@@ -2,12 +2,15 @@ package com.regrx.trade.constant;
 
 public class Constant {
 
-    public static final double TRADE_THRESHOLD = 0.7;
+    public static final int START_FAST_TRADE = 2;       // MUST BE EVEN
+
+    public static final double TRADE_THRESHOLD = 0.0;
 
     public static final double KEEP_THRESHOLD = 5;
 
     public static final int SHAKE_THRESHOLD = 10;
 
+    public static final int FOLLOW_TIME = 2;
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
     public static final int MAX_LENGTH = 1000;
@@ -57,4 +60,5 @@ public class Constant {
     public static final int FUTURE_NIGHT_0100 = 3;
 
     public static final int FUTURE_NIGHT_0230 = 4;
+
 }
