@@ -54,7 +54,12 @@ public class DataTrack {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                PriceData newPrice = PriceDataDownloader.getPriceDataForStockFutures(url);
+                PriceData newPrice;
+                if(breed == Constant.STOCK) {
+                    newPrice = PriceDataDownloader.getPriceDataForStockFutures(url);
+                } else {
+                    newPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
+                }
                 minutesData.update(newPrice, true);
                 this.trade(minutesData.getMovingAverages(), status, url);
             } else {
