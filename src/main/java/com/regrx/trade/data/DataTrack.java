@@ -49,7 +49,7 @@ public class DataTrack {
         minutesData = HistoryDataDownloader.getHistoryData(type, interval, breed);
         status = CsvReader.readTradeHistory("Trade_" + type + "_" + interval);
 
-        if(interval != 1) {
+        if(interval != Constant.MIN_1) {
             System.out.println("Start fetching 1 minute data...");
             everyMinuteData = HistoryDataDownloader.getHistoryData(type, 1, breed);
 
@@ -78,7 +78,7 @@ public class DataTrack {
                     newPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
                 }
 
-                if(interval != 1) {
+                if(interval != Constant.MIN_1) {
                     everyMinuteData.update(newPrice, type, false);
 
                     // time instance of last fetch
@@ -88,8 +88,11 @@ public class DataTrack {
                     int minute = calendar.get(Calendar.MINUTE);
 
                     // special trade at the beginning using 1 min data
-                    if(fastTradeCount > 0 || tradeIntervalLock) {
-                        status.setInterval(1);
+
+                    // has remaining time || has lock && none other interval trade exists
+                    if((fastTradeCount > 0 || tradeIntervalLock) &&
+                            !(status.getStatus() != Constant.EMPTY && status.getInterval() != Constant.MIN_1)) {
+                        status.setInterval(Constant.MIN_1);
                         boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
                         // if success traded, change lock status
                         if(success) {
