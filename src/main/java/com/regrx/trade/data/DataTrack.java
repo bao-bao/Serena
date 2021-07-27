@@ -47,7 +47,7 @@ public class DataTrack {
 
         System.out.println("Start fetching " + interval + " minute data...");
         minutesData = HistoryDataDownloader.getHistoryData(type, interval, breed);
-        status = CsvReader.readTradeHistory("Trade_" + type + "_" + interval);
+        status = CsvReader.readTradeHistory("Trade_" + type);
 
         if(interval != Constant.MIN_1) {
             System.out.println("Start fetching 1 minute data...");
@@ -57,7 +57,7 @@ public class DataTrack {
             if(status.getInterval() == 1 && status.getStatus() != Constant.EMPTY) {
                 tradeIntervalLock = true;
             }
-            System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)");
+            System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
         }
 
         while(true) {
@@ -79,7 +79,7 @@ public class DataTrack {
                 }
 
                 if(interval != Constant.MIN_1) {
-                    everyMinuteData.update(newPrice, type, false);
+                    everyMinuteData.update(newPrice, type, true);
 
                     // time instance of last fetch
                     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
@@ -98,7 +98,16 @@ public class DataTrack {
                         if(success) {
                             tradeIntervalLock = !tradeIntervalLock;
                             fastTradeCount--;
-                            System.out.println("1 min trade remaining: " + fastTradeCount + " time");
+                            System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
+                            // under empty status, try trade again
+                            if(status.getStatus() == Constant.EMPTY && fastTradeCount > 0) {
+                                boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                                if (nestSuccess) {
+                                    tradeIntervalLock = !tradeIntervalLock;
+                                    fastTradeCount--;
+                                    System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
+                                }
+                            }
                         }
                         continue;
                     }
@@ -106,7 +115,9 @@ public class DataTrack {
                     // normal trade if the minute matches the interval
                     if(minute % interval == 0) {
                         minutesData.update(newPrice, type, true);
-                        this.trade(minutesData.getMovingAverages(), status, interval, url);
+                        if((fastTradeCount == 0 || !tradeIntervalLock)) {
+                            this.trade(minutesData.getMovingAverages(), status, interval, url);
+                        }
                     }
                 } else {
                     minutesData.update(newPrice, type, true);

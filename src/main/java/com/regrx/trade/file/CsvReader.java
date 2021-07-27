@@ -49,7 +49,7 @@ public class CsvReader {
         // load interval
         status.setInterval(Integer.parseInt(lastHistory[11]));
 
-        System.out.println("Success, trading status loaded as " + status + ".");
+        System.out.println("Success, trading status loaded as " + status + "\n");
         return status;
     }
 }

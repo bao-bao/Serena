@@ -62,7 +62,7 @@ public class MA5MA20 implements Callable<Status> {
                 status.setStatus(Constant.EMPTY);
                 KeySprite.Empty();
                 String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+                CsvWriter.writeTradeHistory("Trade_" + type, trade);
                 return status;
             } else if(currStatus == Constant.EMPTY) {
                 return status;
@@ -79,7 +79,7 @@ public class MA5MA20 implements Callable<Status> {
             // Cross to much, keep both
 //            if(!Utils.TradeIntervalGreaterThan(movingAverages, Constant.MA5, Constant.MA20, Constant.SHAKE_THRESHOLD)) {
 //                String trade = "ShortSelling at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-//                CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+//                CsvWriter.writeTradeHistory("Trade_" + type, trade);
 //                status.setStatus(Constant.BOTH);
 //                return status;
 //            }
@@ -88,7 +88,8 @@ public class MA5MA20 implements Callable<Status> {
                 status.setStatus(Constant.EMPTY);
                 KeySprite.Empty();
                 String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+                CsvWriter.writeTradeHistory("Trade_" + type, trade);
+                return status;
             }
             // Try to open a Put Buying if over the threshold
             PutBuyingByThreshold(cMA5, cMA20, currPrice);
@@ -100,7 +101,7 @@ public class MA5MA20 implements Callable<Status> {
             // Cross to much, keep both
 //            if(!Utils.TradeIntervalGreaterThan(movingAverages, Constant.MA5, Constant.MA20,  Constant.SHAKE_THRESHOLD)) {
 //                String trade = "PutBuying at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-//                CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+//                CsvWriter.writeTradeHistory("Trade_" + type, trade);
 //                status.setStatus(Constant.BOTH);
 //                return status;
 //            }
@@ -109,7 +110,8 @@ public class MA5MA20 implements Callable<Status> {
                 status.setStatus(Constant.EMPTY);
                 KeySprite.Empty();
                 String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+                CsvWriter.writeTradeHistory("Trade_" + type, trade);
+                return status;
             }
             // Try to open a Short Selling if over the threshold
             ShortSellingByThreshold(cMA5, cMA20, currPrice);
@@ -137,7 +139,7 @@ public class MA5MA20 implements Callable<Status> {
             status.setStatus(Constant.PUT_BUYING);
             KeySprite.PutBuying();
             String trade = "PutBuying at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-            CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+            CsvWriter.writeTradeHistory("Trade_" + type, trade);
         }
     }
 
@@ -146,7 +148,7 @@ public class MA5MA20 implements Callable<Status> {
             status.setStatus(Constant.SHORT_SELLING);
             KeySprite.ShortSelling();
             String trade = "ShortSelling at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-            CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+            CsvWriter.writeTradeHistory("Trade_" + type, trade);
         }
     }
 
@@ -155,7 +157,7 @@ public class MA5MA20 implements Callable<Status> {
             status.setStatus(Constant.PUT_BUYING);
             KeySprite.PutBuying();
             String trade = "PutBuying at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-            CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+            CsvWriter.writeTradeHistory("Trade_" + type, trade);
             return true;
         }
         return false;
@@ -166,7 +168,7 @@ public class MA5MA20 implements Callable<Status> {
             status.setStatus(Constant.SHORT_SELLING);
             KeySprite.ShortSelling();
             String trade = "ShortSelling at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-            CsvWriter.writeTradeHistory("Trade_" + type + "_" + interval, trade);
+            CsvWriter.writeTradeHistory("Trade_" + type, trade);
             return true;
         }
         return false;

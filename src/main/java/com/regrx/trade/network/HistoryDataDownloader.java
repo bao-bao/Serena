@@ -1,6 +1,7 @@
 package com.regrx.trade.network;
 
 import com.google.gson.*;
+import com.regrx.trade.constant.Constant;
 import com.regrx.trade.data.HistoryData;
 import com.regrx.trade.data.MinutesData;
 import com.regrx.trade.data.PriceData;
@@ -32,7 +33,7 @@ public class HistoryDataDownloader {
         Gson gson = new Gson();
         HistoryData[] historyData = gson.fromJson(jsonString, HistoryData[].class);
 
-        if(Utils.isTrading(breed)) {
+        if(Utils.isTrading(breed) && breed == Constant.STOCK) {
             historyData = Arrays.copyOf(historyData, historyData.length - 1);
         }
 
@@ -48,8 +49,8 @@ public class HistoryDataDownloader {
             }
             records.update(newData, type, false);
         }
-        System.out.println("Read Success");
-        System.out.println("Last record time is " + records.getCurrentTime().toString());
+        System.out.println("Success");
+        System.out.println("Last record time is " + records.getCurrentTime().toString() + "\n");
         return records;
     }
 }
