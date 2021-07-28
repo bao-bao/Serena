@@ -94,9 +94,12 @@ public class MA5MA20 implements Callable<Status> {
                 CsvWriter.writeTradeHistory("Trade_" + type, trade);
                 return status;
             }
-            // Try to open a Put Buying if over the threshold
-            PutBuyingByThreshold(cMA5, cMA20, currPrice);
+
+            if(currStatus == Constant.EMPTY) {
+                // Try to open a Put Buying if over the threshold
+                PutBuyingByThreshold(cMA5, cMA20, currPrice);
 //            PutBuyingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
+            }
             return status;
 
         } else if(cMA5 < cMA20 && lMA5 >= lMA20) {
@@ -116,9 +119,12 @@ public class MA5MA20 implements Callable<Status> {
                 CsvWriter.writeTradeHistory("Trade_" + type, trade);
                 return status;
             }
-            // Try to open a Short Selling if over the threshold
-            ShortSellingByThreshold(cMA5, cMA20, currPrice);
+
+            if(currStatus == Constant.EMPTY) {
+                // Try to open a Short Selling if over the threshold
+                ShortSellingByThreshold(cMA5, cMA20, currPrice);
 //            ShortSellingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
+            }
             return status;
         }
 
