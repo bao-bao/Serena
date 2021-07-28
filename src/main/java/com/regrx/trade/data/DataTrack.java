@@ -120,6 +120,7 @@ public class DataTrack {
                                 }
                                 // normal trade
                                 else {
+                                    status.setInterval(interval);
                                     this.trade(minutesData.getMovingAverages(), status, interval, url);
                                 }
                             }
