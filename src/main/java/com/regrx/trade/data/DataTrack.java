@@ -106,6 +106,11 @@ public class DataTrack {
 
                                 // continue fast trade
                                 if(fastTradeCount > 0) {
+                                    try {
+                                        sleep(25000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
                                     boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
                                     if (nestSuccess) {
                                         tradeIntervalLock = !tradeIntervalLock;
