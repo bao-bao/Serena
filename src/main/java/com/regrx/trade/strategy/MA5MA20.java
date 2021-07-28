@@ -77,7 +77,7 @@ public class MA5MA20 implements Callable<Status> {
 //
 //            }
 //        }
-        if(cMA5 > cMA20 && lMA5 < lMA20) {
+        if(cMA5 > cMA20 && lMA5 <= lMA20) {
             status.setInterval(interval);
             // Cross to much, keep both
 //            if(!Utils.TradeIntervalGreaterThan(movingAverages, Constant.MA5, Constant.MA20, Constant.SHAKE_THRESHOLD)) {
@@ -99,7 +99,7 @@ public class MA5MA20 implements Callable<Status> {
 //            PutBuyingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
             return status;
 
-        } else if(cMA5 < cMA20 && lMA5 > lMA20) {
+        } else if(cMA5 < cMA20 && lMA5 >= lMA20) {
             status.setInterval(interval);
             // Cross to much, keep both
 //            if(!Utils.TradeIntervalGreaterThan(movingAverages, Constant.MA5, Constant.MA20,  Constant.SHAKE_THRESHOLD)) {
