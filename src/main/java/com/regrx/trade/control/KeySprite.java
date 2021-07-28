@@ -24,6 +24,7 @@ public class KeySprite implements Callable<Void> {
         return null;
     }
 
+    // consume 1s + (n x 13) s
     public static void PutBuying() {
         try {
             Robot r = new Robot();
@@ -41,6 +42,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
+    // consume 1s + (n x 13) s
     public static void ShortSelling() {
         try {
             Robot r = new Robot();
@@ -58,7 +60,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
-
+    // consume 2s + (n x 13) s
     public static void Empty() {
         try {
             Robot r = new Robot();
@@ -79,7 +81,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
-
+    // consume 3s
     public static void Follow() {
         try {
             Robot r = new Robot();
@@ -103,7 +105,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
-
+    // consume 0s
     private static void CloseWarning() {
         try {
             Robot r = new Robot();
@@ -116,6 +118,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
+    // consume 0s
     private static void Confirm() {
         try {
             Robot r = new Robot();
@@ -127,6 +130,7 @@ public class KeySprite implements Callable<Void> {
         }
     }
 
+    // consume n x (10s + 3s)
     private static void FollowNTime() {
         for (int i = 0; i < Constant.FOLLOW_TIME; i++) {
             try {

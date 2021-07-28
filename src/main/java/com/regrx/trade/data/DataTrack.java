@@ -107,7 +107,7 @@ public class DataTrack {
                                 // continue fast trade
                                 if(fastTradeCount > 0) {
                                     try {
-                                        sleep(25000);
+                                        sleep(Constant.FOLLOW_TIME * 15 * 1000);
                                     } catch (InterruptedException e) {
                                         e.printStackTrace();
                                     }
