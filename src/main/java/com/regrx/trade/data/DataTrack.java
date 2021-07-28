@@ -104,14 +104,9 @@ public class DataTrack {
 
                             // no lock(under empty status), try trade again
                             if(!tradeIntervalLock) {
-
+                                waitForKeySprite();
                                 // continue fast trade
                                 if(fastTradeCount > 0) {
-                                    try {
-                                        sleep(Constant.FOLLOW_TIME * 15 * 1000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
                                     boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
                                     if (nestSuccess) {
                                         tradeIntervalLock = !tradeIntervalLock;
@@ -138,6 +133,7 @@ public class DataTrack {
                         if((fastTradeCount == 0 || !tradeIntervalLock)) {
                             boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
                             if(success && status.getStatus() == Constant.EMPTY) {
+                                waitForKeySprite();
                                 this.trade(minutesData.getMovingAverages(), status, interval, url);
                             }
                         }
@@ -146,6 +142,7 @@ public class DataTrack {
                     minutesData.update(newPrice, type, true);
                     boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
                     if(success && status.getStatus() == Constant.EMPTY) {
+                        waitForKeySprite();
                         this.trade(minutesData.getMovingAverages(), status, interval, url);
                     }
                 }
@@ -184,5 +181,13 @@ public class DataTrack {
         }
         System.out.println("Error when try to trade");
         return false;
+    }
+
+    private static void waitForKeySprite() {
+        try {
+            sleep(Constant.FOLLOW_TIME * 15 * 1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
