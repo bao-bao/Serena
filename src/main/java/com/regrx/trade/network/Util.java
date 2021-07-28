@@ -1,9 +1,17 @@
 package com.regrx.trade.network;
 
+import com.regrx.trade.control.KeySprite;
+import com.regrx.trade.data.Status;
+import com.regrx.trade.strategy.MA5MA20;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.zip.GZIPInputStream;
 
 public class Util {
@@ -44,6 +52,17 @@ public class Util {
             if(res != null) {
                 return res;
             }
+        }
+
+        // empty before exit
+        ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
+        Future<Void> future = newCachedThreadPool.submit(new KeySprite("E"));
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        } finally {
+            newCachedThreadPool.shutdown();
         }
         return null;
     }

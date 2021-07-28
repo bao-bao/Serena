@@ -40,7 +40,7 @@ public class DataTrack {
         fastTradeCount = Constant.START_FAST_TRADE;
     }
 
-    public void track() throws InterruptedException {
+    public void track() {
         System.out.println("Start tracking " + type + " for an interval of " + interval + " minute(s)");
 
         String url = "https://hq.sinajs.cn/list=nf_" + type;
@@ -100,7 +100,6 @@ public class DataTrack {
                             tradeIntervalLock = !tradeIntervalLock;
                             fastTradeCount--;
                             System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
-                            sleep(2000);
 
                             // no lock(under empty status), try trade again
                             if(!tradeIntervalLock) {
