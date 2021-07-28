@@ -124,7 +124,6 @@ public class DataTrack {
                                 }
                             }
                         }
-                        continue;
                     }
 
                     // normal trade if the minute matches the interval
