@@ -131,6 +131,10 @@ public class DataTrack {
                     // normal trade if the minute matches the interval
                     if(minute % interval == 0) {
                         minutesData.update(newPrice, type, true);
+                        if(fastTradeCount != 0) {
+                            System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
+                        }
+
                         if((fastTradeCount == 0 || !tradeIntervalLock)) {
                             boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
                             if(success && status.getStatus() == Constant.EMPTY) {
