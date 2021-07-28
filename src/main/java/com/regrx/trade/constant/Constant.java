@@ -2,9 +2,9 @@ package com.regrx.trade.constant;
 
 public class Constant {
 
-    public static final int START_FAST_TRADE = 2;       // MUST BE EVEN
+    public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
 
-    public static final double TRADE_THRESHOLD = 0.0;
+    public static final double TRADE_THRESHOLD = 0.5;
 
     public static final double KEEP_THRESHOLD = 5;
 

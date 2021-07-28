@@ -51,10 +51,10 @@ public class DataTrack {
 
         if(interval != Constant.MIN_1) {
             System.out.println("Start fetching 1 minute data...");
-            everyMinuteData = HistoryDataDownloader.getHistoryData(type, 1, breed);
+            everyMinuteData = HistoryDataDownloader.getHistoryData(type, Constant.MIN_1, breed);
 
             // if last record is using 1 min data and is not empty, then the lock should be true.
-            if(status.getInterval() == 1 && status.getStatus() != Constant.EMPTY) {
+            if(status.getInterval() == Constant.MIN_1 && status.getStatus() != Constant.EMPTY) {
                 tradeIntervalLock = true;
             }
             System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
@@ -65,7 +65,7 @@ public class DataTrack {
                 // update price data every minute
                 long current = System.currentTimeMillis();
                 Date currentDate = new Date(System.currentTimeMillis());
-                long nextPoint = Time.getNextMillisEveryNMinutes(currentDate, 1);
+                long nextPoint = Time.getNextMillisEveryNMinutes(currentDate, Constant.MIN_1);
                 try {
                     sleep(nextPoint - current);
                 } catch (Exception e) {
@@ -93,7 +93,7 @@ public class DataTrack {
                     if((fastTradeCount > 0 || tradeIntervalLock) &&
                             !(status.getStatus() != Constant.EMPTY && status.getInterval() != Constant.MIN_1)) {
                         status.setInterval(Constant.MIN_1);
-                        boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                        boolean success = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
 
                         // if success traded, change lock status
                         if(success) {
@@ -106,7 +106,7 @@ public class DataTrack {
 
                                 // continue fast trade
                                 if(fastTradeCount > 0) {
-                                    boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                                    boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
                                     if (nestSuccess) {
                                         tradeIntervalLock = !tradeIntervalLock;
                                         fastTradeCount--;
@@ -126,12 +126,18 @@ public class DataTrack {
                     if(minute % interval == 0) {
                         minutesData.update(newPrice, type, true);
                         if((fastTradeCount == 0 || !tradeIntervalLock)) {
-                            this.trade(minutesData.getMovingAverages(), status, interval, url);
+                            boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
+                            if(success && status.getStatus() == Constant.EMPTY) {
+                                this.trade(minutesData.getMovingAverages(), status, interval, url);
+                            }
                         }
                     }
                 } else {
                     minutesData.update(newPrice, type, true);
-                    this.trade(minutesData.getMovingAverages(), status, interval, url);
+                    boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
+                    if(success && status.getStatus() == Constant.EMPTY) {
+                        this.trade(minutesData.getMovingAverages(), status, interval, url);
+                    }
                 }
 
             } else {
@@ -158,7 +164,7 @@ public class DataTrack {
         ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
         Future<Status> future = newCachedThreadPool.submit(new MA5MA20(ma, status, url, interval, breed));
         try {
-            System.out.println("Trade Status: " + future.get());
+            System.out.println("Trade Status: " + future.get() + "\n");
             int after = future.get().getStatus();
             return before != after;
         } catch (InterruptedException | ExecutionException e) {
