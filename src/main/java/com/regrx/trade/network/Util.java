@@ -7,7 +7,7 @@ import java.net.URL;
 import java.util.zip.GZIPInputStream;
 
 public class Util {
-    public static String downloadFromGZIPFormat(String urlString) {
+    private static String downloadFromGZIPFormat(String urlString) {
         HttpURLConnection con;
         GZIPInputStream stream;
         try {
@@ -33,6 +33,17 @@ public class Util {
             return output.toString();
         } catch (IOException e) {
             System.out.println("download Error");
+            return null;
+        }
+    }
+
+    public static String downloadFromGZIPFormat(String urlString, int count) {
+        String res;
+        while(count-- > 0) {
+            res = Util.downloadFromGZIPFormat(urlString);
+            if(res != null) {
+                return res;
+            }
         }
         return null;
     }

@@ -21,9 +21,10 @@ public class HistoryDataDownloader {
                 "symbol=" + type + "&" +
                 "type=" + interval.toString();
         MinutesData records = new MinutesData(interval);
-        String originString = Util.downloadFromGZIPFormat(urlString);
+        String originString = Util.downloadFromGZIPFormat(urlString, 3);
         if (originString == null || StringUtils.ordinalIndexOf(originString, "(null)", 1) != -1) {
             System.out.println("Read Error");
+            System.exit(Constant.DOWNLOAD_ERROR_CODE);
             return records;
         }
         String jsonString = originString.substring(
@@ -45,6 +46,7 @@ public class HistoryDataDownloader {
                 SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
                 newData.setDate(simpleDateFormat.parse(data.getDate()));
             } catch (ParseException e) {
+                System.exit(Constant.PARSE_ERROR_CODE);
                 e.printStackTrace();
             }
             records.update(newData, type, false);

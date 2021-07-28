@@ -40,7 +40,7 @@ public class DataTrack {
         fastTradeCount = Constant.START_FAST_TRADE;
     }
 
-    public void track() {
+    public void track() throws InterruptedException {
         System.out.println("Start tracking " + type + " for an interval of " + interval + " minute(s)");
 
         String url = "https://hq.sinajs.cn/list=nf_" + type;
@@ -94,18 +94,29 @@ public class DataTrack {
                             !(status.getStatus() != Constant.EMPTY && status.getInterval() != Constant.MIN_1)) {
                         status.setInterval(Constant.MIN_1);
                         boolean success = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+
                         // if success traded, change lock status
                         if(success) {
                             tradeIntervalLock = !tradeIntervalLock;
                             fastTradeCount--;
                             System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
-                            // under empty status, try trade again
-                            if(status.getStatus() == Constant.EMPTY && fastTradeCount > 0) {
-                                boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
-                                if (nestSuccess) {
-                                    tradeIntervalLock = !tradeIntervalLock;
-                                    fastTradeCount--;
-                                    System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
+                            sleep(2000);
+
+                            // no lock(under empty status), try trade again
+                            if(!tradeIntervalLock) {
+
+                                // continue fast trade
+                                if(fastTradeCount > 0) {
+                                    boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, 1, url);
+                                    if (nestSuccess) {
+                                        tradeIntervalLock = !tradeIntervalLock;
+                                        fastTradeCount--;
+                                        System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
+                                    }
+                                }
+                                // normal trade
+                                else {
+                                    this.trade(minutesData.getMovingAverages(), status, interval, url);
                                 }
                             }
                         }

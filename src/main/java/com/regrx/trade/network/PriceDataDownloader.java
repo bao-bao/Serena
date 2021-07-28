@@ -1,5 +1,6 @@
 package com.regrx.trade.network;
 
+import com.regrx.trade.constant.Constant;
 import com.regrx.trade.data.PriceData;
 import com.regrx.trade.util.Time;
 import org.apache.commons.lang3.StringUtils;
@@ -12,8 +13,9 @@ public class PriceDataDownloader {
 
     public static PriceData getPriceDataForStockFutures(String urlString) {
         PriceData newPrice = new PriceData();
-        String originString = Util.downloadFromGZIPFormat(urlString);
+        String originString = Util.downloadFromGZIPFormat(urlString, 3);
         if (originString == null) {
+            System.exit(Constant.DOWNLOAD_ERROR_CODE);
             return newPrice;
         }
         String finalString = originString.substring(
@@ -30,6 +32,7 @@ public class PriceDataDownloader {
             newPrice.setDate(Time.getClosetMinute(date));
         } catch (ParseException e) {
             e.printStackTrace();
+            System.exit(Constant.PARSE_ERROR_CODE);
             return newPrice;
         }
         newPrice.setPrice(Double.parseDouble(finalString));
@@ -38,8 +41,9 @@ public class PriceDataDownloader {
 
     public static PriceData getPriceDataForOtherFutures(String urlString) {
         PriceData newPrice = new PriceData();
-        String originString = Util.downloadFromGZIPFormat(urlString);
+        String originString = Util.downloadFromGZIPFormat(urlString, 3);
         if (originString == null) {
+            System.exit(Constant.DOWNLOAD_ERROR_CODE);
             return newPrice;
         }
         String finalString = originString.substring(
@@ -59,6 +63,7 @@ public class PriceDataDownloader {
             newPrice.setDate(Time.getClosetMinute(date));
         } catch (ParseException e) {
             e.printStackTrace();
+            System.exit(Constant.PARSE_ERROR_CODE);
             return newPrice;
         }
         newPrice.setPrice(Double.parseDouble(finalString));

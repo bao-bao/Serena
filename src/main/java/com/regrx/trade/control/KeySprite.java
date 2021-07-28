@@ -4,8 +4,25 @@ import com.regrx.trade.constant.Constant;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.util.concurrent.Callable;
 
-public class KeySprite {
+public class KeySprite implements Callable<Void> {
+    private final String operate;
+
+
+    public KeySprite(String operate) {
+        this.operate = operate;
+    }
+
+    @Override
+    public Void call() {
+        switch (operate) {
+            case "P": KeySprite.PutBuying();break;
+            case "S": KeySprite.ShortSelling();break;
+            case "E": KeySprite.Empty();break;
+        }
+        return null;
+    }
 
     public static void PutBuying() {
         try {
@@ -121,4 +138,5 @@ public class KeySprite {
             }
         }
     }
+
 }
