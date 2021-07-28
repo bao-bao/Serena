@@ -56,6 +56,7 @@ public class DataTrack {
             // if last record is using 1 min data and is not empty, then the lock should be true.
             if(status.getInterval() == Constant.MIN_1 && status.getStatus() != Constant.EMPTY) {
                 tradeIntervalLock = true;
+                fastTradeCount += 1;
             }
             System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
         }
