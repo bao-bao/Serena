@@ -82,7 +82,7 @@ public class Utils {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if(breed == Constant.STOCK) {
-            return hour >= 9 && (hour != 9 || minute >= 29) && (hour != 11 || minute <= 30)     // (9:29 - 11:30)
+            return hour >= 9 && (hour != 9 || minute >= 30) && (hour != 11 || minute <= 30)     // (9:30 - 11:30)
                     && hour != 12 && hour <= 14;                                                // (13:00 - 15:00)
         } else {
             final boolean dayTimeRange =
