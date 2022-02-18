@@ -22,6 +22,7 @@ public class Util {
             URL url = new URL(urlString);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Accept-Encoding", "gzip");
+            con.addRequestProperty("Referer", "https://finance.sina.com.cn/futures/quotes/IF2202.shtml");
             stream = new GZIPInputStream(con.getInputStream());
         } catch (Exception e) {
             System.out.println("download Error");

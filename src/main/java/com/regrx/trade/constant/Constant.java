@@ -6,11 +6,16 @@ public class Constant {
 
     public static final double TRADE_THRESHOLD = 0.5;
 
-    public static final double KEEP_THRESHOLD = 5;
+    //TODO: add final HERE
+    public static int PROFIT_LIMIT_THRESHOLD = 13;
 
-    public static final int SHAKE_THRESHOLD = 10;
+    public static int LOSS_LIMIT_THRESHOLD = 12;
+
+    public static int RESTORE_THRESHOLD = 10;
 
     public static final int FOLLOW_TIME = 2;
+
+    public static final int TEST_LABEL = 1;
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
     public static final int MAX_LENGTH = 1000;

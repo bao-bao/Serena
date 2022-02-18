@@ -46,8 +46,9 @@ public class CsvReader {
             case "Both": status.setStatus(Constant.BOTH); break;
         }
 
-        // load interval
+        // load interval and last trade price
         status.setInterval(Integer.parseInt(lastHistory[11]));
+        status.setLastTradePrice(Double.parseDouble(lastHistory[9]));
 
         System.out.println("Success, trading status loaded as " + status + "\n");
         return status;

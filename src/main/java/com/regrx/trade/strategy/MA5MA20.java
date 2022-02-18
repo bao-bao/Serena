@@ -2,35 +2,33 @@ package com.regrx.trade.strategy;
 
 
 import com.regrx.trade.constant.Constant;
-import com.regrx.trade.control.KeySprite;
 import com.regrx.trade.data.PriceData;
 import com.regrx.trade.data.Status;
-import com.regrx.trade.file.CsvWriter;
-import com.regrx.trade.network.PriceDataDownloader;
 import com.regrx.trade.statistic.MovingAverage;
+import com.regrx.trade.util.Log;
+import com.regrx.trade.util.Trade;
 import com.regrx.trade.util.Utils;
 
 import java.util.LinkedList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 public class MA5MA20 implements Callable<Status> {
     private final LinkedList<MovingAverage> movingAverages;
     private final Status status;
     private final String type;
-    private final String url;
     private final int interval;
     private final int breed;
+    private final PriceData currPrice;
 
-    public MA5MA20(LinkedList<MovingAverage> ma, Status status, String url, int interval, int breed) {
+    public MA5MA20(LinkedList<MovingAverage> ma, Status status, String type, int interval, int breed, PriceData currPrice) {
         this.movingAverages = ma;
         this.status = status;
-        this.url = url;
-        this.type = url.split("_")[1];
+        this.type = type;
         this.interval = interval;
         this.breed = breed;
+        this.currPrice = currPrice;
     }
 
     @Override
@@ -48,13 +46,6 @@ public class MA5MA20 implements Callable<Status> {
         //TODO：现价大于、小于平均值过多，放弃
         //TODO: 开盘尾盘不拿单
         int currStatus = this.status.getStatus();
-        System.out.println("" + cMA5 + " " + cMA20 + " " + lMA5 + " " + lMA20 + "\n");
-        PriceData currPrice;
-        if(breed == Constant.STOCK) {
-            currPrice = PriceDataDownloader.getPriceDataForStockFutures(url);
-        } else {
-            currPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
-        }
 
         // Thread for key sprite
         ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
@@ -62,11 +53,8 @@ public class MA5MA20 implements Callable<Status> {
         // empty if only 5 minutes left
         if(Utils.fiveMinutesLeft(breed)) {
             if(currStatus == Constant.PUT_BUYING || currStatus == Constant.SHORT_SELLING) {
-                status.setStatus(Constant.EMPTY);
-                newCachedThreadPool.submit(new KeySprite("E"));
-                String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Reason: 5 Minutes Left, Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type, trade);
-                return status;
+                Log.emptyLog(currPrice, interval, "5 minutes left", type);
+                return Trade.empty(currPrice, status, newCachedThreadPool);
             } else if(currStatus == Constant.EMPTY) {
                 return status;
             }
@@ -88,17 +76,13 @@ public class MA5MA20 implements Callable<Status> {
 //            }
             // Close the prior Short Selling if MA5 and MA20 cross
             if(currStatus == Constant.SHORT_SELLING) {
-                status.setStatus(Constant.EMPTY);
-                newCachedThreadPool.submit(new KeySprite("E"));
-                String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Reason: MA Cross, Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type, trade);
-                return status;
+                Log.emptyLog(currPrice, interval, "MA cross", type);
+                return Trade.empty(currPrice, status, newCachedThreadPool);
             }
 
             if(currStatus == Constant.EMPTY) {
                 // Try to open a Put Buying if over the threshold
-                PutBuyingByThreshold(cMA5, cMA20, currPrice);
-//            PutBuyingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
+                return PutBuyingByThreshold(cMA5, cMA20, currPrice, newCachedThreadPool);
             }
             return status;
 
@@ -113,17 +97,13 @@ public class MA5MA20 implements Callable<Status> {
 //            }
             // Close the prior Put Buying if MA5 and MA20 cross
             if(currStatus == Constant.PUT_BUYING) {
-                status.setStatus(Constant.EMPTY);
-                newCachedThreadPool.submit(new KeySprite("E"));
-                String trade = "Close at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Reason: MA Cross, Current: " + status;
-                CsvWriter.writeTradeHistory("Trade_" + type, trade);
-                return status;
+                Log.emptyLog(currPrice, interval, "MA cross", type);
+                return Trade.empty(currPrice, status, newCachedThreadPool);
             }
 
             if(currStatus == Constant.EMPTY) {
                 // Try to open a Short Selling if over the threshold
-                ShortSellingByThreshold(cMA5, cMA20, currPrice);
-//            ShortSellingByMA60(Utils.EvalLastCrossPrice(movingAverages, Constant.MA5, Constant.MA20), currentMA.getMA60(), currPrice);
+                return ShortSellingByThreshold(cMA5, cMA20, currPrice, newCachedThreadPool);
             }
             return status;
         }
@@ -135,55 +115,27 @@ public class MA5MA20 implements Callable<Status> {
 
         else {
             if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus == Constant.EMPTY) {
-                PutBuyingByThreshold(cMA5, cMA20, currPrice);
+                return PutBuyingByThreshold(cMA5, cMA20, currPrice, newCachedThreadPool);
             } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus == Constant.EMPTY) {
-                ShortSellingByThreshold(cMA5, cMA20, currPrice);
+                return ShortSellingByThreshold(cMA5, cMA20, currPrice, newCachedThreadPool);
             }
         }
         return status;
     }
 
-    private void PutBuyingByThreshold(double cMA5, double cMA20, PriceData currPrice) {
+    private Status PutBuyingByThreshold(double cMA5, double cMA20, PriceData currPrice, ExecutorService newCachedThreadPool) {
         if(Math.abs(cMA5 - cMA20) >= Constant.TRADE_THRESHOLD) {
-            PutBuying(currPrice);
+            Log.putBuyingLog(currPrice, interval, "empty", type);
+            return Trade.putBuying(currPrice, status, newCachedThreadPool);
         }
+        return status;
     }
 
-    private void ShortSellingByThreshold(double cMA5, double cMA20, PriceData currPrice) {
+    private Status ShortSellingByThreshold(double cMA5, double cMA20, PriceData currPrice, ExecutorService newCachedThreadPool) {
         if(Math.abs(cMA5 - cMA20) >= Constant.TRADE_THRESHOLD) {
-            ShortSelling(currPrice);
+            Log.shortSellingLog(currPrice, interval, "empty", type);
+            return Trade.shortSelling(currPrice, status, newCachedThreadPool);
         }
-    }
-
-    private boolean PutBuyingByMA60(double crossPoint, double MA60, PriceData currPrice) {
-        if(crossPoint > MA60) {
-            PutBuying(currPrice);
-            return true;
-        }
-        return false;
-    }
-
-    private boolean ShortSellingByMA60(double crossPoint, double MA60, PriceData currPrice) {
-        if(crossPoint < MA60) {
-            ShortSelling(currPrice);
-            return true;
-        }
-        return false;
-    }
-
-    private void PutBuying(PriceData currPrice) {
-        status.setStatus(Constant.PUT_BUYING);
-        ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
-        newCachedThreadPool.submit(new KeySprite("P"));
-        String trade = "PutBuying at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-        CsvWriter.writeTradeHistory("Trade_" + type, trade);
-    }
-
-    private void ShortSelling(PriceData currPrice) {
-        status.setStatus(Constant.SHORT_SELLING);
-        ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
-        newCachedThreadPool.submit(new KeySprite("S"));
-        String trade = "ShortSelling at " + currPrice.getDate() + " for " + currPrice.getPrice() + ", Under " + interval + " minute data" + ", Current: " + status;
-        CsvWriter.writeTradeHistory("Trade_" + type, trade);
+        return status;
     }
 }

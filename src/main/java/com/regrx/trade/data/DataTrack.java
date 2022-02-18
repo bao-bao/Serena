@@ -5,6 +5,7 @@ import com.regrx.trade.file.CsvReader;
 import com.regrx.trade.network.HistoryDataDownloader;
 import com.regrx.trade.network.PriceDataDownloader;
 import com.regrx.trade.statistic.MovingAverage;
+import com.regrx.trade.strategy.LossLimit;
 import com.regrx.trade.strategy.MA5MA20;
 import com.regrx.trade.util.Time;
 import com.regrx.trade.util.Utils;
@@ -48,6 +49,7 @@ public class DataTrack {
         System.out.println("Start fetching " + interval + " minute data...");
         minutesData = HistoryDataDownloader.getHistoryData(type, interval, breed);
         status = CsvReader.readTradeHistory("Trade_" + type);
+        status.updateTrend(minutesData.getLastMovingAverage());
 
         if(interval != Constant.MIN_1) {
             System.out.println("Start fetching 1 minute data...");
@@ -78,9 +80,14 @@ public class DataTrack {
                 } else {
                     newPrice = PriceDataDownloader.getPriceDataForOtherFutures(url);
                 }
+                everyMinuteData.update(newPrice, type, true);
+
+                // loss limit first
+                if(lossLimit(everyMinuteData.getPrices(), status, interval, newPrice)) {
+                    continue;
+                }
 
                 if(interval != Constant.MIN_1) {
-                    everyMinuteData.update(newPrice, type, true);
 
                     // time instance of last fetch
                     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
@@ -94,7 +101,7 @@ public class DataTrack {
                     if((fastTradeCount > 0 || tradeIntervalLock) &&
                             !(status.getStatus() != Constant.EMPTY && status.getInterval() != Constant.MIN_1)) {
                         status.setInterval(Constant.MIN_1);
-                        boolean success = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
+                        boolean success = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, newPrice);
 
                         // if success traded, change lock status
                         if(success) {
@@ -107,7 +114,7 @@ public class DataTrack {
                                 waitForKeySprite();
                                 // continue fast trade
                                 if(fastTradeCount > 0) {
-                                    boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, url);
+                                    boolean nestSuccess = this.trade(everyMinuteData.getMovingAverages(), status, Constant.MIN_1, newPrice);
                                     if (nestSuccess) {
                                         tradeIntervalLock = !tradeIntervalLock;
                                         fastTradeCount--;
@@ -117,7 +124,7 @@ public class DataTrack {
                                 // normal trade
                                 else {
                                     status.setInterval(interval);
-                                    this.trade(minutesData.getMovingAverages(), status, interval, url);
+                                    this.trade(minutesData.getMovingAverages(), status, interval, newPrice);
                                 }
                             }
                         }
@@ -126,24 +133,26 @@ public class DataTrack {
                     // normal trade if the minute matches the interval
                     if(minute % interval == 0) {
                         minutesData.update(newPrice, type, true);
+                        status.updateTrend(minutesData.getLastMovingAverage());
                         if(fastTradeCount != 0) {
                             System.out.println("Fast trade remaining: " + fastTradeCount + " time(s)\n");
                         }
 
                         if((fastTradeCount == 0 || !tradeIntervalLock)) {
-                            boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
+                            boolean success = this.trade(minutesData.getMovingAverages(), status, interval, newPrice);
                             if(success && status.getStatus() == Constant.EMPTY) {
                                 waitForKeySprite();
-                                this.trade(minutesData.getMovingAverages(), status, interval, url);
+                                this.trade(minutesData.getMovingAverages(), status, interval, newPrice);
                             }
                         }
                     }
                 } else {
                     minutesData.update(newPrice, type, true);
-                    boolean success = this.trade(minutesData.getMovingAverages(), status, interval, url);
+                    status.updateTrend(minutesData.getLastMovingAverage());
+                    boolean success = this.trade(minutesData.getMovingAverages(), status, interval, newPrice);
                     if(success && status.getStatus() == Constant.EMPTY) {
                         waitForKeySprite();
-                        this.trade(minutesData.getMovingAverages(), status, interval, url);
+                        this.trade(minutesData.getMovingAverages(), status, interval, newPrice);
                     }
                 }
 
@@ -166,12 +175,23 @@ public class DataTrack {
         }
     }
 
-    private boolean trade(LinkedList<MovingAverage> ma, Status status, int interval, String url) {
+    private boolean trade(LinkedList<MovingAverage> ma, Status status, int interval, PriceData newPrice) {
         int before = status.getStatus();
         ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
-        Future<Status> future = newCachedThreadPool.submit(new MA5MA20(ma, status, url, interval, breed));
+        Future<Status> future = newCachedThreadPool.submit(new MA5MA20(ma, status, type, interval, breed, newPrice));
+        return execute(before, newCachedThreadPool, future);
+    }
+
+    private boolean lossLimit(LinkedList<Double> prices, Status status, int interval, PriceData newPrice) {
+        int before = status.getStatus();
+        ExecutorService newCachedThreadPool = Executors.newCachedThreadPool();
+        Future<Status> future = newCachedThreadPool.submit(new LossLimit(prices, status, type, interval, newPrice));
+        return execute(before, newCachedThreadPool, future);
+    }
+
+    private boolean execute(int before, ExecutorService newCachedThreadPool, Future<Status> future) {
         try {
-            System.out.println("Trade Status: " + future.get() + "\n");
+//            System.out.println("Trade Status: " + future.get() + "\n");
             int after = future.get().getStatus();
             return before != after;
         } catch (InterruptedException | ExecutionException e) {

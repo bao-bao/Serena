@@ -61,4 +61,8 @@ public class MinutesData {
     public LinkedList<MovingAverage> getMovingAverages() {
         return movingAverages;
     }
+
+    public LinkedList<Double> getPrices() {
+        return prices;
+    }
 }
