@@ -23,4 +23,8 @@ public class Log {
     public static void shortSellingLog(PriceData priceData, int interval, String reason, String type) {
         CsvWriter.writeTradeHistory("Trade_" + type, "ShortSelling " + tradeLog(priceData, interval, reason) + "ShortSelling");
     }
+
+    public static String eventLog(String event) {
+        return event;
+    }
 }

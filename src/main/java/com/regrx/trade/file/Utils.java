@@ -14,7 +14,7 @@ public class Utils {
         List<String> result = new ArrayList<>();
 
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(file, StandardCharsets.UTF_8)) {
-            String line = "";
+            String line;
             while ((line = reader.readLine()) != null && result.size() < numLastLineToRead) {
                 result.add(line);
             }

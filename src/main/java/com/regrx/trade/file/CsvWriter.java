@@ -19,8 +19,6 @@ public class CsvWriter {
     public static void write(String filename, MinutesData data) {
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
 
-//            System.out.println(data.getCurrentTime());
-
             String formattedDate = Time.getFormattedTime(data.getCurrentTime());
             writer.append(formattedDate).append(',');
             writer.append(data.getLastPrice().toString()).append(',');
@@ -36,8 +34,6 @@ public class CsvWriter {
             writer.append(String.format("%.2f", movingAverage.getMA250())).append('\n');
 
             writer.flush();
-            writer.close();
-//            System.out.println("Success to write data for " + data.getCurrentTime().toString());
         } catch (FileNotFoundException e) {
             CsvWriter.newFile(filename + ".csv");
             write(filename + ".csv", data);
@@ -50,8 +46,6 @@ public class CsvWriter {
         try (FileWriter writer = new FileWriter(filename + ".log", true)) {
             writer.append(history).append('\n');
             writer.flush();
-            writer.close();
-//            System.out.println(history);
         } catch (FileNotFoundException e) {
             CsvWriter.newFile(filename + ".log");
             writeTradeHistory(filename, history);

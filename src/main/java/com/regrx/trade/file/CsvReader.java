@@ -13,7 +13,7 @@ import java.util.List;
 public class CsvReader {
     public static MinutesData readFromCsv(String type, int interval) {
         MinutesData records = new MinutesData(interval);
-        try (BufferedReader br = new BufferedReader(new FileReader("Minute_" + type + "_" + String.valueOf(interval) + ".csv"))) {
+        try (BufferedReader br = new BufferedReader(new FileReader("Minute_" + type + "_" + interval + ".csv"))) {
             String line;
             int count = 0;
             while ((line = br.readLine()) != null) {

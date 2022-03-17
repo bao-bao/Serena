@@ -22,10 +22,10 @@ public class Util {
             URL url = new URL(urlString);
             con = (HttpURLConnection) url.openConnection();
             con.setRequestProperty("Accept-Encoding", "gzip");
-            con.addRequestProperty("Referer", "https://finance.sina.com.cn/futures/quotes/IF2202.shtml");
+            con.addRequestProperty("Referer", "https://finance.sina.com.cn/futures/quotes/IF2203.shtml");
             stream = new GZIPInputStream(con.getInputStream());
         } catch (Exception e) {
-            System.out.println("download Error");
+            System.out.println("download error, retry...");
             return null;
         }
 
@@ -41,14 +41,14 @@ public class Util {
             }
             return output.toString();
         } catch (IOException e) {
-            System.out.println("download Error");
+            System.out.println("download error, retry...");
             return null;
         }
     }
 
-    public static String downloadFromGZIPFormat(String urlString, int count) {
+    public static String downloadFromGZIPFormat(String urlString, int retry) {
         String res;
-        while(count-- > 0) {
+        while(retry-- > 0) {
             res = Util.downloadFromGZIPFormat(urlString);
             if(res != null) {
                 return res;

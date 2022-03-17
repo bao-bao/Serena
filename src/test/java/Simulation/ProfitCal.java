@@ -15,7 +15,8 @@ public class ProfitCal {
             while ((line = reader.readLine()) != null) {
                 lineCount++;
                 String[] lastHistory = line.split(" ");
-                double currPrice = Double.parseDouble(lastHistory[9]);
+//                double currPrice = Double.parseDouble(lastHistory[9]);
+                double currPrice = Double.parseDouble(lastHistory[5]);
                 switch (lastHistory[lastHistory.length - 1]) {
                     case "Empty":
                         emptyPrice = currPrice;
