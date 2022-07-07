@@ -10,6 +10,7 @@ public enum IntervalEnum {
     MIN_15(15),
     MIN_30(30),
     MIN_60(60),
+    DAY(240),
     NULL(0);
 
     private final int value;

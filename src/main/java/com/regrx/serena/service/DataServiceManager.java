@@ -44,6 +44,7 @@ public class DataServiceManager {
         dataList.put(interval, dataService);
         Future<?> future = this.dataTrackingExecutor.submit(dataService);
         dataRef.put(interval, future);
+        LogUtil.getInstance().info("Successful add data service for " + interval + " min(s) interval");
     }
 
     public void removeDataTrackThread(IntervalEnum interval) {
@@ -55,9 +56,27 @@ public class DataServiceManager {
         future.cancel(true);
         dataRef.remove(interval);
         dataList.remove(interval);
+        LogUtil.getInstance().info("Successful remove data service for " + interval + " min(s) interval");
+    }
+
+    public void removeAll() {
+        for(Future<?> f : dataRef.values()) {
+            f.cancel(true);
+        }
+        dataRef.clear();
+        dataList.clear();
+        LogUtil.getInstance().info("Successful remove all data services");
     }
 
     public MinutesData queryData(IntervalEnum interval) {
         return dataList.get(interval).getMinutesData();
+    }
+
+    public IntervalEnum getMinimumInterval() {
+        if(dataList.isEmpty()) {
+            return IntervalEnum.NULL;
+        } else {
+            return dataList.keySet().stream().reduce((x, y) -> x.compareTo(y) < 0 ? x : y).get();
+        }
     }
 }

@@ -57,11 +57,31 @@ public class DataServiceManagerTest {
         dataList.remove(interval);
     }
 
-    public MinutesData queryData(IntervalEnum interval) {
-        DataServiceTest dst = dataList.get(IntervalEnum.MIN_1);
-        if (interval == IntervalEnum.MIN_5) {
-            return dst.getMinutesData_5();
+    public void removeAll() {
+        for(Future<?> f : dataRef.values()) {
+            f.cancel(true);
         }
-        return dst.getMinutesData_1();
+        dataRef.clear();
+        dataList.clear();
+    }
+
+    public MinutesData queryData(IntervalEnum interval) {
+        if(getMinimumInterval() == IntervalEnum.MIN_1) {
+            if (interval == IntervalEnum.MIN_1) {
+                return dataList.get(IntervalEnum.MIN_1).getMinutesData();
+            }
+            if (interval == IntervalEnum.MIN_5) {
+                return dataList.get(IntervalEnum.MIN_1).getMinutesData_5();
+            }
+        }
+        return dataList.get(interval).getMinutesData();
+    }
+
+    public IntervalEnum getMinimumInterval() {
+        if(dataList.isEmpty()) {
+            return IntervalEnum.NULL;
+        } else {
+            return dataList.keySet().stream().reduce((x, y) -> x.compareTo(y) < 0 ? x : y).get();
+        }
     }
 }

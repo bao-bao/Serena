@@ -3,7 +3,7 @@ package com.regrx.serena.service;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.FutureType;
 import com.regrx.serena.common.constant.IntervalEnum;
-import com.regrx.serena.common.controller.Controller;
+import com.regrx.serena.controller.Controller;
 import com.regrx.serena.common.network.HistoryDownloader;
 import com.regrx.serena.common.network.PriceDownloader;
 import com.regrx.serena.common.utils.LogUtil;
@@ -12,6 +12,7 @@ import com.regrx.serena.common.utils.TimeUtil;
 import com.regrx.serena.data.MinutesData;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
+import com.regrx.serena.data.base.Status;
 
 import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -68,9 +69,10 @@ public class DataService implements Runnable {
     }
 
     private void callback(ExPrice newPrice) {
-        if(interval != IntervalEnum.MIN_1) {
+        if(interval != DataServiceManager.getInstance().getMinimumInterval()) {
             return;
         }
+
         LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");
         Decision decision = StrategyManager.getInstance().execute(newPrice);
         LogUtil.getInstance().info("Decision making complete!");
@@ -90,7 +92,6 @@ public class DataService implements Runnable {
                 queue.wait();
             } catch (InterruptedException ignored) {
             }
-            LogUtil.getInstance().info("Decision added into queue, waiting for consuming...");
         }
     }
 

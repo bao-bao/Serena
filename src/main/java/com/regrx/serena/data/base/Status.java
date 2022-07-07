@@ -5,6 +5,7 @@ import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 
 public class Status {
+    private boolean trading;
     private int count;
     private TradingType status;
     private IntervalEnum interval;
@@ -13,6 +14,7 @@ public class Status {
     private static Status stat;
 
     private Status() {
+        trading = true;
         count = 0;
         status = TradingType.EMPTY;
         interval = IntervalEnum.NULL;
@@ -25,6 +27,19 @@ public class Status {
             stat = new Status();
         }
         return stat;
+    }
+
+    public static Status reset() {
+        stat = new Status();
+        return stat;
+    }
+
+    public boolean isTrading() {
+        return trading;
+    }
+
+    public void setTrading(boolean trading) {
+        this.trading = trading;
     }
 
     public int getCount() {

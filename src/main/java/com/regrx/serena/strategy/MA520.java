@@ -10,6 +10,7 @@ import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.MovingAverage;
+import com.regrx.serena.service.StrategyManager;
 
 public class MA520 extends AbstractStrategy {
 
@@ -37,6 +38,11 @@ public class MA520 extends AbstractStrategy {
         }
 
         TradingType currStatus = Status.getInstance().getStatus();
+
+        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
+            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
+        }
 
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             // Close the prior Short Selling if MA5 up cross MA20

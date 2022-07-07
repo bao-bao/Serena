@@ -5,14 +5,14 @@ public class Setting {
 
     public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
 
-    public static final double TRADE_THRESHOLD = 0.5;
-
     //TODO: add final HERE
-    public static int PROFIT_LIMIT_THRESHOLD = 13;
+    public static double TRADE_THRESHOLD = 0.5;
 
-    public static int LOSS_LIMIT_THRESHOLD = 12;
+    public static double PROFIT_LIMIT_THRESHOLD = 13;
 
-    public static int RESTORE_THRESHOLD = 10;
+    public static double LOSS_LIMIT_THRESHOLD = 15;
+
+    public static double RESTORE_THRESHOLD = 17;
 
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 500;   // unit is millisecond
@@ -26,9 +26,20 @@ public class Setting {
 
     public static final int MAX_DECISION_QUEUE_SIZE = 1;
 
-    public static final int DEFAULT_LOSS_LIMIT_PRIORITY = 0;
+    // strategy priority
+    public static final int BLOCK_LOW_PRIORITY_STRATEGY = 10000;
 
-    public static final int DEFAULT_MA_520_PRIORITY = 100;
+    public static final int DEFAULT_FORCE_TRIGGER_PRIORITY = 0;
+
+    public static final int HIGH_LOSS_LIMIT_PRIORITY = 100;
+
+    public static final int DEFAULT_LOSS_LIMIT_PRIORITY = Integer.MAX_VALUE;
+
+    public static final int HIGH_PROFIT_LIMIT_PRIORITY = 100;
+
+    public static final int DEFAULT_PROFIT_LIMIT_PRIORITY = Integer.MAX_VALUE;
+
+    public static final int DEFAULT_MA_520_PRIORITY = 500;
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

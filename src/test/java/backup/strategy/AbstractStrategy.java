@@ -1,9 +1,10 @@
-package SerenaSimulation.strategy;
+package backup.strategy;
 
 import SerenaSimulation.DataServiceManagerTest;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
+
 
 public abstract class AbstractStrategy implements Comparable<AbstractStrategy> {
     protected String name;
@@ -16,7 +17,6 @@ public abstract class AbstractStrategy implements Comparable<AbstractStrategy> {
         this.priority = priority;
     }
 
-    @Override
     public int compareTo(AbstractStrategy s) {
         return priority.compareTo(s.priority);
     }
@@ -33,7 +33,7 @@ public abstract class AbstractStrategy implements Comparable<AbstractStrategy> {
         priority = p;
     }
 
-    public Integer getPriority() {
+    public int getPriority() {
         return priority;
     }
 

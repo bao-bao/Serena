@@ -1,5 +1,6 @@
 package Simulation;
 
+import SerenaSimulation.profit.ProfitCal;
 import com.regrx.trade.constant.Constant;
 
 import java.io.File;

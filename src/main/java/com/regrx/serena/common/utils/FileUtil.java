@@ -8,8 +8,6 @@ import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.MovingAverage;
 
-import com.regrx.trade.data.PriceData;
-import com.regrx.trade.util.Time;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
@@ -27,7 +25,7 @@ public class FileUtil {
             String line;
             int count = 0;
 
-            while ((line = br.readLine()) != null) {
+            while ((line = br.readLine()) != null && !line.equals("")) {
                 String[] values = line.split(",");
                 ExPrice newPrice = new ExPrice(Double.parseDouble(values[1]), values[0]);
                 records.updateWithoutWrite(newPrice);

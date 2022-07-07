@@ -1,4 +1,4 @@
-package SerenaSimulation.strategy;
+package backup.strategy;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -25,6 +25,7 @@ public class LossLimit extends AbstractStrategy {
 
         double lTP = status.getLastTradePrice();
         double currP = price.getPrice();
+        double lastP = dataSvcMgr.queryData(interval).getLastPrice();
         TradingType currStatus = status.getStatus();
 
         if (currStatus == TradingType.EMPTY) {
@@ -41,16 +42,20 @@ public class LossLimit extends AbstractStrategy {
 
         // current is not empty, limit the loss into a threshold
         if (currStatus == TradingType.PUT_BUYING) {
-            return limitLoss(decision, currP > lTP, currP - lTP);
+            return limitLossAndProfit(decision, currP > lTP, lastP - lTP, currP - lTP);
         } else if (currStatus == TradingType.SHORT_SELLING) {
-            return limitLoss(decision, currP < lTP, lTP - currP);
+            return limitLossAndProfit(decision, currP < lTP, lTP - lastP, lTP - currP);
         }
         return decision;
     }
 
 
-    private Decision limitLoss(Decision decision, boolean hasProfit, double currProfit) {
-        if (!hasProfit && Math.abs(currProfit) > Setting.LOSS_LIMIT_THRESHOLD) {         // deficit much
+    private Decision limitLossAndProfit(Decision decision, boolean hasProfit, double historyProfit, double currProfit) {
+        // has profit but not much, and was much
+        if (hasProfit && currProfit < Setting.PROFIT_LIMIT_THRESHOLD && historyProfit > Setting.PROFIT_LIMIT_THRESHOLD) {
+            decision.make(TradingType.EMPTY, "profit limit");
+            return decision;
+        } else if (!hasProfit && Math.abs(currProfit) > Setting.LOSS_LIMIT_THRESHOLD) {         // deficit much
             decision.make(TradingType.EMPTY, "loss limit");
             return decision;
         }

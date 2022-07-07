@@ -1,4 +1,4 @@
-package com.regrx.serena.common.controller;
+package com.regrx.serena.controller;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -22,16 +22,20 @@ public class Controller implements Runnable {
 
     private Controller(String type) {
         this.type = type;
+        FileUtil.readTradeHistory("Trade_" + type);
         this.dataSvcMgr = DataServiceManager.getInstance(type);
         this.dataSvcMgr.addDataTrackThread(IntervalEnum.MIN_1);
         this.strategyMgr = StrategyManager.getInstance();
-        FileUtil.readTradeHistory("Trade_" + type);
     }
 
     public static Controller getInstance(String type) {
         if(controller == null) {
             controller = new Controller(type);
         }
+        return controller;
+    }
+
+    public static Controller getInstance() {
         return controller;
     }
 
@@ -42,14 +46,18 @@ public class Controller implements Runnable {
                 while(decisionQueue.isEmpty()) {
                     try {
                         decisionQueue.notify();
+                        LogUtil.getInstance().info("waiting for next decision...");
                         decisionQueue.wait();
                     } catch (InterruptedException ignored) {}
                 }
                 Decision decision = decisionQueue.poll();
-                if(decision != null && decision.isExecute()) {
-                    LogUtil.getInstance().info("Perform trade based on decision: " + decision);
-                    TradeUtil.trade(decision);
-                    LogUtil.tradeLog(type, decision);
+                if(decision != null) {
+                    LogUtil.getInstance().info("Decision in this minute: " + decision);
+                    if(decision.isExecute()) {
+                        LogUtil.getInstance().info("Perform trade...");
+                        TradeUtil.trade(decision);
+                        LogUtil.tradeLog(type, decision);
+                    }
                 }
             }
         }
@@ -61,11 +69,14 @@ public class Controller implements Runnable {
 
     public void addDataTrack(IntervalEnum interval) {
         dataSvcMgr.addDataTrackThread(interval);
-        LogUtil.getInstance().info("Successful add data service for " + interval + " min(s) interval");
     }
 
+
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {
-        strategyMgr.addStrategy(strategy, interval);
-        LogUtil.getInstance().info("Successful add strategy " + strategy);
+        boolean res = strategyMgr.addStrategy(strategy, interval);
+    }
+
+    public String getType() {
+        return type;
     }
 }

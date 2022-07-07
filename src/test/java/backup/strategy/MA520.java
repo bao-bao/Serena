@@ -1,6 +1,5 @@
-package SerenaSimulation.strategy;
+package backup.strategy;
 
-import SerenaSimulation.StrategyManagerTest;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
@@ -38,11 +37,6 @@ public class MA520 extends AbstractStrategy {
         }
 
         TradingType currStatus = Status.getInstance().getStatus();
-
-        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0 || StrategyManagerTest.getInstance().containsStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT)) {
-            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
-            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
-        }
 
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             // Close the prior Short Selling if MA5 up cross MA20

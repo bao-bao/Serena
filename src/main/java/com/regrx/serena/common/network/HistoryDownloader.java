@@ -18,8 +18,11 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.regrx.serena.common.utils.FileUtil.readLastLine;
+
 public class HistoryDownloader {
 
+    // open/highest/lowest/close(from website) -> open/close/highest/lowest(local csv data)
     public static MinutesData getHistoryData(String type, IntervalEnum interval, FutureType breed) {
         String urlString = "https://stock2.finance.sina.com.cn/futures/api/jsonp.php" +
                 "/var%20list=" +
@@ -55,7 +58,7 @@ public class HistoryDownloader {
     }
 
     public static void writeHistoryDataToCsv(HistoryData[] historyData, String filename) {
-        List<String> lastRecords = com.regrx.trade.file.Utils.readLastLine(new File(filename + ".csv"), 1);
+        List<String> lastRecords = readLastLine(new File(filename + ".csv"), 1);
         String lastRecordDateStr = null;
         if(lastRecords.size() > 0) {
             lastRecordDateStr = lastRecords.get(0).split(",")[0];

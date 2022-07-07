@@ -8,10 +8,7 @@ import java.util.TimeZone;
 
 public class PreparationUtil {
 
-    public static boolean fiveMinutesLeft(FutureType breed) {
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minute = calendar.get(Calendar.MINUTE);
+    public static boolean fiveMinutesLeft(FutureType breed, int hour, int minute) {
 
         boolean dayTime = ((hour == 14 && minute >= 54) || hour == 15);     // 14:54:00 - 15:59:59
 

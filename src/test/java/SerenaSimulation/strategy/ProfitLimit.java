@@ -10,22 +10,24 @@ import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 
-public class LossLimit extends AbstractStrategy {
+public class ProfitLimit extends AbstractStrategy {
 
-    public LossLimit(IntervalEnum interval) {
+    public ProfitLimit(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
-        super.setName("Loss Limit");
+        super.setName("Profit Limit");
     }
 
     @Override
     public Decision execute(ExPrice price) {
-        LogUtil.getInstance().info("Executing LOSS LIMIT...");
+        LogUtil.getInstance().info("Executing PROFIT LIMIT...");
         Status status = Status.getInstance();
-        Decision decision = new Decision(price, StrategyEnum.STRATEGY_LOSS_LIMIT, interval);
+        Decision decision = new Decision(price, StrategyEnum.STRATEGY_PROFIT_LIMIT, interval);
 
         double lTP = status.getLastTradePrice();
         double currP = price.getPrice();
+        double lastP = dataSvcMgr.queryData(interval).getLastPrice();
         TradingType currStatus = status.getStatus();
+
 
         if (currStatus == TradingType.EMPTY) {
             if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
@@ -38,22 +40,23 @@ public class LossLimit extends AbstractStrategy {
                 return decision;
             }
         }
-
+        
         // current is not empty, limit the loss into a threshold
         if (currStatus == TradingType.PUT_BUYING) {
-            return limitLoss(decision, currP > lTP, currP - lTP);
+            return limitProfit(decision, currP > lTP, lastP - lTP, currP - lTP);
         } else if (currStatus == TradingType.SHORT_SELLING) {
-            return limitLoss(decision, currP < lTP, lTP - currP);
+            return limitProfit(decision, currP < lTP, lTP - lastP, lTP - currP);
         }
-        return decision;
+        return null;
     }
 
-
-    private Decision limitLoss(Decision decision, boolean hasProfit, double currProfit) {
-        if (!hasProfit && Math.abs(currProfit) > Setting.LOSS_LIMIT_THRESHOLD) {         // deficit much
-            decision.make(TradingType.EMPTY, "loss limit");
+    private Decision limitProfit(Decision decision, boolean hasProfit, double historyProfit, double currProfit) {
+        // has profit but not much, and was much
+        if (hasProfit && currProfit < Setting.PROFIT_LIMIT_THRESHOLD && historyProfit > Setting.PROFIT_LIMIT_THRESHOLD) {
+            decision.make(TradingType.EMPTY, "profit limit");
             return decision;
         }
         return decision;
     }
+
 }

@@ -7,10 +7,12 @@ import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.common.utils.TradeUtil;
 import com.regrx.serena.data.base.Decision;
+import com.regrx.serena.data.base.Status;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ControllerTest implements Runnable {
+    private boolean signal;
     private final String type;
     private final DataServiceManagerTest dataSvcMgr;
     private final StrategyManagerTest strategyMgr;
@@ -20,9 +22,9 @@ public class ControllerTest implements Runnable {
 
 
     private ControllerTest(String type) {
+        this.signal = true;
         this.type = type;
         this.dataSvcMgr = DataServiceManagerTest.getInstance(type);
-        this.dataSvcMgr.addDataTrackThread(IntervalEnum.MIN_1);
         this.strategyMgr = StrategyManagerTest.getInstance();
         FileUtil.readTradeHistory("Trade_" + type);
     }
@@ -34,11 +36,19 @@ public class ControllerTest implements Runnable {
         return controller;
     }
 
+    public static void stop() {
+        controller.dataSvcMgr.removeAll();
+        controller.strategyMgr.removeAll();
+        Status.reset();
+        controller = null;
+    }
+
     @Override
     public void run() {
-        while (true) {
+        controller.addDataTrack(IntervalEnum.MIN_1);
+        while (signal) {
             synchronized (decisionQueue) {
-                while(decisionQueue.isEmpty()) {
+                while(decisionQueue.isEmpty() && signal) {
                     try {
                         decisionQueue.notify();
                         decisionQueue.wait();
@@ -65,6 +75,13 @@ public class ControllerTest implements Runnable {
 
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {
         strategyMgr.addStrategy(strategy, interval);
-        LogUtil.getInstance().info("Successful add strategy " + strategy);
+    }
+
+    public void setSignal(boolean signal) {
+        this.signal = signal;
+    }
+
+    public boolean getSignal() {
+        return signal;
     }
 }
