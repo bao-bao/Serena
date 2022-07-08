@@ -31,7 +31,7 @@ public class SerenaSimulation {
         double[] MA520Para = {0};
 
         double profit;
-        double best = 0.0;
+        double best = Integer.MIN_VALUE;
         double[] bestPara = {0, 0, 0, 0};
         for(double lossLimit  : lossLimitPara) {
             for (double profitLimit : profitLimitPara) {
