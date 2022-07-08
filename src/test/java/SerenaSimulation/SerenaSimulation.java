@@ -9,10 +9,11 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 public class SerenaSimulation {
+    public static String type = "IF2212";
 
     public static void main(String[] args) {
-//        runner();
-        simulation();
+        runner();
+//        simulation();
     }
 
 
@@ -24,7 +25,7 @@ public class SerenaSimulation {
 //        double[] profitLimitPara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] restorePara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] MA520Para = {0.0, 0.3, 0.5, 0.8, 1.0};
-        double[] lossLimitPara = {23.0};
+        double[] lossLimitPara = {23.0, 1.0};
         double[] profitLimitPara = {15.0};
         double[] restorePara = {19.0};
         double[] MA520Para = {0};
@@ -36,10 +37,10 @@ public class SerenaSimulation {
             for (double profitLimit : profitLimitPara) {
                 for (double restore : restorePara) {
                     for (double ma520 : MA520Para) {
-//                        Setting.LOSS_LIMIT_THRESHOLD = lossLimit;
-//                        Setting.PROFIT_LIMIT_THRESHOLD = profitLimit;
-//                        Setting.RESTORE_THRESHOLD = restore;
-//                        Setting.TRADE_THRESHOLD = ma520;
+                        Setting.LOSS_LIMIT_THRESHOLD = lossLimit;
+                        Setting.PROFIT_LIMIT_THRESHOLD = profitLimit;
+                        Setting.RESTORE_THRESHOLD = restore;
+                        Setting.TRADE_THRESHOLD = ma520;
                         simulation();
                         try {
                             Thread.sleep(500);
@@ -47,7 +48,7 @@ public class SerenaSimulation {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        profit = ProfitCal.cal("IF2212");
+                        profit = ProfitCal.cal(type);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -74,7 +75,7 @@ public class SerenaSimulation {
     }
 
     public static void simulation() {
-        String type = "IF2212";
+        String type = SerenaSimulation.type;
 
         clearTradeHistory(type);
 
