@@ -14,7 +14,7 @@ public class ProfitCal {
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
         int posiCount = 0, negeCount = 0;
         PriorityQueue<SingleTrade> worstTrade = new PriorityQueue<>();
-        PriorityQueue<SingleTrade> bestTrade = new PriorityQueue<>(Collections.reverseOrder());
+        PriorityQueue<SingleTrade> bestTrade = new PriorityQueue<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line = "";
             SingleTrade st = new SingleTrade("");

@@ -15,7 +15,7 @@ public class SingleTrade implements Comparable<SingleTrade> {
 
     @Override
     public int compareTo(SingleTrade o) {
-        return profit.compareTo(o.profit);
+        return closeTime.compareTo(o.closeTime);
     }
 
     public void setCloseTime(String closeTime) {
