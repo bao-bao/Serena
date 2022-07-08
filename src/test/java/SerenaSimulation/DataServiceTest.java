@@ -46,7 +46,7 @@ public class DataServiceTest implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            ControllerTest.getInstance("IC2212").setSignal(false);
+            ControllerTest.getInstance("IF2212").setSignal(false);
             ArrayBlockingQueue<Decision> queue;
             synchronized (queue = ControllerTest.getDecisionQueue()) {
                 queue.add(new Decision());

@@ -6,13 +6,13 @@ public class Setting {
     public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
 
     //TODO: add final HERE
-    public static double TRADE_THRESHOLD = 0.5;
+    final public static double TRADE_THRESHOLD = 0;
 
-    public static double PROFIT_LIMIT_THRESHOLD = 13;
+    final public static double PROFIT_LIMIT_THRESHOLD = 15;
 
-    public static double LOSS_LIMIT_THRESHOLD = 15;
+    final public static double LOSS_LIMIT_THRESHOLD = 23;
 
-    public static double RESTORE_THRESHOLD = 17;
+    final public static double RESTORE_THRESHOLD = 19;
 
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 500;   // unit is millisecond

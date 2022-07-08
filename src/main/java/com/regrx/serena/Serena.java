@@ -6,8 +6,9 @@ import com.regrx.serena.controller.Controller;
 
 public class Serena {
     public static void main(String[] args) {
-        Controller controller = Controller.getInstance("IF2207");
+        Controller controller = Controller.getInstance("IF2212");
 
+        controller.addDataTrack(IntervalEnum.MIN_1);
         controller.addDataTrack(IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_1);

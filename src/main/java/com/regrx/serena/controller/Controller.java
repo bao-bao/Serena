@@ -24,7 +24,6 @@ public class Controller implements Runnable {
         this.type = type;
         FileUtil.readTradeHistory("Trade_" + type);
         this.dataSvcMgr = DataServiceManager.getInstance(type);
-        this.dataSvcMgr.addDataTrackThread(IntervalEnum.MIN_1);
         this.strategyMgr = StrategyManager.getInstance();
     }
 
@@ -73,7 +72,7 @@ public class Controller implements Runnable {
 
 
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {
-        boolean res = strategyMgr.addStrategy(strategy, interval);
+        strategyMgr.addStrategy(strategy, interval);
     }
 
     public String getType() {
