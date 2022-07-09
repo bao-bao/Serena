@@ -47,58 +47,56 @@ public class MA520 extends AbstractStrategy {
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             // Close the prior Short Selling if MA5 up cross MA20
             if(currStatus == TradingType.SHORT_SELLING) {
+                lastTradeInTrend = TrendType.NULL;
                 decision.make(TradingType.EMPTY, "MA cross");
-                return decision;
             }
             // Try to open a Put Buying if over the threshold
             else if(currStatus == TradingType.EMPTY) {
-                return PutBuyingByThreshold(cMA5, cMA20, decision);
+                PutBuyingByThreshold(cMA5, cMA20, decision);
             }
             // Do nothing if current status is put buying
-            else {
-                return decision;
-            }
-
         }
 
         else if(cMA5 < cMA20 && lMA5 >= lMA20) {
             // Close the prior Put Buying if MA5 and MA20 cross
             if(currStatus == TradingType.PUT_BUYING) {
+                lastTradeInTrend = TrendType.NULL;
                 decision.make(TradingType.EMPTY, "MA cross");
-                return decision;
             }
             // Try to open a Short Selling if over the threshold
             else if(currStatus == TradingType.EMPTY) {
-                return ShortSellingByThreshold(cMA5, cMA20, decision);
+                ShortSellingByThreshold(cMA5, cMA20, decision);
             }
             // Do nothing if current status is put buying
-            else {
-                return decision;
-            }
         }
         else {
             if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus == TradingType.EMPTY && lastTradeInTrend != TrendType.TREND_UP) {
-                return PutBuyingByThreshold(cMA5, cMA20, decision);
+                PutBuyingByThreshold(cMA5, cMA20, decision);
             } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus == TradingType.EMPTY && lastTradeInTrend != TrendType.TREND_DOWN) {
-                return ShortSellingByThreshold(cMA5, cMA20, decision);
+                ShortSellingByThreshold(cMA5, cMA20, decision);
+            }
+        }
+        if(decision.isExecute()) {
+            Status.getInstance().setTrend(lastTradeInTrend);
+            if(lastTradeInTrend == TrendType.NULL) {
+                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
+                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
             }
         }
         return decision;
     }
 
-    private Decision PutBuyingByThreshold(double cMA5, double cMA20, Decision decision) {
+    private void PutBuyingByThreshold(double cMA5, double cMA20, Decision decision) {
         if(Math.abs(cMA5 - cMA20) >= Setting.TRADE_THRESHOLD) {
             lastTradeInTrend = TrendType.TREND_UP;
             decision.make(TradingType.PUT_BUYING, "empty");
         }
-        return decision;
     }
 
-    private Decision ShortSellingByThreshold(double cMA5, double cMA20, Decision decision) {
+    private void ShortSellingByThreshold(double cMA5, double cMA20, Decision decision) {
         if(Math.abs(cMA5 - cMA20) >= Setting.TRADE_THRESHOLD) {
             lastTradeInTrend = TrendType.TREND_DOWN;
             decision.make(TradingType.SHORT_SELLING, "empty");
         }
-        return decision;
     }
 }

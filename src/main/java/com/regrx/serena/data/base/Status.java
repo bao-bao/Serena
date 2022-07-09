@@ -3,11 +3,13 @@ package com.regrx.serena.data.base;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
+import com.regrx.serena.common.constant.TrendType;
 
 public class Status {
     private boolean trading;
     private int count;
     private TradingType status;
+    private TrendType trend;
     private IntervalEnum interval;
     private StrategyEnum strategy;
     private double lastTradePrice;
@@ -40,6 +42,14 @@ public class Status {
 
     public void setTrading(boolean trading) {
         this.trading = trading;
+    }
+
+    public TrendType getTrend() {
+        return trend;
+    }
+
+    public void setTrend(TrendType trend) {
+        this.trend = trend;
     }
 
     public int getCount() {

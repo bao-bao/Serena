@@ -30,15 +30,13 @@ public class ProfitLimit extends AbstractStrategy {
 
 
         if (currStatus == TradingType.EMPTY) {
-            if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
+            if (status.getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.PUT_BUYING, "exceed restore limit");
-                return decision;
-            } else if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
+            } else if (status.getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.SHORT_SELLING, "exceed restore limit");
-                return decision;
-            } else {
-                return decision;
             }
+            return decision;
+
         }
         
         // current is not empty, limit the loss into a threshold
@@ -54,7 +52,6 @@ public class ProfitLimit extends AbstractStrategy {
         // has profit but not much, and was much
         if (hasProfit && currProfit < Setting.PROFIT_LIMIT_THRESHOLD && historyProfit > Setting.PROFIT_LIMIT_THRESHOLD) {
             decision.make(TradingType.EMPTY, "profit limit");
-            return decision;
         }
         return decision;
     }

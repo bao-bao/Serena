@@ -30,10 +30,10 @@ public class ProfitLimit extends AbstractStrategy {
 
 
         if (currStatus == TradingType.EMPTY) {
-            if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
+            if (status.getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.PUT_BUYING, "exceed restore limit");
                 return decision;
-            } else if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
+            } else if (status.getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.SHORT_SELLING, "exceed restore limit");
                 return decision;
             } else {
