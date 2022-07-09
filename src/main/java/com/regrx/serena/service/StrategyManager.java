@@ -40,6 +40,9 @@ public class StrategyManager {
             case STRATEGY_LOSS_LIMIT:
                 strategyList.put(strategy, new LossLimit(interval));
                 break;
+            case STRATEGY_PROFIT_LIMIT:
+                strategyList.put(strategy, new CloseOnEnd());
+                break;
             case STRATEGY_CLOSE_ON_END:
                 forceTriggerStrategyList.put(strategy, new CloseOnEnd());
                 break;

@@ -49,8 +49,8 @@ public class FileUtil {
         String[] lastHistory = logs.get(0).split(" ");
         switch (lastHistory[lastHistory.length - 1]) {
             case "Empty": status.setStatus(TradingType.EMPTY); break;
-            case "Buying": status.setStatus(TradingType.PUT_BUYING); break;
-            case "Selling": status.setStatus(TradingType.SHORT_SELLING); break;
+            case "PutBuying": status.setStatus(TradingType.PUT_BUYING); break;
+            case "ShortSelling": status.setStatus(TradingType.SHORT_SELLING); break;
         }
 
         // load interval and last trade price

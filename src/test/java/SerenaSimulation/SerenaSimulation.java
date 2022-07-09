@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 public class SerenaSimulation {
-    public static String type = "IC2212";
+    public static String type = "If2212";
 
     public static void main(String[] args) {
         runner();
@@ -25,10 +25,10 @@ public class SerenaSimulation {
 //        double[] profitLimitPara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] restorePara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] MA520Para = {0.0, 0.3, 0.5, 0.8, 1.0};
-        double[] lossLimitPara = {17.0};
-        double[] profitLimitPara = {25.0};
-        double[] restorePara = {5.0};
-        double[] MA520Para = {0};
+        double[] lossLimitPara = {23.0};
+        double[] profitLimitPara = {15.0};
+        double[] restorePara = {19.0};
+        double[] MA520Para = {0.0};
 
         double profit;
         double best = Integer.MIN_VALUE;
