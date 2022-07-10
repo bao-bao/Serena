@@ -5,6 +5,8 @@ public class Setting {
 
     public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
 
+    public static final boolean TREND_FOLLOW_MA = true;
+
     //TODO: add final HERE
     public static double LOSS_LIMIT_THRESHOLD = 23;
 

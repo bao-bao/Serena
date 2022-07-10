@@ -26,12 +26,13 @@ public class LossLimit extends AbstractStrategy {
         double lTP = status.getLastTradePrice();
         double currP = price.getPrice();
         TradingType currStatus = status.getStatus();
+        TrendType currTrend = Setting.TREND_FOLLOW_MA ? status.getTrend() : dataSvcMgr.queryData(interval).getTrend();
 
         if (currStatus == TradingType.EMPTY) {
-            if (status.getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
+            if (currTrend == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.PUT_BUYING, "exceed restore limit");
                 return decision;
-            } else if (status.getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
+            } else if (currTrend == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.SHORT_SELLING, "exceed restore limit");
                 return decision;
             } else {
