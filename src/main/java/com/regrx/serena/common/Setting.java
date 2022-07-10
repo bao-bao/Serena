@@ -3,9 +3,10 @@ package com.regrx.serena.common;
 public class Setting {
     public static final boolean TEST_LABEL = true;
 
-    public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
-
     public static final boolean TREND_FOLLOW_MA = true;
+
+    public static final boolean MA_PRIMARY = true;
+
 
     //TODO: add final HERE
     public static double LOSS_LIMIT_THRESHOLD = 23;
@@ -18,8 +19,6 @@ public class Setting {
 
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 500;   // unit is millisecond
-
-    public static final int FOLLOW_TIME = 2;
 
     public static final int FOLLOW_RETRY_INTERVAL = 10000;
 

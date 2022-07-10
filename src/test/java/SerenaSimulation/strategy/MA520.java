@@ -77,7 +77,7 @@ public class MA520 extends AbstractStrategy {
                 ShortSellingByThreshold(cMA5, cMA20, decision);
             }
         }
-        if(decision.isExecute()) {
+        if(decision.isExecute() && Setting.MA_PRIMARY) {
             Status.getInstance().setTrend(lastTradeInTrend);
             if(lastTradeInTrend == TrendType.NULL) {
                 StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
