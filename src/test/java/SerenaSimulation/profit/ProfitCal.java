@@ -21,7 +21,7 @@ public class ProfitCal {
             while ((line = reader.readLine()) != null) {
                 lineCount++;
                 String[] lastHistory = line.split(" ");
-                String reason = line.split(",")[1].substring(7);
+                String reason = line.split(",")[1].substring(9);
                 double currPrice = Double.parseDouble(lastHistory[5]);
                 switch (lastHistory[lastHistory.length - 1]) {
                     case "Empty":
@@ -110,10 +110,10 @@ public class ProfitCal {
                 }
             }
         }
-
-        System.out.println("\t\tPut\tShort");
-        System.out.println("Loss\t" + putLoss + "\t" + shortLoss);
-        System.out.println("Profit\t" + putProfit + "\t" + shortProfit);
+//
+//        System.out.println("\t\tPut\tShort");
+//        System.out.println("Loss\t" + putLoss + "\t" + shortLoss);
+//        System.out.println("Profit\t" + putProfit + "\t" + shortProfit);
 
         return profit;
     }

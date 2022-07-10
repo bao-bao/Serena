@@ -1,5 +1,6 @@
 package SerenaSimulation;
 
+import SerenaSimulation.profit.ParaCombination;
 import SerenaSimulation.profit.ProfitCal;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -8,8 +9,11 @@ import com.regrx.serena.common.constant.StrategyEnum;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
+import java.util.PriorityQueue;
+
 public class SerenaSimulation {
-    public static String type = "If2212";
+    public static String type = "IC2212";
 
     public static void main(String[] args) {
         runner();
@@ -25,14 +29,12 @@ public class SerenaSimulation {
 //        double[] profitLimitPara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] restorePara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] MA520Para = {0.0, 0.3, 0.5, 0.8, 1.0};
-        double[] lossLimitPara = {23.0};
+        double[] lossLimitPara = {23.0, 25.0};
         double[] profitLimitPara = {15.0};
         double[] restorePara = {19.0};
-        double[] MA520Para = {0.0};
+        double[] MA520Para = {0.0, 0.2};
 
-        double profit;
-        double best = Integer.MIN_VALUE;
-        double[] bestPara = {0, 0, 0, 0};
+        PriorityQueue<ParaCombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
         for(double lossLimit  : lossLimitPara) {
             for (double profitLimit : profitLimitPara) {
                 for (double restore : restorePara) {
@@ -48,30 +50,26 @@ public class SerenaSimulation {
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        profit = ProfitCal.cal(type);
+                        ParaCombination newRes = new ParaCombination();
+                        newRes.setProfit(ProfitCal.cal(type));
+                        newRes.setParaArray(lossLimit, profitLimit, restore, ma520);
+                        queue.add(newRes);
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
-                        if(best < profit) {
-                            best = profit;
-                            bestPara[0] = lossLimit;
-                            bestPara[1] = profitLimit;
-                            bestPara[2] = restore;
-                            bestPara[3] = ma520;
-                        }
                     }
                 }
             }
         }
-        System.out.println("Best Profit: " + String.format("%.2f", best));
-        System.out.print("Best Parameters: [");
-        for(int i = 0; i < 3; i++) {
-            System.out.print(bestPara[i] + ", ");
+        System.out.println("Top 10 Best Parameters: ");
+        for(int i = 0; i < 10; i++) {
+            ParaCombination candidate = queue.poll();
+            if(candidate != null) {
+                System.out.println(candidate);
+            }
         }
-        System.out.println(bestPara[3] + "]");
-
     }
 
     public static void simulation() {
