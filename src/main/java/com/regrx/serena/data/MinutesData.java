@@ -117,7 +117,7 @@ public class MinutesData {
     }
 
     public TrendType getTrend() {
-        double variation = prices.get(0).getPrice() + prices.get(1).getPrice();
+        double variation = newPrice - lastPrice;
         if(variation <= 0) {
             return TrendType.TREND_DOWN;
         } else {
