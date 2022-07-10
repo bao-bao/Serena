@@ -29,7 +29,7 @@ public class SerenaSimulation {
 //        double[] profitLimitPara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] restorePara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] MA520Para = {0.0, 0.3, 0.5, 0.8, 1.0};
-        double[] lossLimitPara = {23.0, 25.0};
+        double[] lossLimitPara = {23.0, 15.0};
         double[] profitLimitPara = {15.0};
         double[] restorePara = {19.0};
         double[] MA520Para = {0.0, 0.2};
@@ -64,6 +64,7 @@ public class SerenaSimulation {
             }
         }
         System.out.println("Top 10 Best Parameters: ");
+        System.out.println("Total Profit\tParameters\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal");
         for(int i = 0; i < 10; i++) {
             ParaCombination candidate = queue.poll();
             if(candidate != null) {

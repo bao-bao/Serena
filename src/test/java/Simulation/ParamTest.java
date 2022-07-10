@@ -1,6 +1,7 @@
 package Simulation;
 
 import SerenaSimulation.profit.ProfitCal;
+import SerenaSimulation.profit.TestResult;
 import com.regrx.trade.constant.Constant;
 
 import java.io.File;
@@ -15,7 +16,7 @@ public class ParamTest {
         int[] profitLimit = new int[]{8, 12, 13, 14, 15, 16};
         int[] lossLimit = new int[]{8, 9, 10, 11, 12, 13};
         int[] restore = new int[]{6, 7, 8, 9, 10, 11};
-        double[][][] profits = new double[6][6][6];
+        TestResult[][][] profits = new TestResult[6][6][6];
         String filename = "History_IF2202_1";
 
         for(int p = 0; p < profitLimit.length; p++) {
@@ -41,8 +42,8 @@ public class ParamTest {
         for(int p = 0; p < profitLimit.length; p++) {
             for(int l = 0; l < lossLimit.length; l++) {
                 for(int r = 0; r < restore.length; r++) {
-                    if(profits[p][l][r] > maxProfit) {
-                        maxProfit = profits[p][l][r];
+                    if(profits[p][l][r].getTotalProfit() > maxProfit) {
+                        maxProfit = profits[p][l][r].getTotalProfit();
                         maxP = p;
                         maxL = l;
                         maxR = r;
