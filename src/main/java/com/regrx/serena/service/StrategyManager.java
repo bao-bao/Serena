@@ -99,15 +99,14 @@ public class StrategyManager {
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         int currMinute = currTime.get(Calendar.MINUTE);
         int currHour = currTime.get(Calendar.HOUR_OF_DAY);
-        if((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0)) {
-            return new Decision();
-        }
+        boolean forceOnly = ((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0));
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
         for (AbstractStrategy strategy : strategyList.values()) {
             if (Status.getInstance().isTrading()
                     && strategy.getPriority() < Setting.BLOCK_LOW_PRIORITY_STRATEGY
-                    && currMinute % strategy.getInterval().getValue() == 0) {
+                    && currMinute % strategy.getInterval().getValue() == 0
+                    && !forceOnly) {
                 strategyQueue.add(strategy);
             }
         }

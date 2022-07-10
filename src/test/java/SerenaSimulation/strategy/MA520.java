@@ -80,8 +80,8 @@ public class MA520 extends AbstractStrategy {
         if(decision.isExecute() && Setting.MA_PRIMARY) {
             Status.getInstance().setTrend(lastTradeInTrend);
             if(lastTradeInTrend == TrendType.NULL) {
-                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
-                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
+                StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
+                StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
             }
         }
         return decision;
