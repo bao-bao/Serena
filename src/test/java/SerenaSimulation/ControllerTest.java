@@ -36,6 +36,10 @@ public class ControllerTest implements Runnable {
         return controller;
     }
 
+    public static ControllerTest getInstance() {
+        return controller;
+    }
+
     public static void stop() {
         controller.dataSvcMgr.removeAll();
         controller.strategyMgr.removeAll();
@@ -83,5 +87,9 @@ public class ControllerTest implements Runnable {
 
     public boolean getSignal() {
         return signal;
+    }
+
+    public String getType() {
+        return type;
     }
 }

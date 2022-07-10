@@ -107,18 +107,18 @@ public class StrategyManagerTest {
         } catch (ParseException ignored) {}
         int currMinute = currTime.get(Calendar.MINUTE);
         int currHour = currTime.get(Calendar.HOUR_OF_DAY);
-        if((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0)) {
-            return new Decision();
-        }
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
-        for (AbstractStrategy strategy : strategyList.values()) {
-            if (Status.getInstance().isTrading()
-                    && strategy.getPriority() < Setting.BLOCK_LOW_PRIORITY_STRATEGY
-                    && currMinute % strategy.getInterval().getValue() == 0) {
-                strategyQueue.add(strategy);
+        if(!((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0))) {
+            for (AbstractStrategy strategy : strategyList.values()) {
+                if (Status.getInstance().isTrading()
+                        && strategy.getPriority() < Setting.BLOCK_LOW_PRIORITY_STRATEGY
+                        && currMinute % strategy.getInterval().getValue() == 0) {
+                    strategyQueue.add(strategy);
+                }
             }
         }
+
         for (ForceTriggerStrategy strategy : forceTriggerStrategyList.values()) {
             if (strategy.isTriggered(currHour, currMinute)) {
                 strategyQueue.add(strategy);

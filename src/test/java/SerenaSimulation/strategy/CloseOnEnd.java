@@ -1,5 +1,7 @@
 package SerenaSimulation.strategy;
 
+import SerenaSimulation.ControllerTest;
+import SerenaSimulation.DataServiceManagerTest;
 import SerenaSimulation.StrategyManagerTest;
 import com.regrx.serena.common.constant.FutureType;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -7,6 +9,7 @@ import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.common.utils.PreparationUtil;
+import com.regrx.serena.controller.Controller;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
@@ -36,7 +39,7 @@ public class CloseOnEnd extends ForceTriggerStrategy {
 
     @Override
     public boolean isTriggered(int hour, int minute) {
-        FutureType futureType = PreparationUtil.getBreed("IF2203");
+        FutureType futureType = PreparationUtil.getBreed(ControllerTest.getInstance().getType());
         return PreparationUtil.fiveMinutesLeft(futureType, hour, minute);
     }
 }

@@ -10,16 +10,16 @@ public class PreparationUtil {
 
     public static boolean fiveMinutesLeft(FutureType breed, int hour, int minute) {
 
-        boolean dayTime = ((hour == 14 && minute >= 54) || hour == 15);     // 14:54:00 - 15:59:59
+        boolean dayTime = ((hour == 14 && minute >= 55) || hour == 15);     // 14:55:00 - 15:59:59
 
         if(breed == FutureType.STOCK || breed == FutureType.FUTURE_NO_NIGHT) {
             return dayTime;
         } else if (breed == FutureType.FUTURE_NIGHT_2300) {
-            return dayTime || ((hour == 22 && minute >= 54) || hour == 23); // daytime || 22:54:00 - 23:59:59
+            return dayTime || ((hour == 22 && minute >= 55) || hour == 23); // daytime || 22:54:00 - 23:59:59
         } else if (breed == FutureType.FUTURE_NIGHT_0100) {
-            return dayTime || ((hour == 0 && minute >= 54) || hour == 1);   // daytime || 00:54:00 - 01:59:59
+            return dayTime || ((hour == 0 && minute >= 55) || hour == 1);   // daytime || 00:54:00 - 01:59:59
         } else if (breed == FutureType.FUTURE_NIGHT_0230) {
-            return dayTime || ((hour == 2 && minute >= 24));                // daytime || 02:24:00 - 02:59:59
+            return dayTime || ((hour == 2 && minute >= 25));                // daytime || 02:24:00 - 02:59:59
         }
         return false;
     }
