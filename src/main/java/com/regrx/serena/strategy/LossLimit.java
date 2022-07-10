@@ -29,31 +29,27 @@ public class LossLimit extends AbstractStrategy {
 
         if (currStatus == TradingType.EMPTY) {
             if (status.getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
+//            if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_UP && currP - lTP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.PUT_BUYING, "exceed restore limit");
-                return decision;
             } else if (status.getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
+//            } else if (dataSvcMgr.queryData(interval).getTrend() == TrendType.TREND_DOWN && lTP - currP > Setting.RESTORE_THRESHOLD) {
                 decision.make(TradingType.SHORT_SELLING, "exceed restore limit");
-                return decision;
-            } else {
-                return decision;
             }
         }
 
         // current is not empty, limit the loss into a threshold
         if (currStatus == TradingType.PUT_BUYING) {
-            return limitLoss(decision, currP > lTP, currP - lTP);
+            limitLoss(decision, currP > lTP, currP - lTP);
         } else if (currStatus == TradingType.SHORT_SELLING) {
-            return limitLoss(decision, currP < lTP, lTP - currP);
+            limitLoss(decision, currP < lTP, lTP - currP);
         }
         return decision;
     }
 
 
-    private Decision limitLoss(Decision decision, boolean hasProfit, double currProfit) {
+    private void limitLoss(Decision decision, boolean hasProfit, double currProfit) {
         if (!hasProfit && Math.abs(currProfit) > Setting.LOSS_LIMIT_THRESHOLD) {         // deficit much
             decision.make(TradingType.EMPTY, "loss limit");
-            return decision;
         }
-        return decision;
     }
 }
