@@ -33,6 +33,10 @@ public class PreparationUtil {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
+        int weekDay = calendar.get(Calendar.DAY_OF_WEEK);
+        if (weekDay == Calendar.SATURDAY || weekDay == Calendar.SUNDAY) {
+            return false;
+        }
 
         if(breed == FutureType.STOCK) {
             return hour >= 9 && (hour != 9 || minute >= 30) && (hour != 11 || minute <= 30)     // (9:30 - 11:30)
