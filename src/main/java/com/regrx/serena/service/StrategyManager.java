@@ -99,6 +99,9 @@ public class StrategyManager {
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         int currMinute = currTime.get(Calendar.MINUTE);
         int currHour = currTime.get(Calendar.HOUR_OF_DAY);
+        if((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0)) {
+            return new Decision();
+        }
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
         for (AbstractStrategy strategy : strategyList.values()) {

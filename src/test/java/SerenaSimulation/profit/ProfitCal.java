@@ -21,31 +21,37 @@ public class ProfitCal {
             while ((line = reader.readLine()) != null) {
                 lineCount++;
                 String[] lastHistory = line.split(" ");
+                String reason = line.split(",")[1].substring(7);
                 double currPrice = Double.parseDouble(lastHistory[5]);
                 switch (lastHistory[lastHistory.length - 1]) {
                     case "Empty":
                         emptyPrice = currPrice;
                         st.setCloseTime(lastHistory[2] + " " + lastHistory[3]);
                         st.setProfit(status == 1 ? (emptyPrice - tradeInPrice) : (tradeInPrice - emptyPrice));
-                        if (st.profit >= 0) {
-                            posiCount++;
-                            bestTrade.add(st);
-                        } else {
-                            negeCount++;
-                            worstTrade.add(st);
-                        }
+                        st.setCloseReason(reason);
+//                        if (st.profit >= 0) {
+//                            posiCount++;
+//                            bestTrade.add(st);
+//                        } else {
+//                            negeCount++;
+//                            worstTrade.add(st);
+//                        }
+                        posiCount++;
+                        bestTrade.add(st);
                         profit += st.profit;
                         status = 0;
                         break;
                     case "PutBuying":
                         st = new SingleTrade(lastHistory[2] + " " + lastHistory[3]);
                         st.setTradeType("Put");
+                        st.setOpenReason(reason);
                         status = 1;
                         tradeInPrice = currPrice;
                         break;
                     case "ShortSelling":
                         st = new SingleTrade(lastHistory[2] + " " + lastHistory[3]);
                         st.setTradeType("Short");
+                        st.setOpenReason(reason);
                         status = 2;
                         tradeInPrice = currPrice;
                         break;
@@ -66,23 +72,37 @@ public class ProfitCal {
 
         int putLoss = 0, shortLoss = 0, putProfit = 0, shortProfit = 0;
 
-        System.out.println("\nWorst Top 5: ");
-        for (int i = 0; i < negeCount; i++) {
-            SingleTrade worst = worstTrade.poll();
-            if (worst != null) {
-                System.out.println(worst.openTime + "," + worst.closeTime + "," + worst.tradeType + "," + String.format("%.2f", worst.profit));
-                if(worst.tradeType.equals("Short")) {
-                    shortLoss++;
-                } else {
-                    putLoss++;
-                }
-            }
-        }
-        System.out.println("\nBest Top 5: ");
+//        System.out.println("\nWorst Top 5: ");
+//        for (int i = 0; i < negeCount; i++) {
+//            SingleTrade worst = worstTrade.poll();
+//            if (worst != null) {
+//                System.out.println(worst.openTime + "," + worst.closeTime + "," + worst.tradeType + "," + String.format("%.2f", worst.profit));
+//                if(worst.tradeType.equals("Short")) {
+//                    shortLoss++;
+//                } else {
+//                    putLoss++;
+//                }
+//            }
+//        }
+//        System.out.println("\nBest Top 5: ");
+//        for (int i = 0; i < posiCount; i++) {
+//            SingleTrade best = bestTrade.poll();
+//            if (best != null) {
+//                System.out.println(best.openTime + "," + best.closeTime + "," + best.tradeType + "," + String.format("%.2f", best.profit));
+//                if(best.tradeType.equals("Short")) {
+//                    shortProfit++;
+//                } else {
+//                    putProfit++;
+//                }
+//            }
+//        }
+
         for (int i = 0; i < posiCount; i++) {
             SingleTrade best = bestTrade.poll();
             if (best != null) {
-                System.out.println(best.openTime + "," + best.closeTime + "," + best.tradeType + "," + String.format("%.2f", best.profit));
+                System.out.println(best.openTime + "," + best.closeTime + "," +
+                        best.tradeType + "," + String.format("%.2f", best.profit) +
+                        ", openReason: " + best.openReason + ", closeReason: " + best.closeReason);
                 if(best.tradeType.equals("Short")) {
                     shortProfit++;
                 } else {

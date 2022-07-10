@@ -4,6 +4,8 @@ public class SingleTrade implements Comparable<SingleTrade> {
     public String openTime;
     public String closeTime;
     public String tradeType;
+    public String openReason;
+    public String closeReason;
     public Double profit;
 
     SingleTrade(String openTime) {
@@ -28,5 +30,13 @@ public class SingleTrade implements Comparable<SingleTrade> {
 
     public void setTradeType(String tradeType) {
         this.tradeType = tradeType;
+    }
+
+    public void setOpenReason(String openReason) {
+        this.openReason = openReason;
+    }
+
+    public void setCloseReason(String closeReason) {
+        this.closeReason = closeReason;
     }
 }

@@ -1,7 +1,7 @@
 package com.regrx.serena.common;
 
 public class Setting {
-    public static final boolean TEST_LABEL = false;
+    public static final boolean TEST_LABEL = true;
 
     public static final int START_FAST_TRADE = 0;       // MUST BE EVEN
 
