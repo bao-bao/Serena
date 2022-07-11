@@ -22,8 +22,20 @@ public class TradeUtil {
         Status stat = Status.getInstance();
         boolean result  = false;
         switch (decision.getTradingType()) {
-            case PUT_BUYING:    result = submit('P'); break;
-            case SHORT_SELLING: result = submit('S'); break;
+            case PUT_BUYING:
+                if(stat.getStatus() == TradingType.SHORT_SELLING) {
+                    result = submit('A');
+                } else {
+                    result = submit('P');
+                }
+                break;
+            case SHORT_SELLING:
+                if(stat.getStatus() == TradingType.PUT_BUYING) {
+                    result = submit('B');
+                } else {
+                    result = submit('S');
+                }
+                break;
             case EMPTY:         result = submit('E'); break;
             case NO_ACTION: break;
         }

@@ -29,6 +29,15 @@ public class Decision {
         this.price = price;
     }
 
+    public void copy(Decision origin) {
+        this.setExecute(origin.execute);
+        this.setTradingType(origin.tradingType);
+        this.setPrice(origin.price);
+        this.setSource(origin.source);
+        this.setReason(origin.getReason());
+        this.setInterval(origin.getInterval());
+    }
+
     public boolean isExecute() {
         return execute;
     }

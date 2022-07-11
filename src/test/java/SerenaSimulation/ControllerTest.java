@@ -3,6 +3,7 @@ package SerenaSimulation;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
+import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.common.utils.TradeUtil;
@@ -59,10 +60,20 @@ public class ControllerTest implements Runnable {
                     } catch (InterruptedException ignored) {}
                 }
                 Decision decision = decisionQueue.poll();
-                if(decision != null && decision.isExecute()) {
-                    LogUtil.getInstance().info("Perform trade based on decision: " + decision);
-                    TradeUtil.trade(decision);
-                    LogUtil.tradeLog(type, decision);
+                if(decision != null) {
+                    LogUtil.getInstance().info("Decision in this minute: " + decision);
+                    if(decision.isExecute()) {
+                        LogUtil.getInstance().info("Perform trade...");
+                        if((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
+                                (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
+                            Decision emptyDecision = new Decision();
+                            emptyDecision.copy(decision);
+                            emptyDecision.setTradingType(TradingType.EMPTY);
+                            LogUtil.tradeLog(type, emptyDecision);
+                        }
+                        LogUtil.tradeLog(type, decision);
+                        TradeUtil.trade(decision);
+                    }
                 }
             }
         }

@@ -3,10 +3,12 @@ package com.regrx.serena.controller;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
+import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.common.utils.TradeUtil;
 import com.regrx.serena.data.base.Decision;
+import com.regrx.serena.data.base.Status;
 import com.regrx.serena.service.DataServiceManager;
 import com.regrx.serena.service.StrategyManager;
 
@@ -54,8 +56,14 @@ public class Controller implements Runnable {
                     LogUtil.getInstance().info("Decision in this minute: " + decision);
                     if(decision.isExecute()) {
                         LogUtil.getInstance().info("Perform trade...");
-                        TradeUtil.trade(decision);
+                        if((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
+                           (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
+                            Decision emptyDecision = new Decision();
+                            emptyDecision.copy(decision);
+                            LogUtil.tradeLog(type, emptyDecision);
+                        }
                         LogUtil.tradeLog(type, decision);
+                        TradeUtil.trade(decision);
                     }
                 }
             }

@@ -5,7 +5,7 @@ public class Setting {
 
     public static final boolean TREND_FOLLOW_MA = true;
 
-    public static final boolean MA_PRIMARY = true;
+    public static final boolean MA_PRIMARY = false;
 
 
     //TODO: add final HERE
@@ -32,15 +32,15 @@ public class Setting {
 
     public static final int DEFAULT_FORCE_TRIGGER_PRIORITY = 0;
 
-    public static final int HIGH_LOSS_LIMIT_PRIORITY = 100;
+    public static final int HIGH_LOSS_LIMIT_PRIORITY = 200;
 
     public static final int DEFAULT_LOSS_LIMIT_PRIORITY = Integer.MAX_VALUE;
 
-    public static final int HIGH_PROFIT_LIMIT_PRIORITY = 100;
+    public static final int HIGH_PROFIT_LIMIT_PRIORITY = 200;
 
     public static final int DEFAULT_PROFIT_LIMIT_PRIORITY = Integer.MAX_VALUE;
 
-    public static final int DEFAULT_MA_520_PRIORITY = 500;
+    public static final int DEFAULT_MA_520_PRIORITY = 100;
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

@@ -22,6 +22,8 @@ public class KeySprite implements Callable<Boolean> {
             case 'P': return KeySprite.PutBuying();
             case 'S': return KeySprite.ShortSelling();
             case 'E': return KeySprite.Empty();
+            case 'A': return KeySprite.Empty() && KeySprite.PutBuying();
+            case 'B': return KeySprite.Empty() && KeySprite.ShortSelling();
             default:
                 return false;
         }

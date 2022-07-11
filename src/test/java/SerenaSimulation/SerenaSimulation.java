@@ -29,10 +29,10 @@ public class SerenaSimulation {
 //        double[] profitLimitPara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] restorePara = {11.0, 13.0, 15.0, 17.0, 19.0, 21.0, 23.0};
 //        double[] MA520Para = {0.0, 0.3, 0.5, 0.8, 1.0};
-        double[] lossLimitPara = {23.0, 15.0};
-        double[] profitLimitPara = {15.0};
-        double[] restorePara = {19.0};
-        double[] MA520Para = {0.0, 0.2};
+        double[] lossLimitPara = {23.0};
+        double[] profitLimitPara = {35.0};
+        double[] restorePara = {5.0};
+        double[] MA520Para = {0.0};
 
         PriorityQueue<ParaCombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
         for(double lossLimit  : lossLimitPara) {
@@ -85,7 +85,7 @@ public class SerenaSimulation {
         controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
+//        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
 
         controller.run();
     }
