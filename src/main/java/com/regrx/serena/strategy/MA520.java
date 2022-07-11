@@ -38,6 +38,7 @@ public class MA520 extends AbstractStrategy {
         }
 
         TradingType currStatus = Status.getInstance().getStatus();
+        TrendType currTradeInTrend = cMA5 >= cMA20 ? TrendType.TREND_UP : TrendType.TREND_DOWN;
 
         if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
@@ -47,7 +48,6 @@ public class MA520 extends AbstractStrategy {
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             // Close the prior Short Selling if MA5 up cross MA20
             if(currStatus == TradingType.SHORT_SELLING) {
-                lastTradeInTrend = TrendType.NULL;
                 decision.make(TradingType.EMPTY, "MA cross");
             }
             // Try to open a Put Buying if over the threshold
@@ -60,7 +60,6 @@ public class MA520 extends AbstractStrategy {
         else if(cMA5 < cMA20 && lMA5 >= lMA20) {
             // Close the prior Put Buying if MA5 and MA20 cross
             if(currStatus == TradingType.PUT_BUYING) {
-                lastTradeInTrend = TrendType.NULL;
                 decision.make(TradingType.EMPTY, "MA cross");
             }
             // Try to open a Short Selling if over the threshold
@@ -76,13 +75,12 @@ public class MA520 extends AbstractStrategy {
                 ShortSellingByThreshold(cMA5, cMA20, decision);
             }
         }
-        if(decision.isExecute() && Setting.MA_PRIMARY) {
-            Status.getInstance().setTrend(lastTradeInTrend);
-            if(lastTradeInTrend == TrendType.NULL) {
-                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
-                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
-            }
+        if(decision.isExecute() && currTradeInTrend != lastTradeInTrend && Setting.MA_PRIMARY) {
+            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
+            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
         }
+        Status.getInstance().setTrend(lastTradeInTrend);
+        lastTradeInTrend = currTradeInTrend;
         return decision;
     }
 
