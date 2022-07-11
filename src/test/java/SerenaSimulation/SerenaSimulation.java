@@ -2,13 +2,18 @@ package SerenaSimulation;
 
 import SerenaSimulation.profit.ParaCombination;
 import SerenaSimulation.profit.ProfitCal;
+import SerenaSimulation.profit.TestResult;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
+import com.regrx.serena.common.utils.FileUtil;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
@@ -63,14 +68,20 @@ public class SerenaSimulation {
                 }
             }
         }
+
+        ArrayList<ParaCombination> resList = new ArrayList<>();
         System.out.println("Top 10 Best Parameters: ");
         System.out.println("Total Profit\tParameters\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal");
         for(int i = 0; i < 10; i++) {
             ParaCombination candidate = queue.poll();
             if(candidate != null) {
-                System.out.println(candidate);
+                resList.add(candidate);
             }
         }
+        for(ParaCombination res : resList) {
+            System.out.println(res);
+        }
+        outputToCsv(resList, type + '_' + Calendar.getInstance().getTime().getTime());
     }
 
     public static void simulation() {
@@ -95,6 +106,28 @@ public class SerenaSimulation {
         try {
             Files.deleteIfExists(tradeHistory.toPath());
         } catch (IOException ignored) {
+        }
+    }
+
+    private static void outputToCsv(ArrayList<ParaCombination> resList, String filename) {
+        FileUtil.newFile(filename + ".csv");
+        try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            writer.append("Total Profit, LL Thres, PL Thres, Restore, MA, Put P, Put L, Short P, Short L, Total").append('\n');
+            for(ParaCombination res : resList) {
+                TestResult testResult = res.profit;
+                writer.append(String.format("%.2f", testResult.getTotalProfit())).append(',');
+                for(double para : res.paraArray) {
+                    writer.append(String.format("%.2f", para)).append(',');
+                }
+                writer.append(String.valueOf(testResult.getPutProfit())).append(',');
+                writer.append(String.valueOf(testResult.getPutLoss())).append(',');
+                writer.append(String.valueOf(testResult.getShortProfit())).append(',');
+                writer.append(String.valueOf(testResult.getShortLoss())).append(',');
+                writer.append(String.valueOf(testResult.getTotalCount())).append('\n');
+            }
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }

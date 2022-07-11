@@ -47,6 +47,10 @@ public class TestResult implements Comparable<TestResult> {
         this.sProfit = sProfit;
     }
 
+    public int getTotalCount() {
+        return pProfit + pLoss + sProfit + sLoss;
+    }
+
     @Override
     public String toString() {
         return "\t" + pProfit + "\t\t"+ pLoss + "\t\t" + sProfit + "\t\t" + sLoss + "\t\t" + (pProfit + pLoss + sProfit + sLoss);
