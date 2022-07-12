@@ -36,7 +36,8 @@ public class TradeUtil {
                     result = submit('S');
                 }
                 break;
-            case EMPTY:         result = submit('E'); break;
+            case EMPTY:
+                result = submit('E'); break;
             case NO_ACTION: break;
         }
         if(result) {

@@ -99,7 +99,7 @@ public class StrategyManager {
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         int currMinute = currTime.get(Calendar.MINUTE);
         int currHour = currTime.get(Calendar.HOUR_OF_DAY);
-        boolean forceOnly = ((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0));
+        boolean forceOnly = ((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0) || (currHour == 11 && currMinute == 30));
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
         for (AbstractStrategy strategy : strategyList.values()) {
