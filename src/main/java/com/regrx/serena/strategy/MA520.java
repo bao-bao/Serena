@@ -52,9 +52,9 @@ public class MA520 extends AbstractStrategy {
             ShortSellingByThreshold(cMA5, cMA20, decision, currStatus);
         }
         else {
-            if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus == TradingType.EMPTY && lastTradeInTrend == TrendType.TREND_DOWN) {
+            if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus != TradingType.PUT_BUYING && lastTradeInTrend == TrendType.TREND_DOWN) {
                 PutBuyingByThreshold(cMA5, cMA20, decision, currStatus);
-            } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus == TradingType.EMPTY && lastTradeInTrend == TrendType.TREND_UP) {
+            } else if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus != TradingType.SHORT_SELLING && lastTradeInTrend == TrendType.TREND_UP) {
                 ShortSellingByThreshold(cMA5, cMA20, decision, currStatus);
             }
         }
