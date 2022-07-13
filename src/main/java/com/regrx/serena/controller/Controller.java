@@ -60,6 +60,7 @@ public class Controller implements Runnable {
                            (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
                             Decision emptyDecision = new Decision();
                             emptyDecision.copy(decision);
+                            emptyDecision.setTradingType(TradingType.EMPTY);
                             LogUtil.tradeLog(type, emptyDecision);
                         }
                         LogUtil.tradeLog(type, decision);

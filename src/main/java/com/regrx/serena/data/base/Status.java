@@ -31,9 +31,8 @@ public class Status {
         return stat;
     }
 
-    public static Status reset() {
+    public static void reset() {
         stat = new Status();
-        return stat;
     }
 
     public boolean isTrading() {
