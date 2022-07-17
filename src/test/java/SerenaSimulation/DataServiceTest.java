@@ -14,6 +14,7 @@ public class DataServiceTest implements Runnable {
     private final String type;
     private final IntervalEnum interval;
     private final MinutesData minutesData;
+    private final MinutesData minutesData_2;
     private final MinutesData minutesData_5;
 
     public DataServiceTest(String type, IntervalEnum interval) {
@@ -21,6 +22,7 @@ public class DataServiceTest implements Runnable {
         this.type = type;
         this.interval = interval;
         this.minutesData = new MinutesData(interval);
+        this.minutesData_2 = new MinutesData(interval);
         this.minutesData_5 = new MinutesData(interval);
     }
 
@@ -39,6 +41,9 @@ public class DataServiceTest implements Runnable {
                 minutesData.updateWithoutWrite(newPrice);
                 if(interval == IntervalEnum.MIN_1 && count++ % 5 == 0) {
                     minutesData_5.updateWithoutWrite(newPrice);
+                }
+                if(interval == IntervalEnum.MIN_1 && count++ % 2 == 0) {
+                    minutesData_2.updateWithoutWrite(newPrice);
                 }
                 callback(newPrice);
             }
@@ -84,6 +89,10 @@ public class DataServiceTest implements Runnable {
 
     public MinutesData getMinutesData() {
         return minutesData;
+    }
+
+    public MinutesData getMinutesData_2() {
+        return minutesData_2;
     }
 
     public MinutesData getMinutesData_5() {

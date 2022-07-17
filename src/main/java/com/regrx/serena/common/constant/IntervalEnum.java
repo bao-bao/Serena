@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum IntervalEnum {
     MIN_1(1),
+    MIN_2(2),
     MIN_3(3),
     MIN_5(5),
     MIN_15(15),

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class ExportDataPreprocess {
 
     public static void main(String[] args) {
-        String originalFile = "testdata\\stock\\if2212.csv";
-        String type = "If2212";
+        String originalFile = "testdata\\stock\\IC2209.csv";
+        String type = "IC2209";
         int interval = 1;
         minuteData(originalFile, "History_" + type + "_" + interval + ".csv", interval);
 //        dailyData(originalFile, "History_" + type + "_day.csv");
@@ -22,7 +22,7 @@ public class ExportDataPreprocess {
     public static void dailyData(String filename, String newFilename) {
         ArrayList<String> lines = new ArrayList<>();
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filename), StandardCharsets.UTF_8)) {
-            String line;
+            String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
                 lines.add(line);
             }
@@ -52,7 +52,7 @@ public class ExportDataPreprocess {
         ArrayList<String> lines = new ArrayList<>();
         int count = 0;
         try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
-            String line;
+            String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
 //                if(interval == 1 && count++ % 121 == 0) continue; // skip the 1st and 122nd record daily.
                 if(interval == 1 && count++ % 241 == 0) continue; // skip 1st daily
