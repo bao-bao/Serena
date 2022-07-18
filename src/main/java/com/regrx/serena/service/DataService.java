@@ -33,10 +33,14 @@ public class DataService implements Runnable {
     public void run() {
 
         FutureType breed = PreparationUtil.getBreed(type);
-
         LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
         String url = "https://hq.sinajs.cn/list=nf_" + type;
-        minutesData = HistoryDownloader.getHistoryData(type, interval, breed);
+
+        if(interval == IntervalEnum.MIN_2 || interval == IntervalEnum.MIN_3) {
+            minutesData = HistoryDownloader.getHistoryDataForSpecialInterval(type, interval, breed);
+        } else {
+            minutesData = HistoryDownloader.getHistoryData(type, interval, breed);
+        }
 
         while(true) {
             if(!PreparationUtil.isTrading(breed)) {

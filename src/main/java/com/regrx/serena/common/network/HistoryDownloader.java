@@ -1,5 +1,6 @@
 package com.regrx.serena.common.network;
 
+import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.FutureType;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -15,7 +16,10 @@ import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.regrx.serena.common.utils.FileUtil.readLastLine;
@@ -24,12 +28,47 @@ public class HistoryDownloader {
 
     // open/highest/lowest/close(from website) -> open/close/highest/lowest(local csv data)
     public static MinutesData getHistoryData(String type, IntervalEnum interval, FutureType breed) {
+        HistoryData[] historyData = fetchHistoryData(type, interval, breed, false);
+        MinutesData records = new MinutesData(interval);
+        for (HistoryData data : historyData) {
+            ExPrice newData = new ExPrice();
+            newData.setPrice(data.getClosePrice());
+            newData.setTime(data.getDate());
+            records.updateWithoutWrite(newData);
+        }
+        LogUtil.getInstance().info("Success load history data (" + interval + " min), last record time is " + records.getNewRecordTime());
+        return records;
+    }
+
+    public static MinutesData getHistoryDataForSpecialInterval(String type, IntervalEnum interval, FutureType breed) {
+        HistoryData[] historyData = fetchHistoryData(type, IntervalEnum.MIN_1, breed, true);
+        MinutesData records = new MinutesData(interval);
+        int firstRecordMinute;
+        try {
+            Calendar currTime = Calendar.getInstance();
+            SimpleDateFormat dateFormat = new SimpleDateFormat(Setting.TIME_PATTERN);
+            currTime.setTime(dateFormat.parse(historyData[0].getDate()));
+            firstRecordMinute = currTime.get(Calendar.MINUTE);
+        } catch (ParseException e) {
+            LogUtil.getInstance().severe("Fail to parse date string in history data array");
+            return records;
+        }
+        for (int i = firstRecordMinute % interval.getValue(); i < historyData.length; i += interval.getValue()) {
+            ExPrice newData = new ExPrice();
+            newData.setPrice(historyData[i].getClosePrice());
+            newData.setTime(historyData[i].getDate());
+            records.updateWithoutWrite(newData);
+        }
+        LogUtil.getInstance().info("Success load history data (" + interval + " min), last record time is " + records.getNewRecordTime());
+        return records;
+    }
+
+    private static HistoryData[] fetchHistoryData(String type, IntervalEnum interval, FutureType breed, boolean isSpecial) {
         String urlString = "https://stock2.finance.sina.com.cn/futures/api/jsonp.php" +
                 "/var%20list=" +
                 "/InnerFuturesNewService.getFewMinLine?" +
                 "symbol=" + type + "&" +
                 "type=" + interval.getValue();
-        MinutesData records = new MinutesData(interval);
         String originString = GZIPDownloader.download(urlString, type, 3);
         if (StringUtils.ordinalIndexOf(originString, "(null)", 1) != -1) {
             LogUtil.getInstance().severe("Wrong content fetched! Check url availability!");
@@ -41,23 +80,17 @@ public class HistoryDownloader {
 
         Gson gson = new Gson();
         HistoryData[] historyData = gson.fromJson(jsonString, HistoryData[].class);
-        writeHistoryDataToCsv(historyData, "History_" + type + "_" + interval.getValue());
+        if(!isSpecial) {
+            writeHistoryDataToCsv(historyData, "History_" + type + "_" + interval.getValue());
+        }
 
         if(PreparationUtil.isTrading(breed) && breed == FutureType.STOCK) {
             historyData = Arrays.copyOf(historyData, historyData.length - 1);
         }
-
-        for (HistoryData data : historyData) {
-            ExPrice newData = new ExPrice();
-            newData.setPrice(data.getClosePrice());
-            newData.setTime(data.getDate());
-            records.updateWithoutWrite(newData);
-        }
-        LogUtil.getInstance().info("Success load history data, last record time is " + records.getNewRecordTime());
-        return records;
+        return historyData;
     }
 
-    public static void writeHistoryDataToCsv(HistoryData[] historyData, String filename) {
+    private static void writeHistoryDataToCsv(HistoryData[] historyData, String filename) {
         List<String> lastRecords = readLastLine(new File(filename + ".csv"), 1);
         String lastRecordDateStr = null;
         if(lastRecords.size() > 0) {
