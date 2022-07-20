@@ -12,6 +12,7 @@ import com.regrx.serena.data.base.Status;
 import com.regrx.serena.service.DataServiceManager;
 import com.regrx.serena.service.StrategyManager;
 
+import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Controller implements Runnable {
@@ -40,8 +41,16 @@ public class Controller implements Runnable {
         return controller;
     }
 
+    private void init() {
+        if(Status.getInstance().getStatus() != TradingType.EMPTY) {
+            strategyMgr.changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+            strategyMgr.changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
+        }
+    }
+
     @Override
     public void run() {
+        init();
         while (true) {
             synchronized (decisionQueue) {
                 while(decisionQueue.isEmpty()) {
