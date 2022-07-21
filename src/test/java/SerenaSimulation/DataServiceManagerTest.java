@@ -73,6 +73,9 @@ public class DataServiceManagerTest {
             if (interval == IntervalEnum.MIN_2) {
                 return dataList.get(IntervalEnum.MIN_1).getMinutesData_2();
             }
+            if (interval == IntervalEnum.MIN_3) {
+                return dataList.get(IntervalEnum.MIN_1).getMinutesData_3();
+            }
             if (interval == IntervalEnum.MIN_5) {
                 return dataList.get(IntervalEnum.MIN_1).getMinutesData_5();
             }

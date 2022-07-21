@@ -44,10 +44,10 @@ public class MA520 extends AbstractStrategy {
 
         TradingType currStatus = Status.getInstance().getStatus();
 
-//        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
-//            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
-//            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
-//        }
+        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
+            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+            StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
+        }
 
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             PutBuyingByThreshold(cMA5, cMA20, decision, currStatus);
@@ -88,7 +88,7 @@ public class MA520 extends AbstractStrategy {
                 decision.make(TradingType.PUT_BUYING, "empty");
             }
         } else {
-            if(currStatus == TradingType.SHORT_SELLING) {
+            if(currStatus != TradingType.EMPTY) {
                 decision.make(TradingType.EMPTY, "MA cross");
             }
         }
@@ -103,7 +103,7 @@ public class MA520 extends AbstractStrategy {
                 decision.make(TradingType.SHORT_SELLING, "empty");
             }
         } else {
-            if(currStatus == TradingType.PUT_BUYING) {
+            if(currStatus != TradingType.EMPTY) {
                 decision.make(TradingType.EMPTY, "MA cross");
             }
         }
