@@ -44,10 +44,10 @@ public class MA520 extends AbstractStrategy {
 
         TradingType currStatus = Status.getInstance().getStatus();
 
-        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
-            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
-            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
-        }
+//        if((cMA5 - cMA20) * (lMA5 - lMA20) < 0) {
+//            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+//            StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
+//        }
 
         if(cMA5 > cMA20 && lMA5 <= lMA20) {
             PutBuyingByThreshold(cMA5, cMA20, decision, currStatus);
@@ -69,6 +69,10 @@ public class MA520 extends AbstractStrategy {
             if(currTradeInTrend != lastTradeInTrend && decision.getTradingType() == TradingType.EMPTY && Setting.MA_PRIMARY) {
                 StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.DEFAULT_LOSS_LIMIT_PRIORITY);
                 StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.DEFAULT_PROFIT_LIMIT_PRIORITY);
+            }
+            if(decision.getTradingType() != TradingType.EMPTY) {
+                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+                StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
             }
             lastTradeInTrend = currTradeInTrend;
         }
