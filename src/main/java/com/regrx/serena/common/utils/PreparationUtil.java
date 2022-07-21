@@ -61,7 +61,7 @@ public class PreparationUtil {
     }
 
     public static FutureType getBreed(String type) {
-        if(type.startsWith("IC") || type.startsWith("IF") || type.startsWith("IH")) {
+        if(type.startsWith("IC") || type.startsWith("IF") || type.startsWith("IH") || type.startsWith("IM")) {
             return FutureType.STOCK;
         } else if (type.startsWith("AU") || type.startsWith("AG") || type.startsWith("SC")) {
             return FutureType.FUTURE_NIGHT_0230;
