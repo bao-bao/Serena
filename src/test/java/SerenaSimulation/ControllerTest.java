@@ -48,9 +48,17 @@ public class ControllerTest implements Runnable {
         controller = null;
     }
 
+    private void init() {
+        if(Status.getInstance().getStatus() != TradingType.EMPTY) {
+            controller.strategyMgr.changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
+            controller.strategyMgr.changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
+        }
+    }
+
     @Override
     public void run() {
         controller.addDataTrack(IntervalEnum.MIN_1);
+        init();
         while (signal) {
             synchronized (decisionQueue) {
                 while(decisionQueue.isEmpty() && signal) {
