@@ -73,8 +73,9 @@ public class MA520 extends AbstractStrategy {
             if(decision.getTradingType() != TradingType.EMPTY) {
                 StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
                 StrategyManagerTest.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
-                lastTradeInTrend = currTradeInTrend;
+//                lastTradeInTrend = currTradeInTrend;
             }
+            lastTradeInTrend = currTradeInTrend;        // sometime will not open
         }
         return decision;
     }
