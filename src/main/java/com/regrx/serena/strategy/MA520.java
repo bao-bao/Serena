@@ -88,7 +88,7 @@ public class MA520 extends AbstractStrategy {
                 decision.make(TradingType.PUT_BUYING, "empty");
             }
         } else {
-            if(currStatus != TradingType.EMPTY) {
+            if(currStatus == TradingType.SHORT_SELLING) {
                 decision.make(TradingType.EMPTY, "MA cross");
             }
         }
@@ -103,7 +103,7 @@ public class MA520 extends AbstractStrategy {
                 decision.make(TradingType.SHORT_SELLING, "empty");
             }
         } else {
-            if(currStatus != TradingType.EMPTY) {
+            if(currStatus == TradingType.PUT_BUYING) {
                 decision.make(TradingType.EMPTY, "MA cross");
             }
         }
