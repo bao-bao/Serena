@@ -76,7 +76,11 @@ public class DataService implements Runnable {
         if(interval != DataServiceManager.getInstance().getMinimumInterval()) {
             return;
         }
-
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");
         Decision decision = StrategyManager.getInstance().execute(newPrice);
         LogUtil.getInstance().info("Decision making complete!");
