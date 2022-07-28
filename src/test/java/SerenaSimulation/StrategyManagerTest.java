@@ -49,6 +49,9 @@ public class StrategyManagerTest {
             case STRATEGY_PROFIT_LIMIT:
                 strategyList.put(strategy, new ProfitLimit(interval));
                 break;
+            case STRATEGY_FILL_GAP:
+                strategyList.put(strategy, new FillGap(interval));
+                break;
             case STRATEGY_CLOSE_ON_END:
                 forceTriggerStrategyList.put(strategy, new CloseOnEnd());
                 break;

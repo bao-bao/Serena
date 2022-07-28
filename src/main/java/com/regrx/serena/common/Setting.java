@@ -17,6 +17,8 @@ public class Setting {
 
     public static double TRADE_THRESHOLD = 0;
 
+    public static double FILL_GAP_THRESHOLD = 10;
+
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 500;   // unit is millisecond
 
@@ -41,6 +43,8 @@ public class Setting {
     public static final int DEFAULT_PROFIT_LIMIT_PRIORITY = Integer.MAX_VALUE;
 
     public static final int DEFAULT_MA_520_PRIORITY = 100;
+
+    public static final int DEFAULT_FILL_GAP_PRIORITY = 500;
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
