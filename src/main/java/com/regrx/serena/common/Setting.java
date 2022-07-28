@@ -7,6 +7,7 @@ public class Setting {
 
     public static final boolean MA_PRIMARY = false;
 
+    public static final int FILL_GAP_BY_MA = 20;
 
     //TODO: add final HERE
     public static double LOSS_LIMIT_THRESHOLD = 23;

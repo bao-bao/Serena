@@ -2,6 +2,7 @@ package SerenaSimulation.strategy;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
+import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.LogUtil;
@@ -24,20 +25,20 @@ public class FillGap extends AbstractStrategy {
         LogUtil.getInstance().info("Executing Fill Gap...");
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_FILL_GAP, interval);
 
-
-        MinutesData data = dataSvcMgr.queryData(interval);
-        MovingAverage currentMA = data.getNewMAvgs();
-        double currentPrice = data.getNewPrice();
-
-        if(Status.getInstance().getStatus() != TradingType.EMPTY || currentMA.getMA20() == 0) {
+        if(Status.getInstance().getStatus() != TradingType.EMPTY) {
             return decision;
         }
 
-        if(currentMA.getMA5() > currentMA.getMA20() && currentPrice - currentMA.getMA5() > Setting.FILL_GAP_THRESHOLD) {
+        MinutesData data = dataSvcMgr.queryData(interval);
+        MovingAverage MAs = data.getNewMAvgs();
+        double currentMA = data.getNewMAvgs().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
+        double currentPrice = data.getNewPrice();
+
+        if(MAs.getMA5() > MAs.getMA20() && currentPrice - currentMA > Setting.FILL_GAP_THRESHOLD) {
             decision.make(TradingType.PUT_BUYING, "exceed MA5 too far");
         }
 
-        if(currentMA.getMA5() < currentMA.getMA20() && currentMA.getMA5() - currentPrice > Setting.FILL_GAP_THRESHOLD) {
+        if(MAs.getMA5() < MAs.getMA20() && currentMA - currentPrice < Setting.FILL_GAP_THRESHOLD) {
             decision.make(TradingType.SHORT_SELLING, "exceed MA5 too far");
         }
         return decision;
