@@ -60,7 +60,7 @@ public class SerenaSimulation {
                             }
                             ParaCombination newRes = new ParaCombination();
                             newRes.setProfit(ProfitCal.cal(type));
-                            newRes.setParaArray(lossLimit, profitLimit, restore, ma520);
+                            newRes.setParaArray(lossLimit, profitLimit, restore, ma520, fill);
                             queue.add(newRes);
                             try {
                                 Thread.sleep(500);

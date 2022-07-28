@@ -28,21 +28,22 @@ public class FillGap extends AbstractStrategy {
 
         MinutesData data = dataSvcMgr.queryData(interval);
         MovingAverage MAs = data.getNewMAvgs();
-        double currentMA = data.getNewMAvgs().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
+        double ref = data.getLastCrossPrice(MAEnum.MA5, MAEnum.MA20);
+//        double ref = data.getNewMAvgs().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
         double currentPrice = data.getNewPrice();
 
-        if(Status.getInstance().getStatus() != TradingType.EMPTY || currentMA == 0) {
+        if(Status.getInstance().getStatus() != TradingType.EMPTY || ref == 0) {
             return decision;
         }
 
-        if(MAs.getMA5() > MAs.getMA20() && currentPrice - currentMA > Setting.FILL_GAP_THRESHOLD) {
-            decision.make(TradingType.PUT_BUYING, "exceed MA");
+        if(MAs.getMA5() > MAs.getMA20() && currentPrice - ref > Setting.FILL_GAP_THRESHOLD) {
+            decision.make(TradingType.PUT_BUYING, "exceed reference");
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
         }
 
-        if(MAs.getMA5() < MAs.getMA20() && currentMA - currentPrice > Setting.FILL_GAP_THRESHOLD) {
-            decision.make(TradingType.SHORT_SELLING, "exceed MA");
+        if(MAs.getMA5() < MAs.getMA20() && ref - currentPrice > Setting.FILL_GAP_THRESHOLD) {
+            decision.make(TradingType.SHORT_SELLING, "exceed reference");
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
         }

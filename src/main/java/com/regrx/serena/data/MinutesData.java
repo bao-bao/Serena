@@ -1,6 +1,7 @@
 package com.regrx.serena.data;
 
 import com.regrx.serena.common.constant.IntervalEnum;
+import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.constant.TrendType;
 import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
@@ -124,4 +125,9 @@ public class MinutesData {
             return TrendType.TREND_UP;
         }
     }
+
+    public double getLastCrossPrice(MAEnum ind_1, MAEnum ind_2) {
+        return MovingAverage.evalLastCrossPrice(mAvgs, ind_1, ind_2);
+    }
+
 }

@@ -141,6 +141,7 @@ public class MovingAverage {
         }
     }
 
+    @Deprecated
     public static boolean tradeIntervalGreaterThan(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2, int limit) {
         int iterator = findLastCross(movingAverages, ind_1, ind_2, movingAverages.size() - 1);
         int rightCross = iterator - 1;
@@ -148,6 +149,7 @@ public class MovingAverage {
         return rightCross - leftCross > limit;
     }
 
+    @Deprecated
     public static boolean lastCrossDiffGreaterThan(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2, double limit) {
         int iterator = findLastCross(movingAverages, ind_1, ind_2, movingAverages.size() - 1);
         double crossPoint1 = evalCrossPrice(movingAverages.get(iterator), movingAverages.get(iterator - 1), ind_1, ind_2);
@@ -156,19 +158,25 @@ public class MovingAverage {
         return Math.abs(crossPoint1 - crossPoint2) > limit;
     }
 
-    public static double EvalLastCrossPrice(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2) {
-        int iterator = findLastCross(movingAverages, ind_1, ind_2, movingAverages.size() - 1);
-        return evalCrossPrice(movingAverages.get(iterator), movingAverages.get(iterator - 1), ind_1, ind_2);
+    public static double evalLastCrossPrice(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2) {
+        int iterator = findLastCross(movingAverages, ind_1, ind_2, 0);
+        if(iterator == 0) {
+            return 0;
+        }
+        return evalCrossPrice(movingAverages.get(iterator), movingAverages.get(iterator + 1), ind_1, ind_2);
     }
 
     public static int findLastCross(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2, int from) {
-        MovingAverage ma1 = movingAverages.get(from);
-        MovingAverage ma2 = movingAverages.get(from - 1);
-        int res = from;
-        while((ma1.getMAByIndex(ind_1) - ma1.getMAByIndex(ind_2)) * (ma2.getMAByIndex(ind_1) - ma2.getMAByIndex(ind_2)) > 0) {
-            res -= 1;
+        if(from == movingAverages.size() - 1 || movingAverages.size() < 2) {
+            return 0;
+        }
+        MovingAverage ma1 = movingAverages.get(0);
+        MovingAverage ma2 = movingAverages.get(1);
+        int res = 0;
+        while(res < movingAverages.size() - 2 && (ma1.getMAByIndex(ind_1) - ma1.getMAByIndex(ind_2)) * (ma2.getMAByIndex(ind_1) - ma2.getMAByIndex(ind_2)) > 0) {
+            res++;
             ma1 = movingAverages.get(res);
-            ma2 = movingAverages.get(res - 1);
+            ma2 = movingAverages.get(res + 1);
         }
         return res;
     }
@@ -181,8 +189,7 @@ public class MovingAverage {
         if((value1_1 - value1_2) * (value2_1 - value2_2) < 0) {
             return (value1_1 + value1_2 + value2_1 + value2_2) / 4;
         }
-        System.out.println("No cross exist");
-        return -1;
+        return 0;
     }
 
 }

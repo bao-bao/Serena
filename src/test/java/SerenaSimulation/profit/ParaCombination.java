@@ -5,27 +5,20 @@ public class ParaCombination implements Comparable<ParaCombination> {
     public double[] paraArray;
 
     public ParaCombination() {
-        paraArray = new double[4];
+        paraArray = new double[5];
     }
 
     public void setProfit(TestResult profit) {
         this.profit = profit;
     }
 
-    public void setParaArray(double loss, double profit, double restore, double ma) {
+    public void setParaArray(double loss, double profit, double restore, double ma, double fill) {
         paraArray[0] = loss;
         paraArray[1] = profit;
         paraArray[2] = restore;
         paraArray[3] = ma;
+        paraArray[4] = fill;
     }
-
-//    public void setProfitCount(int profitCount) {
-//        this.profitCount = profitCount;
-//    }
-//
-//    public void setLossCount(int lossCount) {
-//        this.lossCount = lossCount;
-//    }
 
     @Override
     public String toString() {
