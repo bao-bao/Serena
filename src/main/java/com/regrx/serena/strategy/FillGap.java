@@ -36,13 +36,13 @@ public class FillGap extends AbstractStrategy {
         }
 
         if(MAs.getMA5() > MAs.getMA20() && currentPrice - currentMA > Setting.FILL_GAP_THRESHOLD) {
-            decision.make(TradingType.PUT_BUYING, "exceed MA5 too far");
+            decision.make(TradingType.PUT_BUYING, "exceed MA");
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
         }
 
         if(MAs.getMA5() < MAs.getMA20() && currentMA - currentPrice > Setting.FILL_GAP_THRESHOLD) {
-            decision.make(TradingType.SHORT_SELLING, "exceed MA5 too far");
+            decision.make(TradingType.SHORT_SELLING, "exceed MA");
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
             StrategyManager.getInstance().changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
         }
