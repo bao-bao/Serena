@@ -38,31 +38,35 @@ public class SerenaSimulation {
         double[] profitLimitPara = {35.0};
         double[] restorePara = {5.0};
         double[] MA520Para = {0.0};
+        double[] fillPara = {10.0};
 
         PriorityQueue<ParaCombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
-        for(double lossLimit  : lossLimitPara) {
+        for (double lossLimit : lossLimitPara) {
             for (double profitLimit : profitLimitPara) {
                 for (double restore : restorePara) {
                     for (double ma520 : MA520Para) {
-                        Setting.LOSS_LIMIT_THRESHOLD = lossLimit;
-                        Setting.PROFIT_LIMIT_THRESHOLD = profitLimit;
-                        Setting.RESTORE_THRESHOLD = restore;
-                        Setting.TRADE_THRESHOLD = ma520;
-                        simulation();
-                        try {
-                            Thread.sleep(500);
-                            ControllerTest.stop();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        ParaCombination newRes = new ParaCombination();
-                        newRes.setProfit(ProfitCal.cal(type));
-                        newRes.setParaArray(lossLimit, profitLimit, restore, ma520);
-                        queue.add(newRes);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
+                        for (double fill : fillPara) {
+                            Setting.LOSS_LIMIT_THRESHOLD = lossLimit;
+                            Setting.PROFIT_LIMIT_THRESHOLD = profitLimit;
+                            Setting.RESTORE_THRESHOLD = restore;
+                            Setting.TRADE_THRESHOLD = ma520;
+                            Setting.FILL_GAP_THRESHOLD = fill;
+                            simulation();
+                            try {
+                                Thread.sleep(500);
+                                ControllerTest.stop();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            ParaCombination newRes = new ParaCombination();
+                            newRes.setProfit(ProfitCal.cal(type));
+                            newRes.setParaArray(lossLimit, profitLimit, restore, ma520);
+                            queue.add(newRes);
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -72,13 +76,13 @@ public class SerenaSimulation {
         ArrayList<ParaCombination> resList = new ArrayList<>();
         System.out.println("Top 10 Best Parameters: ");
         System.out.println("Total Profit\tParameters\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal");
-        for(int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; i++) {
             ParaCombination candidate = queue.poll();
-            if(candidate != null) {
+            if (candidate != null) {
                 resList.add(candidate);
             }
         }
-        for(ParaCombination res : resList) {
+        for (ParaCombination res : resList) {
             System.out.println(res);
         }
         outputToCsv(resList, type + '_' + Calendar.getInstance().getTime().getTime());
@@ -93,9 +97,10 @@ public class SerenaSimulation {
 
 //        controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
+//        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
+        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
 
         controller.run();
@@ -113,10 +118,10 @@ public class SerenaSimulation {
         FileUtil.newFile(filename + ".csv");
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
             writer.append("Total Profit, LL Thres, PL Thres, Restore, MA, Put P, Put L, Short P, Short L, Total").append('\n');
-            for(ParaCombination res : resList) {
+            for (ParaCombination res : resList) {
                 TestResult testResult = res.profit;
                 writer.append(String.format("%.2f", testResult.getTotalProfit())).append(',');
-                for(double para : res.paraArray) {
+                for (double para : res.paraArray) {
                     writer.append(String.format("%.2f", para)).append(',');
                 }
                 writer.append(String.valueOf(testResult.getPutProfit())).append(',');
