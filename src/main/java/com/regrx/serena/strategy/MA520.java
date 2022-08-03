@@ -5,6 +5,7 @@ import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.constant.TrendType;
+import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
@@ -19,12 +20,7 @@ public class MA520 extends AbstractStrategy {
     public MA520(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_MA_520_PRIORITY);
         super.setName("MA 520");
-        if(Status.getInstance().getStatus() == TradingType.EMPTY) {
-            this.lastTradeInTrend = TrendType.NULL;
-        } else {
-            MovingAverage currentMA = dataSvcMgr.queryData(interval).getNewMAvgs();
-            this.lastTradeInTrend = currentMA.getMA5() > currentMA.getMA20() ? TrendType.TREND_UP : TrendType.TREND_DOWN;
-        }
+        this.lastTradeInTrend = FileUtil.loadLastTradeInTrend();
     }
 
     @Override

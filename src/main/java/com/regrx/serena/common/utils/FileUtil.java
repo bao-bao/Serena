@@ -3,6 +3,8 @@ package com.regrx.serena.common.utils;
 import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.TradingType;
+import com.regrx.serena.common.constant.TrendType;
+import com.regrx.serena.controller.Controller;
 import com.regrx.serena.data.MinutesData;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
@@ -128,5 +130,48 @@ public class FileUtil {
         }
     }
 
+    public static TrendType loadLastTradeInTrend() {
+        TrendType res = TrendType.NULL;
+        String filename = "Trade_" + Controller.getInstance().getType() + ".log";
+        try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filename), StandardCharsets.UTF_8)) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if(line.contains("MA cross")) {
+                    String[] lastHistory = line.split(" ");
+                    if(lastHistory[lastHistory.length - 1].equals("Empty")) {
+                        line = reader.readLine();
+                        if(line != null) {
+                            lastHistory = line.split(" ");
+                            if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                                res = TrendType.TREND_DOWN;
+                            } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                                res = TrendType.TREND_UP;
+                            }
+                        }
+                    } else {
+                        if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                            res = TrendType.TREND_UP;
+                        } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                            res = TrendType.TREND_DOWN;
+                        }
+                    }
+                    break;
+                } else if(line.contains("empty")) {
+                    String[] lastHistory = line.split(" ");
+                    if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                        res = TrendType.TREND_UP;
+                    } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                        res = TrendType.TREND_DOWN;
+                    }
+                    break;
+                }
+            }
+        } catch (FileNotFoundException ignored) {
+        } catch (IOException e) {
+            LogUtil.getInstance().severe("Error occurred when opening file \"" + filename + "\"");
+            System.exit(ErrorType.IO_ERROR_CODE.getCode());
+        }
+        return res;
+    }
 
 }

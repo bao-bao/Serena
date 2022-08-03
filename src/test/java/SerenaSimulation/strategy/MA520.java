@@ -19,12 +19,7 @@ public class MA520 extends AbstractStrategy {
     public MA520(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_MA_520_PRIORITY);
         super.setName("MA 520");
-        if(Status.getInstance().getStatus() == TradingType.EMPTY) {
-            this.lastTradeInTrend = TrendType.NULL;
-        } else {
-            MovingAverage currentMA = dataSvcMgr.queryData(interval).getNewMAvgs();
-            this.lastTradeInTrend = currentMA.getMA5() > currentMA.getMA20() ? TrendType.TREND_UP : TrendType.TREND_DOWN;
-        }
+        this.lastTradeInTrend = TrendType.NULL;
     }
 
     @Override
