@@ -68,7 +68,9 @@ public class FileUtil {
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(file, StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null && result.size() < numLastLineToRead) {
-                result.add(line);
+                if(!line.equals("")) {
+                    result.add(line);
+                }
             }
         } catch (FileNotFoundException e) {
             LogUtil.getInstance().warning("No trade history named " + file.getName() + ", file will be created soon");
