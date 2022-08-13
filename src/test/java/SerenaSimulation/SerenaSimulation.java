@@ -75,7 +75,7 @@ public class SerenaSimulation {
 
         ArrayList<ParaCombination> resList = new ArrayList<>();
         System.out.println("\nTop 10 Best Parameters: ");
-        System.out.println("Total Profit\tParameters\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal");
+        System.out.println("Total Profit\tParameters\t\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal\tCont. Loss\tOccurred");
         for (int i = 0; i < 10; i++) {
             ParaCombination candidate = queue.poll();
             if (candidate != null) {
@@ -128,7 +128,9 @@ public class SerenaSimulation {
                 writer.append(String.valueOf(testResult.getPutLoss())).append(',');
                 writer.append(String.valueOf(testResult.getShortProfit())).append(',');
                 writer.append(String.valueOf(testResult.getShortLoss())).append(',');
-                writer.append(String.valueOf(testResult.getTotalCount())).append('\n');
+                writer.append(String.valueOf(testResult.getTotalCount())).append(',');
+                writer.append(String.valueOf(testResult.getContinousLoss())).append(',');
+                writer.append(String.valueOf(testResult.getCLTime())).append('\n');
             }
             writer.flush();
         } catch (IOException e) {

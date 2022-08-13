@@ -13,8 +13,8 @@ public class ProfitCal {
         int status = 0;
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
         int putProfitCount = 0, putLossCount = 0, shortProfitCount = 0, shortLossCount = 0, count = 0;
-        double maximumContinousLoss = 0.0, continousLoss = 0.0;
-        String maximumContinousLossTime = "";
+        double maximumContinuousLoss = 0.0, continuousLoss = 0.0;
+        String maximumContinuousLossTime = "";
         PriorityQueue<SingleTrade> trades = new PriorityQueue<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line;
@@ -41,13 +41,13 @@ public class ProfitCal {
                             shortLossCount++;
                         }
                         if(st.profit >= 0) {
-                            if(continousLoss < maximumContinousLoss) {
-                                maximumContinousLoss = continousLoss;
-                                maximumContinousLossTime = st.openTime;
+                            if(continuousLoss < maximumContinuousLoss) {
+                                maximumContinuousLoss = continuousLoss;
+                                maximumContinuousLossTime = st.openTime;
                             }
-                            continousLoss = 0.0;
+                            continuousLoss = 0.0;
                         } else {
-                            continousLoss += st.profit;
+                            continuousLoss += st.profit;
                         }
                         trades.add(st);
                         profit += st.profit;
@@ -69,9 +69,9 @@ public class ProfitCal {
                         break;
                 }
             }
-            if(continousLoss < maximumContinousLoss) {
-                maximumContinousLoss = continousLoss;
-                maximumContinousLossTime = st.openTime;
+            if(continuousLoss < maximumContinuousLoss) {
+                maximumContinuousLoss = continuousLoss;
+                maximumContinuousLossTime = st.openTime;
             }
         } catch (FileNotFoundException e) {
             System.out.println("No such file.");
@@ -99,12 +99,14 @@ public class ProfitCal {
         System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
 
         System.out.println();
-        System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinousLoss) + ", Occurred until: " + maximumContinousLossTime);
+        System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinuousLoss) + ", Occurred until: " + maximumContinuousLossTime);
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
         testResult.setShortProfit(shortProfitCount);
         testResult.setPutLoss(putLossCount);
         testResult.setShortLoss(shortLossCount);
+        testResult.setContinousLoss(maximumContinuousLoss);
+        testResult.setCLTime(maximumContinuousLossTime);
         return testResult;
     }
 }

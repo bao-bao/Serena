@@ -6,6 +6,8 @@ public class TestResult implements Comparable<TestResult> {
     int pProfit;
     int sLoss;
     int sProfit;
+    double continousLoss;
+    String CLTime;
 
     public double getTotalProfit() {
         return totalProfit;
@@ -51,9 +53,25 @@ public class TestResult implements Comparable<TestResult> {
         return pProfit + pLoss + sProfit + sLoss;
     }
 
+    public double getContinousLoss() {
+        return continousLoss;
+    }
+
+    public void setContinousLoss(double continousLoss) {
+        this.continousLoss = continousLoss;
+    }
+
+    public String getCLTime() {
+        return CLTime;
+    }
+
+    public void setCLTime(String CLTime) {
+        this.CLTime = CLTime;
+    }
+
     @Override
     public String toString() {
-        return "\t" + pProfit + "\t\t"+ pLoss + "\t\t" + sProfit + "\t\t" + sLoss + "\t\t" + (pProfit + pLoss + sProfit + sLoss);
+        return "\t" + pProfit + "\t\t"+ pLoss + "\t\t" + sProfit + "\t\t" + sLoss + "\t\t" + (pProfit + pLoss + sProfit + sLoss) + "\t\t" + String.format("%.2f", continousLoss) + "\t\t" + CLTime;
     }
 
     @Override
