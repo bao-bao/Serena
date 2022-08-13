@@ -5,7 +5,6 @@ import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.PriorityQueue;
 
 public class ProfitCal {
@@ -14,6 +13,8 @@ public class ProfitCal {
         int status = 0;
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
         int putProfitCount = 0, putLossCount = 0, shortProfitCount = 0, shortLossCount = 0, count = 0;
+        double maximumContinousLoss = 0.0, continousLoss = 0.0;
+        String maximumContinousLossTime = "";
         PriorityQueue<SingleTrade> trades = new PriorityQueue<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line;
@@ -39,6 +40,15 @@ public class ProfitCal {
                         } else {
                             shortLossCount++;
                         }
+                        if(st.profit >= 0) {
+                            if(continousLoss < maximumContinousLoss) {
+                                maximumContinousLoss = continousLoss;
+                                maximumContinousLossTime = st.openTime;
+                            }
+                            continousLoss = 0.0;
+                        } else {
+                            continousLoss += st.profit;
+                        }
                         trades.add(st);
                         profit += st.profit;
                         status = 0;
@@ -58,7 +68,10 @@ public class ProfitCal {
                         tradeInPrice = currPrice;
                         break;
                 }
-
+            }
+            if(continousLoss < maximumContinousLoss) {
+                maximumContinousLoss = continousLoss;
+                maximumContinousLossTime = st.openTime;
             }
         } catch (FileNotFoundException e) {
             System.out.println("No such file.");
@@ -81,10 +94,12 @@ public class ProfitCal {
             }
         }
 
-        System.out.println("\t\tPut\tShort");
+        System.out.println("\n\t\tPut\tShort");
         System.out.println("Loss\t" + putLossCount + "\t" + shortLossCount);
         System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
 
+        System.out.println();
+        System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinousLoss) + ", Occurred until: " + maximumContinousLossTime);
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
         testResult.setShortProfit(shortProfitCount);

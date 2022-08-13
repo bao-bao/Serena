@@ -74,7 +74,7 @@ public class SerenaSimulation {
         }
 
         ArrayList<ParaCombination> resList = new ArrayList<>();
-        System.out.println("Top 10 Best Parameters: ");
+        System.out.println("\nTop 10 Best Parameters: ");
         System.out.println("Total Profit\tParameters\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal");
         for (int i = 0; i < 10; i++) {
             ParaCombination candidate = queue.poll();
