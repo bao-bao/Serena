@@ -3,6 +3,7 @@ package com.regrx.serena.service;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.FutureType;
 import com.regrx.serena.common.constant.IntervalEnum;
+import com.regrx.serena.common.utils.SyncLock;
 import com.regrx.serena.controller.Controller;
 import com.regrx.serena.common.network.HistoryDownloader;
 import com.regrx.serena.common.network.PriceDownloader;
@@ -12,7 +13,6 @@ import com.regrx.serena.common.utils.TimeUtil;
 import com.regrx.serena.data.MinutesData;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
-import com.regrx.serena.data.base.Status;
 
 import java.util.Date;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -21,12 +21,14 @@ public class DataService implements Runnable {
     private final String type;
     private final IntervalEnum interval;
     private MinutesData minutesData;
+    private final SyncLock lock;
 
     public DataService(String type, IntervalEnum interval) {
         super();
         this.type = type;
         this.interval = interval;
         this.minutesData = new MinutesData(interval);
+        this.lock = new SyncLock();
     }
 
     @Override
@@ -55,7 +57,9 @@ public class DataService implements Runnable {
                 Date currentDate = new Date(current);
                 long nextPoint = TimeUtil.getNextMillisEveryNMinutes(currentDate, interval.getValue());
                 try {
-                    Thread.sleep(nextPoint - current);
+                    Thread.sleep((nextPoint - current) / 2);
+                    lock.lockOn();
+                    Thread.sleep((nextPoint - current) / 2);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -67,6 +71,7 @@ public class DataService implements Runnable {
                     newPrice = PriceDownloader.getPriceDataForOtherFutures(url, type);
                 }
                 minutesData.update(newPrice, type);
+                lock.lockOff();
                 callback(newPrice);
             }
         }
@@ -75,11 +80,6 @@ public class DataService implements Runnable {
     private void callback(ExPrice newPrice) {
         if(interval != DataServiceManager.getInstance().getMinimumInterval()) {
             return;
-        }
-        try {
-            Thread.sleep(100);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
         }
         LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");
         Decision decision = StrategyManager.getInstance().execute(newPrice);
@@ -105,5 +105,9 @@ public class DataService implements Runnable {
 
     public MinutesData getMinutesData() {
         return minutesData;
+    }
+
+    public SyncLock getLock() {
+        return lock;
     }
 }

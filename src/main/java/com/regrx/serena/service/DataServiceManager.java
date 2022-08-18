@@ -79,4 +79,13 @@ public class DataServiceManager {
             return dataList.keySet().stream().reduce((x, y) -> x.compareTo(y) < 0 ? x : y).get();
         }
     }
+
+    public boolean isSyncLocked() {
+        for(DataService service : dataList.values()) {
+            if(service.getLock().isLocked()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -119,11 +119,19 @@ public class StrategyManager {
             }
         }
 
+        DataServiceManager dSrvMgr = DataServiceManager.getInstance();
+        while(dSrvMgr.isSyncLocked()) {
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException ignored) {
+            }
+        }
+
         LogUtil.getInstance().info(strategyQueue.size() + " strategies will be in use at "
                 + currHour + ":" + currMinute + ": " + strategyQueueString(strategyQueue));
         Decision decision;
         Decision finalDecision = new Decision();
-        while (!strategyQueue.isEmpty() && Status.getInstance().isTrading()) {
+        while (Status.getInstance().isTrading() && !strategyQueue.isEmpty() ) {
             decision = strategyQueue.poll().execute(newPrice);
             if (decision.isExecute()) {
                 finalDecision = decision;
