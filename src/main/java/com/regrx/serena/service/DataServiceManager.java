@@ -4,7 +4,10 @@ import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.MinutesData;
 
+import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -81,8 +84,14 @@ public class DataServiceManager {
     }
 
     public boolean isSyncLocked() {
-        for(DataService service : dataList.values()) {
-            if(service.getLock().isLocked()) {
+        Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        int currMinute = currTime.get(Calendar.MINUTE);
+        int currSec = currTime.get(Calendar.SECOND);
+        if(currSec > 50) {
+            currMinute = (currMinute + 1) % 60;
+        }
+        for(Map.Entry<IntervalEnum, DataService> service : dataList.entrySet()) {
+            if(currMinute % service.getKey().getValue() == 0 && service.getValue().getLock().isLocked()) {
                 return true;
             }
         }
