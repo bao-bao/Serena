@@ -3,9 +3,9 @@ package com.regrx.serena.common;
 public class Setting {
     public static final boolean TEST_LABEL = true;
 
-    public static final boolean TREND_FOLLOW_MA = true;
+    public static final boolean TREND_FOLLOW_MA = false;
 
-    public static final boolean MA_PRIMARY = false;
+    public static final boolean MA_PRIMARY = true;
 
     public static final int FILL_GAP_BY_MA = 20;
 
@@ -46,6 +46,10 @@ public class Setting {
     public static final int DEFAULT_MA_520_PRIORITY = 100;
 
     public static final int DEFAULT_FILL_GAP_PRIORITY = 500;
+
+    public static final int DEFAULT_MA_240_PRIORITY = 100;
+
+    public static final int DEFAULT_MA_240_520_PRIORITY = 200;
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

@@ -107,7 +107,7 @@ public class FileUtil {
             writer.append(String.format("%.2f", movingAverage.getMA60())).append(',');
             writer.append(String.format("%.2f", movingAverage.getMA90())).append(',');
             writer.append(String.format("%.2f", movingAverage.getMA120())).append(',');
-            writer.append(String.format("%.2f", movingAverage.getMA250())).append('\n');
+            writer.append(String.format("%.2f", movingAverage.getMA240())).append('\n');
 
             writer.flush();
         } catch (FileNotFoundException e) {

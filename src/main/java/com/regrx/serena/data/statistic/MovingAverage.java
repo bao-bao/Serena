@@ -14,7 +14,7 @@ public class MovingAverage {
     private Double MA60;
     private Double MA90;
     private Double MA120;
-    private Double MA250;
+    private Double MA240;
 
     public MovingAverage() {
         this.MA5 = 0.0;
@@ -24,7 +24,7 @@ public class MovingAverage {
         this.MA60 = 0.0;
         this.MA90 = 0.0;
         this.MA120 = 0.0;
-        this.MA250 = 0.0;
+        this.MA240 = 0.0;
     }
 
     public Double getMA5() {
@@ -83,12 +83,12 @@ public class MovingAverage {
         this.MA120 = MA120;
     }
 
-    public Double getMA250() {
-        return MA250;
+    public Double getMA240() {
+        return MA240;
     }
 
-    public void setMA250(Double MA250) {
-        this.MA250 = MA250;
+    public void setMA240(Double MA240) {
+        this.MA240 = MA240;
     }
 
     public Double getMAByIndex(MAEnum index) {
@@ -100,7 +100,7 @@ public class MovingAverage {
             case MA60: return MA60;
             case MA90: return MA90;
             case MA120: return MA120;
-            case MA250: return MA250;
+            case MA250: return MA240;
         }
         return null;
     }
@@ -113,10 +113,10 @@ public class MovingAverage {
         this.MA60 = 0.0;
         this.MA90 = 0.0;
         this.MA120 = 0.0;
-        this.MA250 = 0.0;
+        this.MA240 = 0.0;
 
-        if(prices.size() >= 250) {
-            this.MA250 = Calculator.avg(prices.subList(0, 250));
+        if(prices.size() >= 240) {
+            this.MA240 = Calculator.avg(prices.subList(0, 240));
         }
         if(prices.size() >= 120) {
             this.MA120 = Calculator.avg(prices.subList(0, 120));
