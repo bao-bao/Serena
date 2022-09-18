@@ -52,6 +52,12 @@ public class StrategyManager {
             case STRATEGY_REOPEN:
                 forceTriggerStrategyList.put(strategy, new Reopen());
                 break;
+            case STRATEGY_MA_240:
+                strategyList.put(strategy, new MA240(interval));
+                break;
+            case STRATEGY_MA_240_520:
+                strategyList.put(strategy, new MA240520(interval));
+                break;
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;

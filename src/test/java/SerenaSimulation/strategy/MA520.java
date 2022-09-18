@@ -74,34 +74,4 @@ public class MA520 extends AbstractStrategy {
         }
         return decision;
     }
-
-    private void PutBuyingByThreshold(double cMA5, double cMA20, Decision decision, TradingType currStatus) {
-        if(Math.abs(cMA5 - cMA20) >= Setting.TRADE_THRESHOLD) {
-            if(currStatus == TradingType.SHORT_SELLING) {
-                decision.make(TradingType.PUT_BUYING, "MA cross");
-            }
-            else if(currStatus == TradingType.EMPTY) {
-                decision.make(TradingType.PUT_BUYING, "empty");
-            }
-        } else {
-            if(currStatus == TradingType.SHORT_SELLING) {
-                decision.make(TradingType.EMPTY, "MA cross");
-            }
-        }
-    }
-
-    private void ShortSellingByThreshold(double cMA5, double cMA20, Decision decision, TradingType currStatus) {
-        if(Math.abs(cMA5 - cMA20) >= Setting.TRADE_THRESHOLD) {
-            if(currStatus == TradingType.PUT_BUYING) {
-                decision.make(TradingType.SHORT_SELLING, "MA cross");
-            }
-            else if(currStatus == TradingType.EMPTY) {
-                decision.make(TradingType.SHORT_SELLING, "empty");
-            }
-        } else {
-            if(currStatus == TradingType.PUT_BUYING) {
-                decision.make(TradingType.EMPTY, "MA cross");
-            }
-        }
-    }
 }
