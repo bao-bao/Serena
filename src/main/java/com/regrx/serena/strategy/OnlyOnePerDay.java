@@ -4,6 +4,7 @@ import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
+import com.regrx.serena.data.base.Status;
 
 import java.util.Calendar;
 import java.util.TimeZone;
@@ -23,14 +24,22 @@ public class OnlyOnePerDay extends AfterCheckStrategy {
         tryReset();
         if(origin.isExecute() && origin.getTradingType() == TradingType.PUT_BUYING) {
             if(putBuyingRemain == 0) {
-                origin.make(TradingType.NO_ACTION, "Denied");
+                if(Status.getInstance().getStatus() == TradingType.SHORT_SELLING) {
+                    origin.make(TradingType.EMPTY, origin.getReason());
+                } else {
+                    origin.make(TradingType.NO_ACTION, "Denied");
+                }
             } else {
                 putBuyingRemain--;
             }
         }
         if (origin.isExecute() && origin.getTradingType() == TradingType.SHORT_SELLING) {
             if(shortSellingRemain == 0) {
-                origin.make(TradingType.NO_ACTION, "Denied");
+                if(Status.getInstance().getStatus() == TradingType.PUT_BUYING) {
+                    origin.make(TradingType.EMPTY, origin.getReason());
+                } else {
+                    origin.make(TradingType.NO_ACTION, "Denied");
+                }
             } else {
                 shortSellingRemain--;
             }
