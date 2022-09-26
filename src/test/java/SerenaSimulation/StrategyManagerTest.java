@@ -123,7 +123,7 @@ public class StrategyManagerTest {
         int currHour = currTime.get(Calendar.HOUR_OF_DAY);
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
-        if(!((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0) || (currHour == 11 && currMinute == 30))) {
+        if(!((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0))) {
             for (AbstractStrategy strategy : strategyList.values()) {
                 if (Status.getInstance().isTrading()
                         && strategy.getPriority() < Setting.BLOCK_LOW_PRIORITY_STRATEGY
