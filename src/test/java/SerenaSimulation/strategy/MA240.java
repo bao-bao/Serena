@@ -28,6 +28,9 @@ public class MA240 extends AbstractStrategy {
         double cMA240 = currentMA.getMA240();
         double lMA5 = lastMA.getMA5();
         double lMA240 = lastMA.getMA240();
+        if(cMA240 == 0) {
+            return decision;
+        }
 
         TradingType currStatus = Status.getInstance().getStatus();
 

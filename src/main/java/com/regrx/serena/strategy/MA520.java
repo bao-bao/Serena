@@ -34,7 +34,7 @@ public class MA520 extends AbstractStrategy {
         double cMA20 = currentMA.getMA20();
         double lMA5 = lastMA.getMA5();
         double lMA20 = lastMA.getMA20();
-        if(cMA20 == 0 || lMA20 == 0) {
+        if(cMA20 == 0) {
             return decision;
         }
 
