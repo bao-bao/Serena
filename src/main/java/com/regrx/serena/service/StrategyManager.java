@@ -14,11 +14,13 @@ import java.util.*;
 public class StrategyManager {
     private final HashMap<StrategyEnum, AbstractStrategy> strategyList;
     private final HashMap<StrategyEnum, ForceTriggerStrategy> forceTriggerStrategyList;
+    private final ArrayList<AfterCheckStrategy> afterCheckStrategyList;
     private static StrategyManager strategyMgr;
 
     private StrategyManager() {
         this.strategyList = new HashMap<>();
         this.forceTriggerStrategyList = new HashMap<>();
+        this.afterCheckStrategyList = new ArrayList<>();
     }
 
     public static StrategyManager getInstance() {
@@ -58,6 +60,9 @@ public class StrategyManager {
             case STRATEGY_MA_240_520:
                 strategyList.put(strategy, new MA240520(interval));
                 break;
+            case STRATEGY_ONLY_ONE_PER_DAY:
+                afterCheckStrategyList.add(new OnlyOnePerDay());
+                break;
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;
@@ -66,17 +71,16 @@ public class StrategyManager {
         return true;
     }
 
-    public boolean addStrategy(StrategyEnum strategy, ForceTriggerStrategy newStrategy) {
+    public void changeStrategy(StrategyEnum strategy, ForceTriggerStrategy newStrategy) {
         if (forceTriggerStrategyList.containsKey(strategy)) {
             LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
-            return false;
+            return;
         }
         if (newStrategy == null) {
-            return false;
+            return;
         }
         forceTriggerStrategyList.put(strategy, newStrategy);
         LogUtil.getInstance().info("Successful add strategy " + strategy);
-        return true;
     }
 
     public void removeStrategy(StrategyEnum strategy) {
@@ -135,15 +139,17 @@ public class StrategyManager {
 
         LogUtil.getInstance().info(strategyQueue.size() + " strategies will be in use at "
                 + currHour + ":" + currMinute + ": " + strategyQueueString(strategyQueue));
-        Decision decision;
-        Decision finalDecision = new Decision();
-        while (Status.getInstance().isTrading() && !strategyQueue.isEmpty() ) {
+        Decision decision = new Decision();
+        while (Status.getInstance().isTrading() && !strategyQueue.isEmpty()) {
             decision = strategyQueue.poll().execute(newPrice);
             if (decision.isExecute()) {
-                finalDecision = decision;
+                break;
             }
         }
-        return finalDecision;
+        for (AfterCheckStrategy strategy : afterCheckStrategyList) {
+            decision = strategy.check(decision);
+        }
+        return decision;
     }
 
     public String strategyQueueString(PriorityQueue<AbstractStrategy> queue) {

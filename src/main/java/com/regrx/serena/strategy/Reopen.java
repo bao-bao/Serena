@@ -27,7 +27,7 @@ public class Reopen extends ForceTriggerStrategy {
     public Decision execute(ExPrice price) {
         Status.getInstance().setTrading(true);
         StrategyManager.getInstance().removeStrategy(StrategyEnum.STRATEGY_REOPEN);
-        StrategyManager.getInstance().addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, new CloseOnEnd());
+        StrategyManager.getInstance().changeStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, new CloseOnEnd());
         return new Decision();
     }
 

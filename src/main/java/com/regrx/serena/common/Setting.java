@@ -33,6 +33,8 @@ public class Setting {
     // strategy priority
     public static final int BLOCK_LOW_PRIORITY_STRATEGY = 10000;
 
+    public static final int DEFAULT_PRIORITY = 0;
+
     public static final int DEFAULT_FORCE_TRIGGER_PRIORITY = 0;
 
     public static final int HIGH_LOSS_LIMIT_PRIORITY = 200;
@@ -50,6 +52,11 @@ public class Setting {
     public static final int DEFAULT_MA_240_PRIORITY = 100;
 
     public static final int DEFAULT_MA_240_520_PRIORITY = 200;
+
+    // only one per day
+    public static final int PUT_BUYING_LIMIT = 1;
+
+    public static final int SHORT_SELLING_LIMIT = 1;
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

@@ -102,6 +102,7 @@ public class SerenaSimulation {
         controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
+        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
 
         controller.run();
     }

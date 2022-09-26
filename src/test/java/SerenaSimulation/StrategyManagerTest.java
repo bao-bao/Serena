@@ -16,11 +16,13 @@ import java.util.*;
 public class StrategyManagerTest {
     private final HashMap<StrategyEnum, AbstractStrategy> strategyList;
     private final HashMap<StrategyEnum, ForceTriggerStrategy> forceTriggerStrategyList;
+    private final ArrayList<AfterCheckStrategy> afterCheckStrategyList;
     private static StrategyManagerTest strategyMgr;
 
     private StrategyManagerTest() {
         this.strategyList = new HashMap<>();
         this.forceTriggerStrategyList = new HashMap<>();
+        this.afterCheckStrategyList = new ArrayList<>();
     }
 
     public static StrategyManagerTest getInstance() {
@@ -63,6 +65,9 @@ public class StrategyManagerTest {
                 break;
             case STRATEGY_MA_240_520:
                 strategyList.put(strategy, new MA240520(interval));
+                break;
+            case STRATEGY_ONLY_ONE_PER_DAY:
+                afterCheckStrategyList.add(new OnlyOnePerDay());
                 break;
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
@@ -136,11 +141,14 @@ public class StrategyManagerTest {
 
         LogUtil.getInstance().info(strategyQueue.size() + " strategies will be in use at " + newPrice.getTime() + " : " + strategyQueueString(strategyQueue));
         Decision decision = new Decision();
-        while(!strategyQueue.isEmpty()) {
+        while(Status.getInstance().isTrading() && !strategyQueue.isEmpty()) {
             decision = strategyQueue.poll().execute(newPrice);
             if(decision.isExecute()) {
                 break;
             }
+        }
+        for (AfterCheckStrategy strategy : afterCheckStrategyList) {
+            decision = strategy.check(decision, currHour, currMinute);
         }
         return decision;
     }

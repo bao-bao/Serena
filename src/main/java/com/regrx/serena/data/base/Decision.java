@@ -87,7 +87,7 @@ public class Decision {
     }
 
     public void make(TradingType trade, String reason) {
-        this.execute = true;
+        this.execute = (trade != TradingType.NO_ACTION);
         this.tradingType = trade;
         this.reason = reason;
     }

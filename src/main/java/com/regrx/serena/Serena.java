@@ -13,6 +13,7 @@ public class Serena {
         controller.addDataTrack(IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_MA_240, IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_MA_240_520, IntervalEnum.MIN_5);
+        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
 
         controller.run();
     }

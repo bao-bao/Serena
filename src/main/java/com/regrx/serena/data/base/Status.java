@@ -6,13 +6,13 @@ import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.constant.TrendType;
 
 public class Status {
-    private boolean trading;
-    private int count;
-    private TradingType status;
-    private TrendType trend;
-    private IntervalEnum interval;
-    private StrategyEnum strategy;
-    private double lastTradePrice;
+    private boolean trading;        // 交易开关
+    private int count;              // 持有手数（暂无作用）
+    private TradingType status;     // 当前交易方向
+    private TrendType trend;        // 走势（MA）
+    private IntervalEnum interval;  // 上次交易使用数据间隔
+    private StrategyEnum strategy;  // 上次交易使用逻辑
+    private double lastTradePrice;  // 上次交易价格
     private static Status stat;
 
     private Status() {

@@ -12,7 +12,6 @@ import com.regrx.serena.data.base.Status;
 import com.regrx.serena.service.DataServiceManager;
 import com.regrx.serena.service.StrategyManager;
 
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class Controller implements Runnable {

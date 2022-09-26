@@ -30,7 +30,7 @@ public class CloseOnEnd extends ForceTriggerStrategy {
         }
         currStat.setTrading(false);
         StrategyManager.getInstance().removeStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END);
-        StrategyManager.getInstance().addStrategy(StrategyEnum.STRATEGY_REOPEN, new Reopen());  // default reopen time: 06:00:00
+        StrategyManager.getInstance().changeStrategy(StrategyEnum.STRATEGY_REOPEN, new Reopen());  // default reopen time: 06:00:00
 
         return decision;
     }
