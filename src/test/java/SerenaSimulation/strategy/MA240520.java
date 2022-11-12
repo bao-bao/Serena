@@ -24,10 +24,10 @@ public class MA240520 extends AbstractStrategy {
         MovingAverage currentMA = dataSvcMgr.queryData(interval).getNewMAvgs();
         MovingAverage lastMA = dataSvcMgr.queryData(interval).getLastMAvgs();
         double cMA5 = currentMA.getMA5();
-        double cMA20 = currentMA.getMA20();
+        double cMA60 = currentMA.getMA60();
         double cMA240 = currentMA.getMA240();
         double lMA5 = lastMA.getMA5();
-        double lMA20 = lastMA.getMA20();
+        double lMA60 = lastMA.getMA60();
         if(cMA240 == 0) {
             return decision;
         }
@@ -35,31 +35,31 @@ public class MA240520 extends AbstractStrategy {
         TradingType currStatus = Status.getInstance().getStatus();
 
         if(cMA5 > cMA240) {
-            if(cMA5 > cMA20 && lMA5 <= lMA20) {
-                PutBuyingByThreshold(cMA5, cMA20, decision, currStatus);
+            if(cMA5 > cMA60 && lMA5 <= lMA60) {
+                PutBuyingByThreshold(cMA5, cMA60, decision, currStatus);
             }
-            if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus != TradingType.PUT_BUYING) {
-                PutBuyingByThreshold(cMA5, cMA20, decision, currStatus);
+            if(cMA5 > cMA60 && lMA5 > lMA60 && currStatus != TradingType.PUT_BUYING) {
+                PutBuyingByThreshold(cMA5, cMA60, decision, currStatus);
             }
-            if(cMA5 < cMA20 && lMA5 > lMA20) {
-                EmptyByThreshold(cMA5, cMA20, decision,currStatus);
+            if(cMA5 < cMA60 && lMA5 > lMA60) {
+                EmptyByThreshold(cMA5, cMA60, decision,currStatus);
             }
-            if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus != TradingType.EMPTY) {
-                EmptyByThreshold(cMA5, cMA20, decision,currStatus);
+            if(cMA5 < cMA60 && lMA5 < lMA60 && currStatus != TradingType.EMPTY) {
+                EmptyByThreshold(cMA5, cMA60, decision,currStatus);
             }
         }
         if(cMA5 < cMA240) {
-            if(cMA5 < cMA20 && lMA5 > lMA20) {
-                ShortSellingByThreshold(cMA5, cMA20, decision, currStatus);
+            if(cMA5 < cMA60 && lMA5 > lMA60) {
+                ShortSellingByThreshold(cMA5, cMA60, decision, currStatus);
             }
-            if(cMA5 < cMA20 && lMA5 < lMA20 && currStatus != TradingType.SHORT_SELLING) {
-                ShortSellingByThreshold(cMA5, cMA20, decision, currStatus);
+            if(cMA5 < cMA60 && lMA5 < lMA60 && currStatus != TradingType.SHORT_SELLING) {
+                ShortSellingByThreshold(cMA5, cMA60, decision, currStatus);
             }
-            if(cMA5 > cMA20 && lMA5 <= lMA20) {
-                EmptyByThreshold(cMA5, cMA20, decision, currStatus);
+            if(cMA5 > cMA60 && lMA5 <= lMA60) {
+                EmptyByThreshold(cMA5, cMA60, decision, currStatus);
             }
-            if(cMA5 > cMA20 && lMA5 > lMA20 && currStatus != TradingType.EMPTY) {
-                EmptyByThreshold(cMA5, cMA20, decision,currStatus);
+            if(cMA5 > cMA60 && lMA5 > lMA60 && currStatus != TradingType.EMPTY) {
+                EmptyByThreshold(cMA5, cMA60, decision,currStatus);
             }
         }
         return decision;
