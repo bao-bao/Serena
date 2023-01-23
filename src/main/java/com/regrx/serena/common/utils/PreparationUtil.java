@@ -84,7 +84,7 @@ public class PreparationUtil {
                 || type.startsWith("EG") || type.startsWith("PG") || type.startsWith("RR")
                 || type.startsWith("FU") || type.startsWith("RU") || type.startsWith("BU")
                 || type.startsWith("SP") || type.startsWith("RB") || type.startsWith("HC")
-                || type.startsWith("LU") || type.startsWith("NR")) {
+                || type.startsWith("LU") || type.startsWith("NR") || type.startsWith("SI")) {
             return FutureType.FUTURE_NIGHT_2300;
         }
         LogUtil.getInstance().severe("NO such breed called " + type);

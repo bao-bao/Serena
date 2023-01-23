@@ -36,6 +36,7 @@ public class DataService implements Runnable {
 
         FutureType breed = PreparationUtil.getBreed(type);
         LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
+        // https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var=/InnerFuturesNewService.getFewMinLine?symbol=RB0&type=15
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
         if(interval == IntervalEnum.MIN_2 || interval == IntervalEnum.MIN_3) {
