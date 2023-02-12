@@ -44,7 +44,7 @@ public class FindProfitMaxPercentReverse extends AbstractStrategy  {
             maxPrice = Math.min(price.getPrice(), maxPrice);
         }
         if (trend && (currentEMA.get(0) > currentEMA.get(1) && lastEMA.get(0) < lastEMA.get(1))) {
-            res.add((maxPrice - lastCross) / lastCross);
+            res.add((lastCross - maxPrice) / lastCross);
             lastCross = 0.0;
             maxPrice = 0.0;
             trend = false;
