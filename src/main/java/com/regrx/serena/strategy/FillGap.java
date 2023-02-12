@@ -27,9 +27,9 @@ public class FillGap extends AbstractStrategy {
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_MA_520, interval);
 
         MinutesData data = dataSvcMgr.queryData(interval);
-        MovingAverage MAs = data.getNewMAvgs();
+        MovingAverage MAs = data.getNewMAvg();
         double ref = data.getLastCrossPrice(MAEnum.MA5, MAEnum.MA20);
-//        double ref = data.getNewMAvgs().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
+//        double ref = data.getNewMAvg().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
         double currentPrice = data.getNewPrice();
 
         if(Status.getInstance().getStatus() != TradingType.EMPTY || ref == 0) {

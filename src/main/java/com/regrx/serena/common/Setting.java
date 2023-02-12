@@ -20,12 +20,16 @@ public class Setting {
 
     public static double FILL_GAP_THRESHOLD = 10;
 
+    // exponential moving average settings ( should be located within (0,1] )
+    public static final double[] EMA_ALPHA = {0.9, 0.7, 0.5, 0.3};
+
+    //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
+
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 500;   // unit is millisecond
 
     public static final int FOLLOW_RETRY_INTERVAL = 10000;
 
-    //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
     public static final int MAX_LENGTH = TEST_LABEL ? Integer.MAX_VALUE : 1000;
 
     public static final int MAX_DECISION_QUEUE_SIZE = 1;

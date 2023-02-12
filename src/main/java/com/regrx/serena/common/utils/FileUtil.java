@@ -99,7 +99,7 @@ public class FileUtil {
             writer.append(timeString).append(',');
             writer.append(String.format("%.2f", data.getNewPrice())).append(',');
 
-            MovingAverage movingAverage = data.getLastMAvgs();
+            MovingAverage movingAverage = data.getLastMAvg();
             writer.append(String.format("%.2f", movingAverage.getMA5())).append(',');
             writer.append(String.format("%.2f", movingAverage.getMA10())).append(',');
             writer.append(String.format("%.2f", movingAverage.getMA20())).append(',');

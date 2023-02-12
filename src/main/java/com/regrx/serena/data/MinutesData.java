@@ -7,36 +7,46 @@ import com.regrx.serena.common.utils.FileUtil;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.data.base.ExPrice;
+import com.regrx.serena.data.statistic.ExpMovingAverage;
 import com.regrx.serena.data.statistic.MovingAverage;
 import com.regrx.serena.data.statistic.PostAnalysis;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.LinkedList;
 
 public class MinutesData {
     private final IntervalEnum interval;
     private final LinkedList<ExPrice> prices;
     private final LinkedList<MovingAverage> mAvgs;
+    private final ExpMovingAverage expMAvgs;
     private final PostAnalysis postAnalysis;
     private int size;
-    private double lastPrice;
-    private MovingAverage lastMAvgs;
+    private MovingAverage lastMAvg;
+    private MovingAverage newMAvg;
+    private ArrayList<Double> lastEMAvg;
+    private ArrayList<Double> newEMAvg;
     private String lastRecordTime;
-    private double newPrice;
-    private MovingAverage newMAvgs;
     private String newRecordTime;
+    private double lastPrice;
+    private double newPrice;
 
     public MinutesData(IntervalEnum interval) {
         this.interval = interval;
         this.prices = new LinkedList<>();
         this.mAvgs = new LinkedList<>();
+        this.expMAvgs = new ExpMovingAverage();
         this.postAnalysis = new PostAnalysis();
         this.size = 0;
-        this.lastPrice = 0.0;
-        this.lastMAvgs = new MovingAverage();
+        this.lastMAvg = new MovingAverage();
+        this.newMAvg = new MovingAverage();
+        this.lastEMAvg = new ArrayList<>();
+        this.newEMAvg = new ArrayList<>();
         this.lastRecordTime = "NULL";
-        this.newPrice = 0.0;
-        this.newMAvgs = new MovingAverage();
         this.newRecordTime = "NULL";
+        this.lastPrice = 0.0;
+        this.newPrice = 0.0;
     }
 
     public void update(ExPrice newPrice, String type) {
@@ -58,9 +68,14 @@ public class MinutesData {
         newPrice = comingPrice.getPrice();
         this.updateList(prices, comingPrice);
 
-        lastMAvgs = newMAvgs;
-        newMAvgs = new MovingAverage(prices);
-        this.updateList(mAvgs, newMAvgs);
+        lastMAvg = newMAvg;
+        newMAvg = new MovingAverage(prices);
+        this.updateList(mAvgs, newMAvg);
+
+        lastEMAvg = new ArrayList<>(newEMAvg);
+        expMAvgs.update(comingPrice);
+        newEMAvg = expMAvgs.getAllCurrentEMA();
+
 
         postAnalysis.update(prices, mAvgs);
         size = prices.size();
@@ -85,6 +100,10 @@ public class MinutesData {
         return mAvgs;
     }
 
+    public ExpMovingAverage getExpMAvgs() {
+        return expMAvgs;
+    }
+
     public PostAnalysis getPostAnalysis() {
         return postAnalysis;
     }
@@ -97,24 +116,32 @@ public class MinutesData {
         return lastPrice;
     }
 
-    public MovingAverage getLastMAvgs() {
-        return lastMAvgs;
+    public double getNewPrice() {
+        return newPrice;
+    }
+
+    public MovingAverage getLastMAvg() {
+        return lastMAvg;
+    }
+
+    public MovingAverage getNewMAvg() {
+        return newMAvg;
     }
 
     public String getLastRecordTime() {
         return lastRecordTime;
     }
 
-    public double getNewPrice() {
-        return newPrice;
-    }
-
-    public MovingAverage getNewMAvgs() {
-        return newMAvgs;
-    }
-
     public String getNewRecordTime() {
         return newRecordTime;
+    }
+
+    public ArrayList<Double> getLastEMAvg() {
+        return lastEMAvg;
+    }
+
+    public ArrayList<Double> getNewEMAvg() {
+        return newEMAvg;
     }
 
     public TrendType getTrend() {

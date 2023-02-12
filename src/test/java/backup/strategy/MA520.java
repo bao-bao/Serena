@@ -26,8 +26,8 @@ public class MA520 extends AbstractStrategy {
         LogUtil.getInstance().info("Executing MA 520...");
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_MA_520, interval);
 
-        MovingAverage currentMA = dataSvcMgr.queryData(interval).getNewMAvgs();
-        MovingAverage lastMA = dataSvcMgr.queryData(interval).getLastMAvgs();
+        MovingAverage currentMA = dataSvcMgr.queryData(interval).getNewMAvg();
+        MovingAverage lastMA = dataSvcMgr.queryData(interval).getLastMAvg();
         double cMA5 = currentMA.getMA5();
         double cMA20 = currentMA.getMA20();
         double lMA5 = lastMA.getMA5();
