@@ -93,8 +93,8 @@ public class SerenaSimulation {
 
     public static void findRunner() {
         int EMALowerBound = 100;
-        int EMAUpperBound = 105;
-        int step = 2;
+        int EMAUpperBound = 500;
+        int step = 10;
         double threshold = 0.005;
 
         String filename = "find_percent_" + type + ".csv";
@@ -166,6 +166,7 @@ public class SerenaSimulation {
         controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_5);
         controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);

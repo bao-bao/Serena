@@ -1,6 +1,7 @@
 package SerenaSimulation;
 
 import SerenaSimulation.strategy.FindProfitMaxPercent;
+import SerenaSimulation.strategy.FindProfitMaxPercentReverse;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.IntervalEnum;
@@ -94,6 +95,10 @@ public class ControllerTest implements Runnable {
         }
         if(this.strategyMgr.containsStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT)) {
             ArrayList<Double> data = ((FindProfitMaxPercent)(this.strategyMgr.strategyList.get(StrategyEnum.STRATEGY_FIND_MAX_PERCENT))).getRes();
+            WriteFindPercent(filename, data);
+        }
+        if(this.strategyMgr.containsStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE)) {
+            ArrayList<Double> data = ((FindProfitMaxPercentReverse)(this.strategyMgr.strategyList.get(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE))).getRes();
             WriteFindPercent(filename, data);
         }
     }

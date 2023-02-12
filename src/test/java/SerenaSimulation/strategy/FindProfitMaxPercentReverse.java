@@ -8,14 +8,14 @@ import com.regrx.serena.data.base.ExPrice;
 
 import java.util.ArrayList;
 
-public class FindProfitMaxPercent extends AbstractStrategy  {
+public class FindProfitMaxPercentReverse extends AbstractStrategy  {
 
     ArrayList<Double> res;
     double maxPrice;
     double lastCross;
     boolean trend;
 
-    public FindProfitMaxPercent(IntervalEnum interval) {
+    public FindProfitMaxPercentReverse(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_FORCE_TRIGGER_PRIORITY);
         super.setName("Find");
         res = new ArrayList<>();
@@ -34,16 +34,16 @@ public class FindProfitMaxPercent extends AbstractStrategy  {
         if (lastEMA.size() == 0) {
             return decision;
         }
-        if (!trend && currentEMA.get(0) > currentEMA.get(1) && lastEMA.get(0) < lastEMA.get(1)) {
+        if (!trend && currentEMA.get(0) < currentEMA.get(1) && lastEMA.get(0) > lastEMA.get(1)) {
             maxPrice = price.getPrice();
             lastCross = price.getPrice();
             trend = true;
         }
 
         if (trend) {
-            maxPrice = Math.max(price.getPrice(), maxPrice);
+            maxPrice = Math.min(price.getPrice(), maxPrice);
         }
-        if (trend && (currentEMA.get(0) < currentEMA.get(1) && lastEMA.get(0) > lastEMA.get(1))) {
+        if (trend && (currentEMA.get(0) > currentEMA.get(1) && lastEMA.get(0) < lastEMA.get(1))) {
             res.add((maxPrice - lastCross) / lastCross);
             lastCross = 0.0;
             maxPrice = 0.0;
