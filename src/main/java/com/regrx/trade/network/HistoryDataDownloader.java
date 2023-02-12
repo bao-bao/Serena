@@ -22,10 +22,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class HistoryDataDownloader {
-
     public static MinutesData getHistoryData(String type, Integer interval, int breed) {
         String urlString = "https://stock2.finance.sina.com.cn/futures/api/jsonp.php" +
-                "/var%20list=" +
+                "/var=" +
                 "/InnerFuturesNewService.getFewMinLine?" +
                 "symbol=" + type + "&" +
                 "type=" + interval.toString();
