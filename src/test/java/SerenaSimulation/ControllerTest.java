@@ -1,6 +1,8 @@
 package SerenaSimulation;
 
+import SerenaSimulation.strategy.FindProfitMaxPercent;
 import com.regrx.serena.common.Setting;
+import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
@@ -10,6 +12,10 @@ import com.regrx.serena.common.utils.TradeUtil;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.Status;
 
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class ControllerTest implements Runnable {
@@ -18,6 +24,7 @@ public class ControllerTest implements Runnable {
     private final DataServiceManagerTest dataSvcMgr;
     private final StrategyManagerTest strategyMgr;
     private static ControllerTest controller;
+    public String filename;
 
     private static final ArrayBlockingQueue<Decision> decisionQueue = new ArrayBlockingQueue<>(Setting.MAX_DECISION_QUEUE_SIZE);
 
@@ -84,6 +91,22 @@ public class ControllerTest implements Runnable {
                     }
                 }
             }
+        }
+        if(this.strategyMgr.containsStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT)) {
+            ArrayList<Double> data = ((FindProfitMaxPercent)(this.strategyMgr.strategyList.get(StrategyEnum.STRATEGY_FIND_MAX_PERCENT))).getRes();
+            WriteFindPercent(filename, data);
+        }
+    }
+
+    public static void WriteFindPercent(String filename, ArrayList<Double> data) {
+        try (FileWriter writer = new FileWriter(filename, true)) {
+            writer.append(data.toString()).append("\n");
+        } catch (FileNotFoundException e) {
+            FileUtil.newFile(filename);
+            WriteFindPercent(filename, data);
+        } catch (IOException e) {
+            LogUtil.getInstance().severe("Error occurred when opening file \"" + filename);
+            System.exit(ErrorType.IO_ERROR_CODE.getCode());
         }
     }
 

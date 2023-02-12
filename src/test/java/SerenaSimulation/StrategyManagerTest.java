@@ -14,8 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class StrategyManagerTest {
-    private final HashMap<StrategyEnum, AbstractStrategy> strategyList;
-    private final HashMap<StrategyEnum, ForceTriggerStrategy> forceTriggerStrategyList;
+    final HashMap<StrategyEnum, AbstractStrategy> strategyList;
+    final HashMap<StrategyEnum, ForceTriggerStrategy> forceTriggerStrategyList;
     private final ArrayList<AfterCheckStrategy> afterCheckStrategyList;
     private static StrategyManagerTest strategyMgr;
 
@@ -69,6 +69,8 @@ public class StrategyManagerTest {
             case STRATEGY_ONLY_ONE_PER_DAY:
                 afterCheckStrategyList.add(new OnlyOnePerDay());
                 break;
+            case STRATEGY_FIND_MAX_PERCENT:
+                strategyList.put(strategy, new FindProfitMaxPercent(interval));
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;
@@ -114,13 +116,10 @@ public class StrategyManagerTest {
     }
 
     public Decision execute(ExPrice newPrice) {
-        Calendar currTime = Calendar.getInstance();
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat(Setting.TIME_PATTERN);
-            currTime.setTime(dateFormat.parse(newPrice.getTime()));
-        } catch (ParseException ignored) {}
-        int currMinute = currTime.get(Calendar.MINUTE);
-        int currHour = currTime.get(Calendar.HOUR_OF_DAY);
+        String[] timeStr = newPrice.getTime().split(",")[0].split(" ")[1].split(":");
+
+        int currHour = Integer.parseInt(timeStr[0]);
+        int currMinute = Integer.parseInt(timeStr[1]);
 
         PriorityQueue<AbstractStrategy> strategyQueue = new PriorityQueue<>();
         if(!((currHour == 14 && currMinute > 56) || (currHour == 15 && currMinute == 0))) {

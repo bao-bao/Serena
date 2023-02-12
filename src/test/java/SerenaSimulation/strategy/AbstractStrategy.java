@@ -7,6 +7,8 @@ import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 
+import java.util.ArrayList;
+
 public abstract class AbstractStrategy implements Comparable<AbstractStrategy> {
     protected String name;
     protected IntervalEnum interval;

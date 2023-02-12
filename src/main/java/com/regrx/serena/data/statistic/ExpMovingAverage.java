@@ -55,7 +55,7 @@ public class ExpMovingAverage {
     public ExpMovingAverage() {
         EMA = new ArrayList<>();
         for (double alpha : Setting.EMA_ALPHA) {
-            EMA.add(new ExpMovingAverageBasic(alpha));
+            EMA.add(new ExpMovingAverageBasic(2 / (alpha + 1)));
         }
     }
     public void update(ExPrice newPrice) {

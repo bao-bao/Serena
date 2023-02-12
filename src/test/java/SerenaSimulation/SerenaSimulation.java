@@ -4,13 +4,15 @@ import SerenaSimulation.profit.ParaCombination;
 import SerenaSimulation.profit.ProfitCal;
 import SerenaSimulation.profit.TestResult;
 import com.regrx.serena.common.Setting;
+import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.utils.FileUtil;
+import com.regrx.serena.common.utils.LogUtil;
+import org.apache.commons.io.input.ReversedLinesFileReader;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -18,11 +20,12 @@ import java.util.Collections;
 import java.util.PriorityQueue;
 
 public class SerenaSimulation {
-    public static String type = "IC2212";
+    public static String type = "IM1234";
 
     public static void main(String[] args) {
-        runner();
+//        runner();
 //        simulation();
+        findRunner();
     }
 
 
@@ -88,6 +91,71 @@ public class SerenaSimulation {
         outputToCsv(resList, type + '_' + Calendar.getInstance().getTime().getTime());
     }
 
+    public static void findRunner() {
+        int EMALowerBound = 100;
+        int EMAUpperBound = 105;
+        int step = 2;
+        double threshold = 0.005;
+
+        String filename = "find_percent_" + type + ".csv";
+        FileUtil.newFile(filename);
+        for(int i = EMALowerBound; i < EMAUpperBound; i += step) {
+            for(int j = i + step; j < EMAUpperBound; j += step) {
+
+                try (FileWriter writer = new FileWriter(filename, true)) {
+                    writer.append(Integer.toString(i)).append("  ").append(Integer.toString(j)).append("  ");
+                } catch (FileNotFoundException ignored) {
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Setting.EMA_ALPHA[0] = i;
+                Setting.EMA_ALPHA[1] = j;
+                simulation();
+                try {
+                    Thread.sleep(500);
+                    ControllerTest.stop();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        parseFindRunner(EMALowerBound, EMAUpperBound, step, threshold);
+    }
+
+    public static void parseFindRunner(int lower, int upper, int step, double threshold) {
+        double maxPercent = 0.0;
+        int maxLine = 0;
+
+
+        String filename = "find_percent_" + type + ".csv";
+        int count = 0;
+        try (BufferedReader reader = new BufferedReader(new FileReader(filename))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                count++;
+                if(!line.equals("")) {
+                    String doubleArray = line.strip().split("  ")[2];
+                    String[] strArray = doubleArray.substring(1, doubleArray.length()-2).split(", ");
+                    double exceedCount = 0;
+                    for(String str : strArray) {
+                        if(Double.parseDouble(str) > threshold) {
+                            exceedCount++;
+                        }
+                    }
+                    double percent = exceedCount / strArray.length;
+                    if(percent > maxPercent) {
+                        maxPercent = percent;
+                        maxLine = count;
+                    }
+                }
+            }
+            System.out.println("Max Percent is " + String.format("%.2f", maxPercent * 100) + "%, Line is " + maxLine);
+        } catch (IOException ignored) {
+        }
+    }
+
     public static void simulation() {
         String type = SerenaSimulation.type;
 
@@ -95,15 +163,18 @@ public class SerenaSimulation {
 
         ControllerTest controller = ControllerTest.getInstance(type);
 
-//        controller.addDataTrack(IntervalEnum.MIN_1);
+        controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
+        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
+//        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
-        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
+//        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
 
+
+        controller.filename = "find_percent_" + type + ".csv";
         controller.run();
     }
 

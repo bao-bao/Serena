@@ -21,7 +21,7 @@ public class Setting {
     public static double FILL_GAP_THRESHOLD = 10;
 
     // exponential moving average settings ( should be located within (0,1] )
-    public static final double[] EMA_ALPHA = {0.9, 0.7, 0.5, 0.3};
+    public static double[] EMA_ALPHA = {100, 200, 30};
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 
