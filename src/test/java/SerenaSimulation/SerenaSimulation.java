@@ -136,19 +136,23 @@ public class SerenaSimulation {
             while ((line = reader.readLine()) != null) {
                 count++;
                 if(!line.equals("")) {
-                    String doubleArray = line.strip().split("  ")[2];
-                    String[] strArray = doubleArray.substring(1, doubleArray.length()-2).split(", ");
-                    double exceedCount = 0;
-                    for(String str : strArray) {
-                        if(Double.parseDouble(str) > threshold) {
-                            exceedCount++;
+                    String[] stringArray = line.strip().split("  ");
+                    if(stringArray.length == 3) {
+                        String doubleArray = stringArray[2];
+                        String[] strArray = doubleArray.substring(1, doubleArray.length()-1).split(", ");
+                        double exceedCount = 0;
+                        for(String str : strArray) {
+                            if(Double.parseDouble(str) > threshold) {
+                                exceedCount++;
+                            }
+                        }
+                        double percent = exceedCount / strArray.length;
+                        if(percent > maxPercent) {
+                            maxPercent = percent;
+                            maxLine = count;
                         }
                     }
-                    double percent = exceedCount / strArray.length;
-                    if(percent > maxPercent) {
-                        maxPercent = percent;
-                        maxLine = count;
-                    }
+
                 }
             }
             System.out.println("Max Percent is " + String.format("%.2f", maxPercent * 100) + "%, Line is " + maxLine);
