@@ -51,13 +51,13 @@ public class BasicEMAForUp extends AbstractStrategy {
 //                return decision;
 //            }
 
-            if (profit < 0 && Math.abs(profit) > Setting.EMA_LOSS_LIMIT * lastCrossPrice) {
+            if (profit < 0 && Math.abs(profit) >= Setting.EMA_LOSS_LIMIT * lastCrossPrice) {
                 reset();
                 decision.make(TradingType.EMPTY, "EMA loss limit");
                 return decision;
             }
 
-            if (profitMaximum > Setting.EMA_PROFIT_THRESHOLD * lastCrossPrice && profit < Setting.EMA_PROFIT_LIMIT * profitMaximum) {
+            if (profitMaximum > Setting.EMA_PROFIT_THRESHOLD * lastCrossPrice && profit <= Setting.EMA_PROFIT_LIMIT * profitMaximum) {
                 reset();
                 decision.make(TradingType.EMPTY, "EMA profit limit");
                 return decision;

@@ -53,39 +53,45 @@ public class SerenaSimulation {
     public static void EMARunner() {
         int EMALowerBound = 410;
         int EMAUpperBound = 490;
-        int step = 10;
-        double profitThreshold = 0.002;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double profitLimit = 0.7;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double lossLimit = 0.01;           // 损失超过开仓时收盘价的 x% 就平仓
+        int step = 80;
+        double[] profitThreshold = {0.002};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] profitLimit = {1};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] lossLimit = {1};           // 损失超过开仓时收盘价的 x% 就平仓
 
         // 下面代码不要动
-        Setting.EMA_PROFIT_THRESHOLD = profitThreshold;
-        Setting.EMA_PROFIT_LIMIT = profitLimit;
-        Setting.EMA_LOSS_LIMIT = lossLimit;
         ArrayList<double[]> EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step);
 
-        PriorityQueue<EMACombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
+        PriorityQueue<EMACombination> queue = new PriorityQueue<>(50, Collections.reverseOrder());
         for(double[] EMA : EMAs) {
-            Setting.EMA_ALPHA = EMA;
-            simulation();
-            try {
-                Thread.sleep(500);
-                ControllerTest.stop();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            EMACombination newRes = new EMACombination(EMA);
-            newRes.setProfit(ProfitCal.cal(type));
-            queue.add(newRes);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for (double pThres : profitThreshold) {
+                for(double pLimit : profitLimit) {
+                    for (double lLimit : lossLimit) {
+                        Setting.EMA_PROFIT_THRESHOLD = pThres;
+                        Setting.EMA_PROFIT_LIMIT = pLimit;
+                        Setting.EMA_LOSS_LIMIT = lLimit;
+                        Setting.EMA_ALPHA = EMA;
+                        simulation();
+                        try {
+                            Thread.sleep(500);
+                            ControllerTest.stop();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                        EMACombination newRes = new EMACombination(EMA, pThres, pLimit, lLimit);
+                        newRes.setProfit(ProfitCal.cal(type));
+                        queue.add(newRes);
+                        try {
+                            Thread.sleep(500);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         }
         ArrayList<EMACombination> resList = new ArrayList<>();
-        System.out.println("\nTop 10 Best Parameters: ");
-        for (int i = 0; i < 10; i++) {
+        System.out.println("\nTop 50 Best Parameters: ");
+        for (int i = 0; i < 50; i++) {
             EMACombination candidate = queue.poll();
             if (candidate != null) {
                 resList.add(candidate);
@@ -111,7 +117,7 @@ public class SerenaSimulation {
         double[] MA520Para = {0.0};
         double[] fillPara = {10.0};
 
-        PriorityQueue<ParaCombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
+        PriorityQueue<ParaCombination> queue = new PriorityQueue<>(50, Collections.reverseOrder());
         for (double lossLimit : lossLimitPara) {
             for (double profitLimit : profitLimitPara) {
                 for (double restore : restorePara) {
@@ -145,9 +151,9 @@ public class SerenaSimulation {
         }
 
         ArrayList<ParaCombination> resList = new ArrayList<>();
-        System.out.println("\nTop 10 Best Parameters: ");
+        System.out.println("\nTop 50 Best Parameters: ");
         System.out.println("Total Profit\tParameters\t\t\t\t\t\t\tPut P\tPut L\tShort P\tShort L\tTotal\tCont. Loss\tOccurred");
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 50; i++) {
             ParaCombination candidate = queue.poll();
             if (candidate != null) {
                 resList.add(candidate);
