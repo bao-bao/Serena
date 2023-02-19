@@ -75,6 +75,12 @@ public class StrategyManagerTest {
             case STRATEGY_FIND_MAX_PERCENT_REVERSE:
                 strategyList.put(strategy, new FindProfitMaxPercentReverse(interval));
                 break;
+            case STRATEGY_BASIC_EMA_FOR_UP:
+                strategyList.put(strategy, new BasicEMAForUp(interval));
+                break;
+            case STRATEGY_BASIC_EMA_FOR_DOWN:
+                strategyList.put(strategy, new BasicEMAForDown(interval));
+                break;
 
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");

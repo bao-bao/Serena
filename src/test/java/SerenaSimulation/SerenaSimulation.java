@@ -1,18 +1,15 @@
 package SerenaSimulation;
 
+import SerenaSimulation.profit.EMACombination;
 import SerenaSimulation.profit.ParaCombination;
 import SerenaSimulation.profit.ProfitCal;
 import SerenaSimulation.profit.TestResult;
 import com.regrx.serena.common.Setting;
-import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.utils.FileUtil;
-import com.regrx.serena.common.utils.LogUtil;
-import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -25,7 +22,78 @@ public class SerenaSimulation {
     public static void main(String[] args) {
 //        runner();
 //        simulation();
-        findRunner();
+//        findRunner();
+        EMARunner();
+    }
+
+    public static void simulation() {
+        String type = SerenaSimulation.type;
+
+        clearTradeHistory(type);
+
+        ControllerTest controller = ControllerTest.getInstance(type);
+
+        controller.addDataTrack(IntervalEnum.MIN_1);
+//        controller.addDataTrack(IntervalEnum.MIN_5);
+        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
+//        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
+//        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
+//        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
+
+        controller.filename = "find_percent_" + type + ".csv";
+        controller.run();
+    }
+
+    public static void EMARunner() {
+        int EMALowerBound = 410;
+        int EMAUpperBound = 490;
+        int step = 10;
+        double profitThreshold = 0.002;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double profitLimit = 0.7;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double lossLimit = 0.01;           // 损失超过开仓时收盘价的 x% 就平仓
+
+        // 下面代码不要动
+        Setting.EMA_PROFIT_THRESHOLD = profitThreshold;
+        Setting.EMA_PROFIT_LIMIT = profitLimit;
+        Setting.EMA_LOSS_LIMIT = lossLimit;
+        ArrayList<double[]> EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step);
+
+        PriorityQueue<EMACombination> queue = new PriorityQueue<>(10, Collections.reverseOrder());
+        for(double[] EMA : EMAs) {
+            Setting.EMA_ALPHA = EMA;
+            simulation();
+            try {
+                Thread.sleep(500);
+                ControllerTest.stop();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            EMACombination newRes = new EMACombination(EMA);
+            newRes.setProfit(ProfitCal.cal(type));
+            queue.add(newRes);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        ArrayList<EMACombination> resList = new ArrayList<>();
+        System.out.println("\nTop 10 Best Parameters: ");
+        for (int i = 0; i < 10; i++) {
+            EMACombination candidate = queue.poll();
+            if (candidate != null) {
+                resList.add(candidate);
+            }
+        }
+        for (EMACombination res : resList) {
+            System.out.println(res);
+        }
     }
 
 
@@ -158,29 +226,6 @@ public class SerenaSimulation {
             System.out.println("Max Percent is " + String.format("%.2f", maxPercent * 100) + "%, Line is " + maxLine);
         } catch (IOException ignored) {
         }
-    }
-
-    public static void simulation() {
-        String type = SerenaSimulation.type;
-
-        clearTradeHistory(type);
-
-        ControllerTest controller = ControllerTest.getInstance(type);
-
-        controller.addDataTrack(IntervalEnum.MIN_1);
-//        controller.addDataTrack(IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
-//        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
-//        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
-//        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
-
-
-        controller.filename = "find_percent_" + type + ".csv";
-        controller.run();
     }
 
     private static void clearTradeHistory(String type) {

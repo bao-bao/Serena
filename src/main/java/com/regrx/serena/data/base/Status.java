@@ -10,6 +10,7 @@ public class Status {
     private int count;              // 持有手数（暂无作用）
     private TradingType status;     // 当前交易方向
     private TrendType trend;        // 走势（MA）
+    private TrendType trendEMA;        // 走势（EMA）
     private IntervalEnum interval;  // 上次交易使用数据间隔
     private StrategyEnum strategy;  // 上次交易使用逻辑
     private double lastTradePrice;  // 上次交易价格
@@ -49,6 +50,14 @@ public class Status {
 
     public void setTrend(TrendType trend) {
         this.trend = trend;
+    }
+
+    public TrendType getTrendEMA() {
+        return trendEMA;
+    }
+
+    public void setTrendEMA(TrendType trendEMA) {
+        this.trendEMA = trendEMA;
     }
 
     public int getCount() {

@@ -20,8 +20,14 @@ public class Setting {
 
     public static double FILL_GAP_THRESHOLD = 10;
 
-    // exponential moving average settings ( should be located within (0,1] )
-    public static double[] EMA_ALPHA = {100, 200, 30};
+    // exponential moving average settings ( should be falling within (0,1] )
+    public static double[] EMA_ALPHA = {410, 490, 100, 200};
+
+    public static double EMA_PROFIT_THRESHOLD = 0.02;
+
+    public static double EMA_PROFIT_LIMIT = 0.6;
+
+    public static double EMA_LOSS_LIMIT = 0.01;
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 
@@ -56,6 +62,8 @@ public class Setting {
     public static final int DEFAULT_MA_240_PRIORITY = 100;
 
     public static final int DEFAULT_MA_240_520_PRIORITY = 200;
+
+    public static final int DEFAULT_BASIC_EMA_PRIORITY = 100;
 
     // only one per day
     public static final int PUT_BUYING_LIMIT = 1;

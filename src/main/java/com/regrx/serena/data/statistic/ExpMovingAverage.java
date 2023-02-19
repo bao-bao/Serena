@@ -47,6 +47,14 @@ public class ExpMovingAverage {
                 return 0.0;
             }
         }
+
+        public double getAlpha() {
+            return alpha;
+        }
+
+        public int getSize() {
+            return historyEMA.size();
+        }
     }
 
 
@@ -69,14 +77,23 @@ public class ExpMovingAverage {
     }
 
     public int getSize() {
-        return EMA.size();
+        if (EMA.size() == 0) {
+            return 0;
+        }
+        return EMA.get(0).getSize();
     }
 
     public double getCurrentEMAByEnum(EMAEnum index) {
+        if (index == EMAEnum.EMA_NULL) {
+            return 0.0;
+        }
         return EMA.get(index.getValue()).currentEMA;
     }
 
     public double getHistoryEMAByEnum(EMAEnum index, int past) {
+        if (index == EMAEnum.EMA_NULL) {
+            return 0.0;
+        }
         return  EMA.get(index.getValue()).getHistoryEMA(past);
     }
 

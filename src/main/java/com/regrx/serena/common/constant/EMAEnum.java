@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EMAEnum {
-    EMA_1(1),
-    EMA_2(2),
-    EMA_3(3),
-    EMA_4(4),
-    EMA_NULL(0);
+    UP_SHORT_TERM_EMA(0),
+    UP_LONG_TERM_EMA(1),
+    DOWN_SHORT_TERM_EMA(2),
+    DOWN_LONG_TERM_EMA(3),
+    EMA_NULL(-1);
 
     private final int value;
 
