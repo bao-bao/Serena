@@ -81,6 +81,10 @@ public class StrategyManagerTest {
             case STRATEGY_BASIC_EMA_FOR_DOWN:
                 strategyList.put(strategy, new BasicEMAForDown(interval));
                 break;
+            case STRATEGY_EMA_520:
+                strategyList.put(strategy, new EMA520(interval));
+                break;
+
 
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");

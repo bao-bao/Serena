@@ -51,9 +51,9 @@ public class SerenaSimulation {
     }
 
     public static void EMARunner() {
-        int EMALowerBound = 410;
+        int EMALowerBound = 420;
         int EMAUpperBound = 490;
-        int step = 80;
+        int step = 70;
         double[] profitThreshold = {0.002};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
         double[] profitLimit = {1};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
         double[] lossLimit = {1};           // 损失超过开仓时收盘价的 x% 就平仓
