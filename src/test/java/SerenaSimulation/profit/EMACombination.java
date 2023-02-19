@@ -17,14 +17,18 @@ public class EMACombination implements Comparable<EMACombination> {
         this.lossLimit = lossLimit;
     }
 
-    public static ArrayList<double[]> generateEMA(int lower, int upper, int step) {
+    public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean both) {
         ArrayList<double[]> res = new ArrayList<>();
         for(int upLower = lower; upLower <= upper; upLower += step) {
             for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
-                for(int downLower = lower; downLower <= upper; downLower += step) {
-                    for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
-                        res.add(new double[]{upLower, upUpper, downLower, downUpper});
+                if(both) {
+                    for(int downLower = lower; downLower <= upper; downLower += step) {
+                        for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
+                            res.add(new double[]{upLower, upUpper, downLower, downUpper});
+                        }
                     }
+                } else {
+                    res.add(new double[]{upLower, upUpper, 0, 0});
                 }
             }
         }

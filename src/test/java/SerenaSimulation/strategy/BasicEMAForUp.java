@@ -37,7 +37,7 @@ public class BasicEMAForUp extends AbstractStrategy {
             lastCrossPrice = price.getPrice();
             inTrade = true;
             Status.getInstance().setTrendEMA(TrendType.TREND_UP);
-            decision.make(TradingType.PUT_BUYING, "EMA cross up");
+            decision.make(TradingType.SHORT_SELLING, "EMA cross up");
             return decision;
         }
 
