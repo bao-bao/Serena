@@ -12,6 +12,7 @@ public class FindProfitMaxPercent extends AbstractStrategy  {
 
     ArrayList<Double> res;
     double maxPrice;
+    double minPrice;
     double lastCross;
     boolean trend;
 
@@ -20,6 +21,7 @@ public class FindProfitMaxPercent extends AbstractStrategy  {
         super.setName("Find");
         res = new ArrayList<>();
         maxPrice = 0.0;
+        minPrice = 0.0;
         lastCross = 0.0;
         trend = false;
     }
@@ -36,17 +38,20 @@ public class FindProfitMaxPercent extends AbstractStrategy  {
         }
         if (!trend && currentEMA.get(0) > currentEMA.get(1) && lastEMA.get(0) < lastEMA.get(1)) {
             maxPrice = price.getPrice();
+            minPrice = price.getPrice();
             lastCross = price.getPrice();
             trend = true;
         }
 
         if (trend) {
             maxPrice = Math.max(price.getPrice(), maxPrice);
+            minPrice = Math.min(price.getPrice(), minPrice);
         }
         if (trend && (currentEMA.get(0) < currentEMA.get(1) && lastEMA.get(0) > lastEMA.get(1))) {
-            res.add((maxPrice - lastCross) / lastCross);
+            res.add((minPrice - lastCross) / lastCross);
             lastCross = 0.0;
             maxPrice = 0.0;
+            minPrice = 0.0;
             trend = false;
         }
         return decision;

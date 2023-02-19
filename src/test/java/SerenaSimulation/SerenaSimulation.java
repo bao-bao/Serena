@@ -20,9 +20,9 @@ public class SerenaSimulation {
     public static String type = "IM1234";
 
     public static void main(String[] args) {
-        runner();
+//        runner();
 //        simulation();
-//        findRunner();
+        findRunner();
 //        EMARunner();
     }
 
@@ -37,12 +37,12 @@ public class SerenaSimulation {
 //        controller.addDataTrack(IntervalEnum.MIN_5);
 //        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_EMA_520, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_EMA_520, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
 //        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
@@ -169,14 +169,14 @@ public class SerenaSimulation {
 
     public static void findRunner() {
         int EMALowerBound = 100;
-        int EMAUpperBound = 500;
+        int EMAUpperBound = 110;
         int step = 10;
-        double threshold = 0.005;
+        double threshold = -0.002;
 
         String filename = "find_percent_" + type + ".csv";
         FileUtil.newFile(filename);
-        for(int i = EMALowerBound; i < EMAUpperBound; i += step) {
-            for(int j = i + step; j < EMAUpperBound; j += step) {
+        for(int i = EMALowerBound; i <= EMAUpperBound; i += step) {
+            for(int j = i + step; j <= EMAUpperBound; j += step) {
 
                 try (FileWriter writer = new FileWriter(filename, true)) {
                     writer.append(Integer.toString(i)).append("  ").append(Integer.toString(j)).append("  ");
@@ -201,7 +201,7 @@ public class SerenaSimulation {
     }
 
     public static void parseFindRunner(int lower, int upper, int step, double threshold) {
-        double maxPercent = 0.0;
+        double maxPercent = 1.0;
         int maxLine = 0;
 
 
@@ -218,12 +218,12 @@ public class SerenaSimulation {
                         String[] strArray = doubleArray.substring(1, doubleArray.length()-1).split(", ");
                         double exceedCount = 0;
                         for(String str : strArray) {
-                            if(Double.parseDouble(str) > threshold) {
+                            if(Double.parseDouble(str) < threshold) {
                                 exceedCount++;
                             }
                         }
                         double percent = exceedCount / strArray.length;
-                        if(percent > maxPercent) {
+                        if(percent < maxPercent) {
                             maxPercent = percent;
                             maxLine = count;
                         }
@@ -231,7 +231,7 @@ public class SerenaSimulation {
 
                 }
             }
-            System.out.println("Max Percent is " + String.format("%.2f", maxPercent * 100) + "%, Line is " + maxLine);
+            System.out.println("Min Percent is " + String.format("%.2f", maxPercent * 100) + "%, Line is " + maxLine);
         } catch (IOException ignored) {
         }
     }
