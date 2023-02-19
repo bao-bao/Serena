@@ -63,6 +63,15 @@ public class StrategyManager {
             case STRATEGY_ONLY_ONE_PER_DAY:
                 afterCheckStrategyList.add(new OnlyOnePerDay());
                 break;
+            case STRATEGY_BASIC_EMA_FOR_UP:
+                strategyList.put(strategy, new BasicEMAForUp(interval));
+                break;
+            case STRATEGY_BASIC_EMA_FOR_DOWN:
+                strategyList.put(strategy, new BasicEMAForDown(interval));
+                break;
+            case STRATEGY_EMA_520:
+                strategyList.put(strategy, new EMA520(interval));
+                break;
             default:
                 LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;

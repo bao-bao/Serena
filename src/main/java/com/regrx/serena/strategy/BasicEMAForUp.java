@@ -1,4 +1,4 @@
-package SerenaSimulation.strategy;
+package com.regrx.serena.strategy;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.*;
