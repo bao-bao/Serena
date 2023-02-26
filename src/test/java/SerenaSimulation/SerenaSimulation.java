@@ -35,7 +35,7 @@ public class SerenaSimulation {
 
         controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_5);
-//        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
@@ -57,12 +57,17 @@ public class SerenaSimulation {
         int EMALowerBound = 40;
         int EMAUpperBound = 160;
         int step = 120;
+        double[] EMA_ALPHA = {410, 490, 100, 200};
         double[] profitThreshold = {0.008};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
         double[] profitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
         double[] lossLimit = {0.005};           // 损失超过开仓时收盘价的 x% 就平仓
-
         // 下面代码不要动
-        ArrayList<double[]> EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
+        ArrayList<double[]> EMAs = new ArrayList<>();
+        if (upSide & downSide) {
+            EMAs.add(EMA_ALPHA);
+        } else {
+            EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
+        }
 
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(50, Collections.reverseOrder());
         for(double[] EMA : EMAs) {
