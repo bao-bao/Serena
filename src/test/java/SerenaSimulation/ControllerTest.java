@@ -77,9 +77,9 @@ public class ControllerTest implements Runnable {
                 }
                 Decision decision = decisionQueue.poll();
                 if(decision != null) {
-                    LogUtil.getInstance().info("Decision in this minute: " + decision);
+                    //LogUtil.getInstance().info("Decision in this minute: " + decision);
                     if(decision.isExecute()) {
-                        LogUtil.getInstance().info("Perform trade...");
+                        //LogUtil.getInstance().info("Perform trade...");
                         if((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
                                 (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
                             Decision emptyDecision = new Decision();
@@ -121,7 +121,7 @@ public class ControllerTest implements Runnable {
 
     public void addDataTrack(IntervalEnum interval) {
         dataSvcMgr.addDataTrackThread(interval);
-        LogUtil.getInstance().info("Successful add data service for " + interval + " min(s) interval");
+        //LogUtil.getInstance().info("Successful add data service for " + interval + " min(s) interval");
     }
 
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {

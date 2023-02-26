@@ -29,7 +29,7 @@ public class ParamTest {
                     if(!file.exists() || file.delete()) {
                         MockDataTrack dataTrack = new MockDataTrack(filename, Constant.MIN_5);
                         dataTrack.track();
-                        profits[p][l][r] = ProfitCal.cal(filename);
+                        profits[p][l][r] = ProfitCal.cal(filename, true);
                     } else {
                         System.out.println("Error at: " + p + " " + l + " " + r);
                     }

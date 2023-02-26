@@ -30,7 +30,7 @@ public class DataServiceTest implements Runnable {
 
     @Override
     public void run() {
-        LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
+        //LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
         BufferedReader reader;
         ExPrice newPrice;
         try {
@@ -71,9 +71,9 @@ public class DataServiceTest implements Runnable {
             return;
         }
 
-        LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");
+        //LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");
         Decision decision = StrategyManagerTest.getInstance().execute(newPrice);
-        LogUtil.getInstance().info("Decision making complete!");
+        //LogUtil.getInstance().info("Decision making complete!");
 
         ArrayBlockingQueue<Decision> queue;
         synchronized (queue = ControllerTest.getDecisionQueue()) {

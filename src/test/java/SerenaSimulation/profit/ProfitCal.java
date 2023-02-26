@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.PriorityQueue;
 
 public class ProfitCal {
-    public static TestResult cal(String filename) {
+    public static TestResult cal(String filename, boolean outputDetail) {
         TestResult testResult = new TestResult();
         int status = 0;
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
@@ -82,24 +82,27 @@ public class ProfitCal {
         profit = profit - (lineCount / 2 * 1.1);
 
         System.out.println("Profit: " + String.format("%.2f", profit));
-        System.out.println("Final Status: " + (status == 1 ? "PutBuying" : status == 2 ? "ShortSelling" : "Empty"));
-        System.out.println("Profit Count: " + (putProfitCount + shortProfitCount) + "\t" + "Loss Count: " + (putLossCount + shortLossCount));
 
-        for (int i = 0; i < count; i++) {
-            SingleTrade trade = trades.poll();
-            if (trade != null) {
-                System.out.println(trade.openTime + "," + trade.closeTime + "," +
-                        trade.tradeType + "," + String.format("%.2f", trade.profit) +
-                        ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
+        if(outputDetail) {
+            System.out.println("Final Status: " + (status == 1 ? "PutBuying" : status == 2 ? "ShortSelling" : "Empty"));
+            System.out.println("Profit Count: " + (putProfitCount + shortProfitCount) + "\t" + "Loss Count: " + (putLossCount + shortLossCount));
+
+            for (int i = 0; i < count; i++) {
+                SingleTrade trade = trades.poll();
+                if (trade != null) {
+                    System.out.println(trade.openTime + "," + trade.closeTime + "," +
+                            trade.tradeType + "," + String.format("%.2f", trade.profit) +
+                            ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
+                }
             }
+
+            System.out.println("\n\t\tPut\tShort");
+            System.out.println("Loss\t" + putLossCount + "\t" + shortLossCount);
+            System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
+
+            System.out.println();
+            System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinuousLoss) + ", Occurred until: " + maximumContinuousLossTime);
         }
-
-        System.out.println("\n\t\tPut\tShort");
-        System.out.println("Loss\t" + putLossCount + "\t" + shortLossCount);
-        System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
-
-        System.out.println();
-        System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinuousLoss) + ", Occurred until: " + maximumContinuousLossTime);
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
         testResult.setShortProfit(shortProfitCount);

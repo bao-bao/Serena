@@ -42,7 +42,7 @@ public class LogUtil {
 
     public static void tradeLog(String type, Decision decision) {
         FileUtil.writeTradeHistory("Trade_" + type, basicTradeLog(decision));
-        logger.info(basicTradeLog(decision));
+        //logger.info(basicTradeLog(decision));
     }
 
 }

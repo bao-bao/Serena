@@ -73,10 +73,10 @@ public class FileUtil {
                 }
             }
         } catch (FileNotFoundException e) {
-            LogUtil.getInstance().warning("No trade history named " + file.getName() + ", file will be created soon");
+            //LogUtil.getInstance().warning("No trade history named " + file.getName() + ", file will be created soon");
             newFile(file.getName());
         } catch (IOException e) {
-            LogUtil.getInstance().severe("Error occurred when opening file \"" + file.getName() + "\"");
+            //LogUtil.getInstance().severe("Error occurred when opening file \"" + file.getName() + "\"");
             System.exit(ErrorType.IO_ERROR_CODE.getCode());
         }
         return result;
@@ -85,9 +85,9 @@ public class FileUtil {
 
     public static void newFile(String filename) {
         try (PrintWriter ignored = new PrintWriter(filename)) {
-            LogUtil.getInstance().info("new file \"" + filename + "\" compete!");
+            //LogUtil.getInstance().info("new file \"" + filename + "\" compete!");
         } catch (FileNotFoundException e) {
-            LogUtil.getInstance().severe("Error occurred when creating file \"" + filename + "\"");
+            //LogUtil.getInstance().severe("Error occurred when creating file \"" + filename + "\"");
             System.exit(ErrorType.IO_ERROR_CODE.getCode());
         }
     }

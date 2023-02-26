@@ -37,7 +37,7 @@ public class DataServiceManagerTest {
 
     public void addDataTrackThread(IntervalEnum interval) {
         if(dataRef.containsKey(interval)) {
-            LogUtil.getInstance().warning("Already tracking on " + type + " for " + interval.getValue() + "minute(s) interval");
+            //LogUtil.getInstance().warning("Already tracking on " + type + " for " + interval.getValue() + "minute(s) interval");
             return;
         }
         DataServiceTest dataService = new DataServiceTest(type, interval);

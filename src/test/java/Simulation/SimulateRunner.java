@@ -13,7 +13,7 @@ public class SimulateRunner {
         if(!file.exists() || file.delete()) {
             MockDataTrack dataTrack = new MockDataTrack(filename, Constant.MIN_5);
             dataTrack.track();
-            ProfitCal.cal(filename);
+            ProfitCal.cal(filename, true);
         }
     }
 }

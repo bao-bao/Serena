@@ -38,7 +38,7 @@ public class StrategyManagerTest {
 
     public boolean addStrategy(StrategyEnum strategy, IntervalEnum interval) {
         if (strategyList.containsKey(strategy) || forceTriggerStrategyList.containsKey(strategy)) {
-            LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
+            //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
             return false;
         }
         switch (strategy) {
@@ -87,23 +87,23 @@ public class StrategyManagerTest {
 
 
             default:
-                LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
+                //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;
         }
-        LogUtil.getInstance().info("Successful add strategy " + strategy);
+        //LogUtil.getInstance().info("Successful add strategy " + strategy);
         return true;
     }
 
     public boolean addStrategy(StrategyEnum strategy, ForceTriggerStrategy newStrategy) {
         if (forceTriggerStrategyList.containsKey(strategy)) {
-            LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
+            //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
             return false;
         }
         if (newStrategy == null) {
             return false;
         }
         forceTriggerStrategyList.put(strategy, newStrategy);
-        LogUtil.getInstance().info("Successful add strategy " + strategy);
+        //LogUtil.getInstance().info("Successful add strategy " + strategy);
         return true;
     }
 
@@ -153,7 +153,7 @@ public class StrategyManagerTest {
             }
         }
 
-        LogUtil.getInstance().info(strategyQueue.size() + " strategies will be in use at " + newPrice.getTime() + " : " + strategyQueueString(strategyQueue));
+        //LogUtil.getInstance().info(strategyQueue.size() + " strategies will be in use at " + newPrice.getTime() + " : " + strategyQueueString(strategyQueue));
         Decision decision = new Decision();
         while(Status.getInstance().isTrading() && !strategyQueue.isEmpty()) {
             decision = strategyQueue.poll().execute(newPrice);

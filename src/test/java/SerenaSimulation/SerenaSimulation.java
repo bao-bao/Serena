@@ -52,11 +52,11 @@ public class SerenaSimulation {
     }
 
     public static void EMARunner() {
-        boolean upSide = true;
+        boolean upSide = false;
         boolean downSide = true;
         int EMALowerBound = 400;
         int EMAUpperBound = 500;
-        int step = 100;
+        int step = 10;
         double[] EMA_ALPHA = {10, 12, 10, 12};
         double[] profitThreshold = {0.008};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
         double[] profitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
@@ -69,11 +69,22 @@ public class SerenaSimulation {
             EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
         }
 
+        double oneLevelCount = (double)(EMAUpperBound - EMALowerBound) / step;
+        int total;
+        if(upSide && downSide) {
+            total = (int)Math.pow((oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount), 2) * profitThreshold.length * profitLimit.length * lossLimit.length;
+        } else {
+            total = (int) (oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount) * profitThreshold.length * profitLimit.length * lossLimit.length;
+        }
+        System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
+
+        int count = 1;
         for(double[] EMA : EMAs) {
             for (double pThres : profitThreshold) {
                 for(double pLimit : profitLimit) {
                     for (double lLimit : lossLimit) {
+                        System.out.println("current running: " + count++ + "/" + total + ", EMA: [" + (int)EMA[0] + ", " + (int)EMA[1] + ", " + (int)EMA[2] + ", " + (int)EMA[3] + "]...");
                         Setting.EMA_PROFIT_THRESHOLD = pThres;
                         Setting.EMA_PROFIT_LIMIT = pLimit;
                         Setting.EMA_LOSS_LIMIT = lLimit;
@@ -86,7 +97,7 @@ public class SerenaSimulation {
                             e.printStackTrace();
                         }
                         EMACombination newRes = new EMACombination(EMA, pThres, pLimit, lLimit);
-                        newRes.setProfit(ProfitCal.cal(type));
+                        newRes.setProfit(ProfitCal.cal(type, false));
                         queue.add(newRes);
                         try {
                             Thread.sleep(500);
@@ -155,7 +166,7 @@ public class SerenaSimulation {
                                 e.printStackTrace();
                             }
                             ParaCombination newRes = new ParaCombination();
-                            newRes.setProfit(ProfitCal.cal(type));
+                            newRes.setProfit(ProfitCal.cal(type, false));
                             newRes.setParaArray(lossLimit, profitLimit, restore, ma520, fill);
                             queue.add(newRes);
                             try {
