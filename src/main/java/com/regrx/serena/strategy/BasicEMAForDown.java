@@ -46,7 +46,6 @@ public class BasicEMAForDown extends AbstractStrategy {
 
         if (status.getStatus() != TradingType.SHORT_SELLING && currentShortTermEMA < currentLongTermEMA && lastShortTermEMA > lastLongTermEMA) {
             lastCrossPrice = price.getPrice();
-            status.setStatus(TradingType.SHORT_SELLING);
             status.setTrendEMA(TrendType.TREND_DOWN);
             decision.make(TradingType.SHORT_SELLING, "EMA cross down");
             return decision;
@@ -76,7 +75,6 @@ public class BasicEMAForDown extends AbstractStrategy {
         lastCrossPrice = 0.0;
         profit = 0.0;
         profitMaximum = 0.0;
-        status.setStatus(TradingType.EMPTY);
         status.setTrendEMA(TrendType.NULL);
     }
 }

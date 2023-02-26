@@ -72,6 +72,7 @@ public class Status {
         return status;
     }
 
+    // DO NOT use in strategies
     public void setStatus(TradingType status) {
         this.status = status;
     }
