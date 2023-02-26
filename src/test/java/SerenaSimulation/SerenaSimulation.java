@@ -69,7 +69,7 @@ public class SerenaSimulation {
             EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
         }
 
-        PriorityQueue<EMACombination> queue = new PriorityQueue<>(50, Collections.reverseOrder());
+        PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
         for(double[] EMA : EMAs) {
             for (double pThres : profitThreshold) {
                 for(double pLimit : profitLimit) {
@@ -98,8 +98,8 @@ public class SerenaSimulation {
             }
         }
         ArrayList<EMACombination> resList = new ArrayList<>();
-        System.out.println("\nTop 50 Best Parameters: ");
-        for (int i = 0; i < 50; i++) {
+        System.out.println("\nTop Best Parameters: ");
+        for (int i = 0; i < 4000; i++) {
             EMACombination candidate = queue.poll();
             if (candidate != null) {
                 resList.add(candidate);
