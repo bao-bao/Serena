@@ -52,12 +52,12 @@ public class SerenaSimulation {
     }
 
     public static void EMARunner() {
-        boolean upSide = false;
+        boolean upSide = true;
         boolean downSide = true;
-        int EMALowerBound = 40;
-        int EMAUpperBound = 160;
-        int step = 120;
-        double[] EMA_ALPHA = {410, 490, 100, 200};
+        int EMALowerBound = 400;
+        int EMAUpperBound = 500;
+        int step = 100;
+        double[] EMA_ALPHA = {10, 12, 10, 12};
         double[] profitThreshold = {0.008};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
         double[] profitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
         double[] lossLimit = {0.005};           // 损失超过开仓时收盘价的 x% 就平仓
@@ -107,6 +107,17 @@ public class SerenaSimulation {
         }
         for (EMACombination res : resList) {
             System.out.println(res);
+        }
+
+        String filename = type + '_' + Calendar.getInstance().getTime().getTime();
+        FileUtil.newFile(filename + ".csv");
+        try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            for (EMACombination res : resList) {
+                writer.append(res.toString());
+            }
+            writer.flush();
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

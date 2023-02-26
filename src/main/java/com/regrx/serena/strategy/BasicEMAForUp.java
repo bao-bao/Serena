@@ -45,7 +45,7 @@ public class BasicEMAForUp extends AbstractStrategy {
         double lastShortTermEMA = EMA.getHistoryEMAByEnum(EMAEnum.UP_SHORT_TERM_EMA, 1);
         double lastLongTermEMA = EMA.getHistoryEMAByEnum(EMAEnum.UP_LONG_TERM_EMA, 1);
 
-        if (status.getStatus() == TradingType.EMPTY && currentShortTermEMA > currentLongTermEMA && lastShortTermEMA < lastLongTermEMA) {
+        if (status.getStatus() != TradingType.PUT_BUYING && currentShortTermEMA > currentLongTermEMA && lastShortTermEMA < lastLongTermEMA) {
             lastCrossPrice = price.getPrice();
             status.setStatus(TradingType.PUT_BUYING);
             status.setTrendEMA(TrendType.TREND_UP);
@@ -53,7 +53,7 @@ public class BasicEMAForUp extends AbstractStrategy {
             return decision;
         }
 
-        if (status.getStatus() != TradingType.EMPTY && status.getTrendEMA() == TrendType.TREND_UP) {
+        if (status.getStatus() == TradingType.PUT_BUYING && status.getTrendEMA() == TrendType.TREND_UP) {
             profit = price.getPrice() - lastCrossPrice;
             profitMaximum = Math.max(profit, profitMaximum);
 
