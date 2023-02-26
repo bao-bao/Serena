@@ -2,6 +2,7 @@ package com.regrx.serena.data.statistic;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.EMAEnum;
+import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.utils.Calculator;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.ExPrice;
@@ -36,14 +37,16 @@ public class ExpMovingAverage {
         }
 
         public double getCurrentEMA() {
+            if(historyEMA.size() < (2 / alpha - 1)) {
+               return 0.0;
+            }
             return currentEMA;
         }
 
         public double getHistoryEMA(int past) {
-            if(past < historyEMA.size()) {
+            if(past < historyEMA.size() && historyEMA.size() >= (2 / alpha - 1)) {
                 return historyEMA.get(past);
             } else {
-                LogUtil.getInstance().warning("exceed EMA maximum length");
                 return 0.0;
             }
         }
@@ -87,7 +90,7 @@ public class ExpMovingAverage {
         if (index == EMAEnum.EMA_NULL) {
             return 0.0;
         }
-        return EMA.get(index.getValue()).currentEMA;
+        return EMA.get(index.getValue()).getCurrentEMA();
     }
 
     public double getHistoryEMAByEnum(EMAEnum index, int past) {
@@ -109,6 +112,21 @@ public class ExpMovingAverage {
         ArrayList<Double> res = new ArrayList<>();
         for (ExpMovingAverageBasic basic : EMA) {
             res.add(basic.getHistoryEMA(past));
+        }
+        return res;
+    }
+
+    public int findLastCrossIndex(EMAEnum ema1, EMAEnum ema2) {
+        int res = 0;
+        double historyOnLine1 = getHistoryEMAByEnum(ema1, res);
+        double historyOnLine2 = getHistoryEMAByEnum(ema2, res + 1);
+        while(res < EMA.get(0).getSize() - 2 && ((historyOnLine1 - historyOnLine2) * (historyOnLine2 - historyOnLine1) > 0)) {
+            res++;
+            historyOnLine1 = historyOnLine2;
+            historyOnLine2 = getHistoryEMAByEnum(ema2, res + 1);
+        }
+        if (((historyOnLine1 - historyOnLine2) * (historyOnLine2 - historyOnLine1) > 0)) {
+            return -1;
         }
         return res;
     }

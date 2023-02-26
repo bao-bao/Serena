@@ -22,8 +22,8 @@ public class SerenaSimulation {
     public static void main(String[] args) {
 //        runner();
 //        simulation();
-        findRunner();
-//        EMARunner();
+//        findRunner();
+        EMARunner();
     }
 
     public static void simulation() {
@@ -36,8 +36,8 @@ public class SerenaSimulation {
         controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_5);
 //        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
+//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
 //        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
 //        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
@@ -52,16 +52,17 @@ public class SerenaSimulation {
     }
 
     public static void EMARunner() {
-        boolean NotSetThisAsTrue = false;
-        int EMALowerBound = 10;
-        int EMAUpperBound = 320;
-        int step = 310;
-        double[] profitThreshold = {0.05};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double[] profitLimit = {1};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double[] lossLimit = {0.01};           // 损失超过开仓时收盘价的 x% 就平仓
+        boolean upSide = false;
+        boolean downSide = true;
+        int EMALowerBound = 40;
+        int EMAUpperBound = 160;
+        int step = 120;
+        double[] profitThreshold = {0.008};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] profitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] lossLimit = {0.005};           // 损失超过开仓时收盘价的 x% 就平仓
 
         // 下面代码不要动
-        ArrayList<double[]> EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, NotSetThisAsTrue);
+        ArrayList<double[]> EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
 
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(50, Collections.reverseOrder());
         for(double[] EMA : EMAs) {

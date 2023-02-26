@@ -1,5 +1,6 @@
 package com.regrx.serena.data;
 
+import com.regrx.serena.common.constant.EMAEnum;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.constant.TrendType;
@@ -153,8 +154,16 @@ public class MinutesData {
         }
     }
 
-    public double getLastCrossPrice(MAEnum ind_1, MAEnum ind_2) {
+    public double getLastMACrossPrice(MAEnum ind_1, MAEnum ind_2) {
         return MovingAverage.evalLastCrossPrice(mAvgs, ind_1, ind_2);
+    }
+
+    public  double getLastEMACrossPrice(EMAEnum ema1, EMAEnum ema2) {
+        int crossIndex = expMAvgs.findLastCrossIndex(ema1, ema2);
+        if(crossIndex != -1) {
+            return prices.get(crossIndex).getPrice();
+        }
+        return 0.0;
     }
 
 }

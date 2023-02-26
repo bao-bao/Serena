@@ -28,7 +28,7 @@ public class FillGap extends AbstractStrategy {
 
         MinutesData data = dataSvcMgr.queryData(interval);
         MovingAverage MAs = data.getNewMAvg();
-        double ref = data.getLastCrossPrice(MAEnum.MA5, MAEnum.MA20);
+        double ref = data.getLastMACrossPrice(MAEnum.MA5, MAEnum.MA20);
 //        double ref = data.getNewMAvg().getMAByIndex(MAEnum.fromInt(Setting.FILL_GAP_BY_MA));
         double currentPrice = data.getNewPrice();
 

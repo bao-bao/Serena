@@ -17,21 +17,30 @@ public class EMACombination implements Comparable<EMACombination> {
         this.lossLimit = lossLimit;
     }
 
-    public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean both) {
+    public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean upSide, boolean downSide) {
         ArrayList<double[]> res = new ArrayList<>();
-        for(int upLower = lower; upLower <= upper; upLower += step) {
-            for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
-                if(both) {
-                    for(int downLower = lower; downLower <= upper; downLower += step) {
-                        for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
-                            res.add(new double[]{upLower, upUpper, downLower, downUpper});
+        if(downSide && !upSide) {
+            for(int downLower = lower; downLower <= upper; downLower += step) {
+                for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
+                    res.add(new double[]{0, 0, downLower, downUpper});
+                }
+            }
+        } else if(upSide) {
+            for(int upLower = lower; upLower <= upper; upLower += step) {
+                for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
+                    if(downSide) {
+                        for(int downLower = lower; downLower <= upper; downLower += step) {
+                            for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
+                                res.add(new double[]{upLower, upUpper, downLower, downUpper});
+                            }
                         }
+                    } else {
+                        res.add(new double[]{upLower, upUpper, 0, 0});
                     }
-                } else {
-                    res.add(new double[]{upLower, upUpper, 0, 0});
                 }
             }
         }
+
         return res;
     }
 

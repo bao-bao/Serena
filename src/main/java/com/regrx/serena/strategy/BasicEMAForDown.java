@@ -6,42 +6,53 @@ import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.ExpMovingAverage;
+import com.regrx.serena.service.DataServiceManager;
 
 public class BasicEMAForDown extends AbstractStrategy {
 
+    private boolean hasInit;
     private double lastCrossPrice;
-    private boolean inTrade;
     private double profit;
     private double profitMaximum;
 
     public BasicEMAForDown(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_BASIC_EMA_PRIORITY);
         super.setName("Basic EMA For Down");
-        reset();
+    }
+
+    private void init() {
+        lastCrossPrice = DataServiceManager.getInstance().queryData(interval).getLastEMACrossPrice(EMAEnum.DOWN_SHORT_TERM_EMA, EMAEnum.DOWN_LONG_TERM_EMA);
+        profit = 0.0;
+        profitMaximum = 0.0;
+        hasInit = true;
     }
 
     @Override
     public Decision execute(ExPrice price) {
+        if(!hasInit) {
+            init();
+        }
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, interval);
         ExpMovingAverage EMA = dataSvcMgr.queryData(interval).getExpMAvgs();
         if(EMA.getSize() == 0) {
             return decision;
         }
 
+        Status status = Status.getInstance();
         double currentShortTermEMA = EMA.getCurrentEMAByEnum(EMAEnum.DOWN_SHORT_TERM_EMA);
         double currentLongTermEMA = EMA.getCurrentEMAByEnum(EMAEnum.DOWN_LONG_TERM_EMA);
         double lastShortTermEMA = EMA.getHistoryEMAByEnum(EMAEnum.DOWN_SHORT_TERM_EMA, 1);
         double lastLongTermEMA = EMA.getHistoryEMAByEnum(EMAEnum.DOWN_LONG_TERM_EMA, 1);
 
-        if (!inTrade && currentShortTermEMA < currentLongTermEMA && lastShortTermEMA > lastLongTermEMA) {
+        if (status.getStatus() != TradingType.EMPTY && currentShortTermEMA < currentLongTermEMA && lastShortTermEMA > lastLongTermEMA) {
             lastCrossPrice = price.getPrice();
-            inTrade = true;
-            Status.getInstance().setTrendEMA(TrendType.TREND_DOWN);
+            status.setStatus(TradingType.SHORT_SELLING);
+            status.setTrendEMA(TrendType.TREND_DOWN);
             decision.make(TradingType.SHORT_SELLING, "EMA cross down");
             return decision;
         }
 
-        if (inTrade && Status.getInstance().getTrendEMA() == TrendType.TREND_DOWN) {
+        if (status.getStatus() == TradingType.EMPTY  && status.getTrendEMA() == TrendType.TREND_DOWN) {
             profit = lastCrossPrice - price.getPrice();
             profitMaximum = Math.max(profit, profitMaximum);
 
@@ -61,10 +72,11 @@ public class BasicEMAForDown extends AbstractStrategy {
     }
 
     private void reset() {
+        Status status = Status.getInstance();
         lastCrossPrice = 0.0;
         profit = 0.0;
         profitMaximum = 0.0;
-        inTrade = false;
-        Status.getInstance().setTrendEMA(TrendType.NULL);
+        status.setStatus(TradingType.EMPTY);
+        status.setTrendEMA(TrendType.NULL);
     }
 }
