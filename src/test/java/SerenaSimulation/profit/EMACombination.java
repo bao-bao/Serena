@@ -19,24 +19,26 @@ public class EMACombination implements Comparable<EMACombination> {
 
     public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean upSide, boolean downSide) {
         ArrayList<double[]> res = new ArrayList<>();
-        if(downSide && !upSide) {
+        if(!upSide && downSide) {
             for(int downLower = lower; downLower <= upper; downLower += step) {
                 for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
                     res.add(new double[]{0, 0, downLower, downUpper});
                 }
             }
-        } else if(upSide) {
+        } else if(upSide && !downSide) {
             for(int upLower = lower; upLower <= upper; upLower += step) {
                 for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
-                    if(downSide) {
+                        res.add(new double[]{upLower, upUpper, 0, 0});
+                    }
+            }
+        } else if(!upSide) {
+            for(int upLower = lower; upLower <= upper; upLower += step) {
+                for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
                         for(int downLower = lower; downLower <= upper; downLower += step) {
                             for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
                                 res.add(new double[]{upLower, upUpper, downLower, downUpper});
                             }
                         }
-                    } else {
-                        res.add(new double[]{upLower, upUpper, 0, 0});
-                    }
                 }
             }
         }

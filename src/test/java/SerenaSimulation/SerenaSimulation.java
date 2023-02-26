@@ -53,7 +53,7 @@ public class SerenaSimulation {
 
     public static void EMARunner() {
         boolean upSide = false;
-        boolean downSide = true;
+        boolean downSide = false;
         int EMALowerBound = 400;
         int EMAUpperBound = 500;
         int step = 10;
@@ -71,7 +71,7 @@ public class SerenaSimulation {
 
         double oneLevelCount = (double)(EMAUpperBound - EMALowerBound) / step;
         int total;
-        if(upSide && downSide) {
+        if(!upSide && !downSide) {
             total = (int)Math.pow((oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount), 2) * profitThreshold.length * profitLimit.length * lossLimit.length;
         } else {
             total = (int) (oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount) * profitThreshold.length * profitLimit.length * lossLimit.length;
@@ -97,7 +97,7 @@ public class SerenaSimulation {
                             e.printStackTrace();
                         }
                         EMACombination newRes = new EMACombination(EMA, pThres, pLimit, lLimit);
-                        newRes.setProfit(ProfitCal.cal(type, false));
+                        newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
                         queue.add(newRes);
                         try {
                             Thread.sleep(500);
