@@ -70,22 +70,32 @@ public class BasicEMAForUp extends AbstractStrategy {
 //            }
 
             if (profit < 0 && Math.abs(profit) >= Setting.EMA_LOSS_LIMIT * lastCrossPrice) {
-                reset();
-                if(status.getTrendEMA() == TrendType.TREND_DOWN) {
-                    decision.make(TradingType.SHORT_SELLING, "EMA up ends, loss limit");
-                } else {
-                    decision.make(TradingType.EMPTY, "EMA up ends, loss limit");
+                if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
+                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by loss limit");
                 }
+                if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() != TradingType.EMPTY) {
+                    decision.make(TradingType.EMPTY, "EMA up ends by loss limit");
+                }
+                if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() == TradingType.EMPTY) {
+                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
+                    status.setTrendEMA(TrendType.TREND_DOWN);
+                }
+                reset();
                 return decision;
             }
 
             if (profitMaximum > Setting.EMA_PROFIT_THRESHOLD * lastCrossPrice && profit <= Setting.EMA_PROFIT_LIMIT * profitMaximum) {
-                reset();
-                if(status.getTrendEMA() == TrendType.TREND_DOWN) {
-                    decision.make(TradingType.SHORT_SELLING, "EMA up ends, profit limit");
-                } else {
-                    decision.make(TradingType.EMPTY, "EMA up ends, profit limit");
+                if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
+                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
                 }
+                if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() != TradingType.EMPTY) {
+                    decision.make(TradingType.EMPTY, "EMA up ends by profit limit");
+                }
+                if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() == TradingType.EMPTY) {
+                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
+                    status.setTrendEMA(TrendType.TREND_DOWN);
+                }
+                reset();
                 return decision;
             }
         }
@@ -93,6 +103,10 @@ public class BasicEMAForUp extends AbstractStrategy {
     }
 
     private void reset() {
+        Status status = Status.getInstance();
+        if(status.getTrendEMA() == TrendType.TREND_UP) {
+            status.setTrendEMA(TrendType.NULL);
+        }
         active = false;
         lastCrossPrice = 0.0;
         profit = 0.0;
