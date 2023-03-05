@@ -69,7 +69,7 @@ public class BasicEMAForUp extends AbstractStrategy {
 //                return decision;
 //            }
 
-            if (profit < 0 && Math.abs(profit) >= Setting.EMA_LOSS_LIMIT * lastCrossPrice) {
+            if (profit < 0 && Math.abs(profit) >= Setting.EMA_UP_LOSS_LIMIT * lastCrossPrice) {
                 if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
                     decision.make(TradingType.SHORT_SELLING, "EMA up ends by loss limit");
                 }
@@ -84,7 +84,7 @@ public class BasicEMAForUp extends AbstractStrategy {
                 return decision;
             }
 
-            if (profitMaximum > Setting.EMA_PROFIT_THRESHOLD * lastCrossPrice && profit <= Setting.EMA_PROFIT_LIMIT * profitMaximum) {
+            if (profitMaximum > Setting.EMA_UP_PROFIT_THRESHOLD * lastCrossPrice && profit <= Setting.EMA_UP_PROFIT_LIMIT * profitMaximum) {
                 if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
                     decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
                 }

@@ -23,11 +23,18 @@ public class Setting {
     // exponential moving average settings ( should be falling within (0,1] )
     public static double[] EMA_ALPHA = {410, 490, 100, 200};
 
-    public static double EMA_PROFIT_THRESHOLD = 0.02;
+    public static double EMA_UP_PROFIT_THRESHOLD = 0.02;
 
-    public static double EMA_PROFIT_LIMIT = 0.6;
+    public static double EMA_UP_PROFIT_LIMIT = 0.6;
 
-    public static double EMA_LOSS_LIMIT = 0.01;
+    public static double EMA_UP_LOSS_LIMIT = 0.01;
+
+    public static double EMA_DOWN_PROFIT_THRESHOLD = 0.02;
+
+    public static double EMA_DOWN_PROFIT_LIMIT = 0.6;
+
+    public static double EMA_DOWN_LOSS_LIMIT = 0.01;
+
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 

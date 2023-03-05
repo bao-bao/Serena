@@ -16,6 +16,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.PriorityQueue;
 
+// TODO: 加几个输出值
 public class SerenaSimulation {
     public static String type = "IM1234";
 
@@ -52,15 +53,18 @@ public class SerenaSimulation {
     }
 
     public static void EMARunner() {
-        boolean upSide = false;
-        boolean downSide = false;
+        boolean upSide = true; // 都是true为单测，都是false为两边同时测
+        boolean downSide = true;
         int EMALowerBound = 400;
         int EMAUpperBound = 500;
         int step = 10;
-        double[] EMA_ALPHA = {10, 12, 10, 12};
-        double[] profitThreshold = {0.008};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double[] profitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double[] lossLimit = {0.005};           // 损失超过开仓时收盘价的 x% 就平仓
+        double[] EMA_ALPHA = {15, 130, 10, 50};
+        double upProfitThreshold = 0.008;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double upProfitLimit = 0.7;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double upLossLimit = 0.005;           // 损失超过开仓时收盘价的 x% 就平仓
+        double downProfitThreshold = 0.01;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double downProfitLimit = 0.8;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double downLossLimit = 0.005;           // 损失超过开仓时收盘价的 x% 就平仓
         // 下面代码不要动
         ArrayList<double[]> EMAs = new ArrayList<>();
         if (upSide & downSide) {
@@ -69,43 +73,42 @@ public class SerenaSimulation {
             EMAs = EMACombination.generateEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
         }
 
-        double oneLevelCount = (double)(EMAUpperBound - EMALowerBound) / step;
+        double oneLevelCount = (double) (EMAUpperBound - EMALowerBound) / step;
         int total;
-        if(!upSide && !downSide) {
-            total = (int)Math.pow((oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount), 2) * profitThreshold.length * profitLimit.length * lossLimit.length;
+        if (!upSide && !downSide) {
+            total = (int) Math.pow((oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount), 2);
+        } else if (!(upSide & downSide)) {
+            total = (int) (oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount);
         } else {
-            total = (int) (oneLevelCount * (oneLevelCount - 1) / 2 + oneLevelCount) * profitThreshold.length * profitLimit.length * lossLimit.length;
+            total = 1;
         }
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
 
         int count = 1;
-        for(double[] EMA : EMAs) {
-            for (double pThres : profitThreshold) {
-                for(double pLimit : profitLimit) {
-                    for (double lLimit : lossLimit) {
-                        System.out.println("current running: " + count++ + "/" + total + ", EMA: [" + (int)EMA[0] + ", " + (int)EMA[1] + ", " + (int)EMA[2] + ", " + (int)EMA[3] + "]...");
-                        Setting.EMA_PROFIT_THRESHOLD = pThres;
-                        Setting.EMA_PROFIT_LIMIT = pLimit;
-                        Setting.EMA_LOSS_LIMIT = lLimit;
-                        Setting.EMA_ALPHA = EMA;
-                        simulation();
-                        try {
-                            Thread.sleep(500);
-                            ControllerTest.stop();
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                        EMACombination newRes = new EMACombination(EMA, pThres, pLimit, lLimit);
-                        newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
-                        queue.add(newRes);
-                        try {
-                            Thread.sleep(500);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
+        for (double[] EMA : EMAs) {
+            System.out.println("current running: " + count++ + "/" + total + ", EMA: [" + (int) EMA[0] + ", " + (int) EMA[1] + ", " + (int) EMA[2] + ", " + (int) EMA[3] + "]...");
+            Setting.EMA_UP_PROFIT_THRESHOLD = upProfitThreshold;
+            Setting.EMA_UP_PROFIT_LIMIT = upProfitLimit;
+            Setting.EMA_UP_LOSS_LIMIT = upLossLimit;
+            Setting.EMA_DOWN_PROFIT_THRESHOLD = downProfitThreshold;
+            Setting.EMA_DOWN_PROFIT_LIMIT = downProfitLimit;
+            Setting.EMA_DOWN_LOSS_LIMIT = downLossLimit;
+            Setting.EMA_ALPHA = EMA;
+            simulation();
+            try {
+                Thread.sleep(500);
+                ControllerTest.stop();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            EMACombination newRes = new EMACombination(EMA, upProfitThreshold, upProfitLimit, upLossLimit, downProfitThreshold, downProfitLimit, downLossLimit);
+            newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
+            queue.add(newRes);
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
         ArrayList<EMACombination> resList = new ArrayList<>();
@@ -127,7 +130,7 @@ public class SerenaSimulation {
                 writer.append(res.toString());
             }
             writer.flush();
-        }catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
@@ -203,8 +206,8 @@ public class SerenaSimulation {
 
         String filename = "find_percent_" + type + ".csv";
         FileUtil.newFile(filename);
-        for(int i = EMALowerBound; i <= EMAUpperBound; i += step) {
-            for(int j = i + step; j <= EMAUpperBound; j += step) {
+        for (int i = EMALowerBound; i <= EMAUpperBound; i += step) {
+            for (int j = i + step; j <= EMAUpperBound; j += step) {
 
                 try (FileWriter writer = new FileWriter(filename, true)) {
                     writer.append(Integer.toString(i)).append("  ").append(Integer.toString(j)).append("  ");
@@ -239,19 +242,19 @@ public class SerenaSimulation {
             String line;
             while ((line = reader.readLine()) != null) {
                 count++;
-                if(!line.equals("")) {
+                if (!line.equals("")) {
                     String[] stringArray = line.strip().split("  ");
-                    if(stringArray.length == 3) {
+                    if (stringArray.length == 3) {
                         String doubleArray = stringArray[2];
-                        String[] strArray = doubleArray.substring(1, doubleArray.length()-1).split(", ");
+                        String[] strArray = doubleArray.substring(1, doubleArray.length() - 1).split(", ");
                         double exceedCount = 0;
-                        for(String str : strArray) {
-                            if(Double.parseDouble(str) < threshold) {
+                        for (String str : strArray) {
+                            if (Double.parseDouble(str) < threshold) {
                                 exceedCount++;
                             }
                         }
                         double percent = exceedCount / strArray.length;
-                        if(percent < maxPercent) {
+                        if (percent < maxPercent) {
                             maxPercent = percent;
                             maxLine = count;
                         }

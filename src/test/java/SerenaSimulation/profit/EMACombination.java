@@ -9,12 +9,18 @@ public class EMACombination implements Comparable<EMACombination> {
     public double profitThreshold;
     public double profitLimit;
     public double lossLimit;
+    public double dProfitThreshold;
+    public double dProfitLimit;
+    public double dLossLimit;
 
-    public EMACombination(double[] ema, double profitThreshold, double profitLimit, double lossLimit) {
+    public EMACombination(double[] ema, double profitThreshold, double profitLimit, double lossLimit, double dProfitThreshold, double dProfitLimit, double dLossLimit) {
         EMA = ema.clone();
         this.profitThreshold = profitThreshold;
         this.profitLimit = profitLimit;
         this.lossLimit = lossLimit;
+        this.dProfitThreshold = dProfitThreshold;
+        this.dProfitLimit = dProfitLimit;
+        this.dLossLimit = dLossLimit;
     }
 
     public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean upSide, boolean downSide) {
@@ -71,9 +77,12 @@ public class EMACombination implements Comparable<EMACombination> {
         sb.setLength(sb.length() - 2);
         sb.append("]");
 
-        sb.append(", Profit Threshold: ").append(String.format("%.2f", profitThreshold * 100)).append("%");
-        sb.append(", Profit Limit: ").append(String.format("%.2f", profitLimit * 100)).append("%");
-        sb.append(", Loss Limit: ").append(String.format("%.2f", lossLimit * 100)).append("%");
+        sb.append(", Up Profit Threshold: ").append(String.format("%.2f", profitThreshold * 100)).append("%");
+        sb.append(", Up Profit Limit: ").append(String.format("%.2f", profitLimit * 100)).append("%");
+        sb.append(", Up Loss Limit: ").append(String.format("%.2f", lossLimit * 100)).append("%");
+        sb.append(", Down Profit Threshold: ").append(String.format("%.2f", dProfitThreshold * 100)).append("%");
+        sb.append(", Down Profit Limit: ").append(String.format("%.2f", dProfitLimit * 100)).append("%");
+        sb.append(", Down Loss Limit: ").append(String.format("%.2f", dLossLimit * 100)).append("%");
         sb.append("\n");
         return sb.toString();
     }

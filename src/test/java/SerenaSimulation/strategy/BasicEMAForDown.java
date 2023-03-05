@@ -63,7 +63,7 @@ public class BasicEMAForDown extends AbstractStrategy {
             profit = lastCrossPrice - price.getPrice();
             profitMaximum = Math.max(profit, profitMaximum);
 
-            if (profit < 0 && Math.abs(profit) > Setting.EMA_LOSS_LIMIT * lastCrossPrice) {
+            if (profit < 0 && Math.abs(profit) > Setting.EMA_DOWN_LOSS_LIMIT * lastCrossPrice) {
                 if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() != TradingType.PUT_BUYING) {
                     decision.make(TradingType.PUT_BUYING, "EMA down ends by loss limit");
                 }
@@ -78,7 +78,7 @@ public class BasicEMAForDown extends AbstractStrategy {
                 return decision;
             }
 
-            if (profitMaximum > Setting.EMA_PROFIT_THRESHOLD * lastCrossPrice && profit < Setting.EMA_PROFIT_LIMIT * profitMaximum) {
+            if (profitMaximum > Setting.EMA_DOWN_PROFIT_THRESHOLD * lastCrossPrice && profit < Setting.EMA_DOWN_PROFIT_LIMIT * profitMaximum) {
                 if(status.getTrendEMA() == TrendType.TREND_UP && status.getStatus() != TradingType.PUT_BUYING) {
                     decision.make(TradingType.PUT_BUYING, "EMA down ends by profit limit");
                 }
