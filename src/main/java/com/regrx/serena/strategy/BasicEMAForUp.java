@@ -23,7 +23,7 @@ public class BasicEMAForUp extends AbstractStrategy {
     }
 
     private void init() {
-        active = false;
+        active = Status.getInstance().getStatus() == TradingType.PUT_BUYING;
         lastCrossPrice = DataServiceManager.getInstance().queryData(interval).getLastEMACrossPrice(EMAEnum.UP_SHORT_TERM_EMA, EMAEnum.UP_LONG_TERM_EMA);
         profit = 0.0;
         profitMaximum = 0.0;

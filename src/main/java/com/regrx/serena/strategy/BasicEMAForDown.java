@@ -22,7 +22,7 @@ public class BasicEMAForDown extends AbstractStrategy {
     }
 
     private void init() {
-        active = false;
+        active = Status.getInstance().getStatus() == TradingType.SHORT_SELLING;
         lastCrossPrice = DataServiceManager.getInstance().queryData(interval).getLastEMACrossPrice(EMAEnum.DOWN_SHORT_TERM_EMA, EMAEnum.DOWN_LONG_TERM_EMA);
         profit = 0.0;
         profitMaximum = 0.0;
