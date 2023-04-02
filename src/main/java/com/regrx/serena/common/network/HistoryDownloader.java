@@ -145,8 +145,9 @@ public class HistoryDownloader implements Runnable {
 
     private static HistoryData[] readHistoryDataFromCsv(String type, IntervalEnum interval, FutureType breed) {
         ArrayList<HistoryData> historyDataList = new ArrayList<>();
+        String filename = "History_" + type + '_' + interval + ".csv";
         try {
-            BufferedReader reader = new BufferedReader(new FileReader("History_" + type + '_' + interval + ".csv"));
+            BufferedReader reader = new BufferedReader(new FileReader(filename));
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
@@ -165,6 +166,8 @@ public class HistoryDownloader implements Runnable {
             Setting.USE_INJECT_HISTORY = false;
             return fetchHistoryData(type, interval, breed, false);
         }
+
+        LogUtil.getInstance().info("Success to read history data from \"" + filename + "\", total lines: " + historyDataList.size());
         HistoryData[] historyData = new HistoryData[historyDataList.size()];
         return historyDataList.toArray(historyData);
     }

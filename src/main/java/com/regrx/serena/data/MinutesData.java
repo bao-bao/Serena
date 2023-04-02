@@ -54,7 +54,14 @@ public class MinutesData {
         updateWithoutWrite(newPrice);
         FileUtil.writeMinutesDataToCsv("Minute_" + type + "_" + interval.getValue(), this);
 
-        LogUtil.getInstance().info("update " + interval.getValue() + " min(s) data for " + type + " at " + newPrice.getPrice());
+        String msg = "update " + interval.getValue() + " min(s) data for " + type +
+                " at " + newPrice.getPrice() +
+                ", EMAs are: [" +
+                String.format("%.2f", newEMAvg.get(0)) + ", " +
+                String.format("%.2f", newEMAvg.get(1)) + ", " +
+                String.format("%.2f", newEMAvg.get(2)) + ", " +
+                String.format("%.2f", newEMAvg.get(3)) + "]";
+        LogUtil.getInstance().info(msg);
     }
 
     public void updateWithoutWrite(ExPrice comingPrice) {
