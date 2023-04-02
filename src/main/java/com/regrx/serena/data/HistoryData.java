@@ -6,7 +6,7 @@ public class HistoryData {
     private double h;    // highestPrice
     private double l;    // lowestPrice
     private double o;    // openPrice
-    private int v;       // volume
+    private long v;       // volume
     private String d;    // time
 
     public int getP() {
@@ -49,11 +49,11 @@ public class HistoryData {
         this.o = o;
     }
 
-    public int getVolume() {
+    public long getVolume() {
         return v;
     }
 
-    public void setVolume(int v) {
+    public void setVolume(long v) {
         this.v = v;
     }
 

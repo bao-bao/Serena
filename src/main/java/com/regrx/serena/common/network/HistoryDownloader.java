@@ -157,11 +157,12 @@ public class HistoryDownloader implements Runnable {
                 newData.setClosePrice(Double.parseDouble(data[2]));
                 newData.setHighestPrice(Double.parseDouble(data[3]));
                 newData.setLowestPrice(Double.parseDouble(data[4]));
-                newData.setVolume(Integer.parseInt(data[5]));
+                newData.setVolume(Long.parseLong(data[5]));
                 historyDataList.add(newData);
             }
             reader.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
+            LogUtil.getInstance().warning(e.toString());
             LogUtil.getInstance().warning("Fail to read history data (type: " + type + ", interval: " + interval + "), try fetch from remote...");
             Setting.USE_INJECT_HISTORY = false;
             return fetchHistoryData(type, interval, breed, false);
