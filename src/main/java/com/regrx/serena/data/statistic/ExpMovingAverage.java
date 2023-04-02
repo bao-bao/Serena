@@ -2,9 +2,7 @@ package com.regrx.serena.data.statistic;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.EMAEnum;
-import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.utils.Calculator;
-import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.ExPrice;
 
 import java.util.*;
@@ -40,7 +38,11 @@ public class ExpMovingAverage {
             if(historyEMA.size() < (2 / alpha - 1)) {
                return 0.0;
             }
-            return currentEMA;
+            if (Setting.USE_INJECT_HISTORY) {
+                return currentEMA;
+            } else {
+                return currentEMA / (1 - Math.pow((1-alpha), historyEMA.size() + 1)); // calibration
+            }
         }
 
         public double getHistoryEMA(int past) {
@@ -69,6 +71,7 @@ public class ExpMovingAverage {
             EMA.add(new ExpMovingAverageBasic(2 / (alpha + 1)));
         }
     }
+
     public void update(ExPrice newPrice) {
         for(ExpMovingAverageBasic ema : EMA) {
             ema.update(newPrice);

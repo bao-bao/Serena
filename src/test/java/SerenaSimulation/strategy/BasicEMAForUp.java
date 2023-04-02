@@ -63,12 +63,6 @@ public class BasicEMAForUp extends AbstractStrategy {
             profit = price.getPrice() - lastCrossPrice;
             profitMaximum = Math.max(profit, profitMaximum);
 
-//            if(currentShortTermEMA < currentLongTermEMA && lastShortTermEMA > lastLongTermEMA) {
-//                reset();
-//                decision.make(TradingType.EMPTY, "EMA cross down");
-//                return decision;
-//            }
-
             if (profit < 0 && Math.abs(profit) >= Setting.EMA_UP_LOSS_LIMIT * lastCrossPrice) {
                 if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
                     decision.make(TradingType.SHORT_SELLING, "EMA up ends by loss limit");

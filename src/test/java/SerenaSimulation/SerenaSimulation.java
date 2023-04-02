@@ -18,7 +18,7 @@ import java.util.PriorityQueue;
 
 // TODO: 加几个输出值
 public class SerenaSimulation {
-    public static String type = "IM1234";
+    public static String type = "IF0";
 
     public static void main(String[] args) {
 //        runner();
@@ -50,6 +50,7 @@ public class SerenaSimulation {
 
         controller.filename = "find_percent_" + type + ".csv";
         controller.run();
+        int i = 0;
     }
 
     public static void EMARunner() {
@@ -58,13 +59,13 @@ public class SerenaSimulation {
         int EMALowerBound = 400;
         int EMAUpperBound = 500;
         int step = 10;
-        double[] EMA_ALPHA = {15, 130, 10, 50};
-        double upProfitThreshold = 0.008;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};
+        double upProfitThreshold = 0.006;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
         double upProfitLimit = 0.7;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double upLossLimit = 0.005;           // 损失超过开仓时收盘价的 x% 就平仓
-        double downProfitThreshold = 0.01;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double downProfitLimit = 0.8;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double downLossLimit = 0.005;           // 损失超过开仓时收盘价的 x% 就平仓
+        double upLossLimit = 0.003;           // 损失超过开仓时收盘价的 x% 就平仓
+        double downProfitThreshold = 0.015;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double downProfitLimit = 0.6;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double downLossLimit = 0.0075;           // 损失超过开仓时收盘价的 x% 就平仓
         // 下面代码不要动
         ArrayList<double[]> EMAs = new ArrayList<>();
         if (upSide & downSide) {

@@ -43,6 +43,9 @@ public class DataService implements Runnable {
             minutesData = HistoryDownloader.getHistoryDataForSpecialInterval(type, interval, breed);
         } else {
             minutesData = HistoryDownloader.getHistoryData(type, interval, breed);
+            HistoryDownloader historyDownloader = new HistoryDownloader(type, interval, PreparationUtil.getBreed(type));
+            Thread thread = new Thread(historyDownloader);
+            thread.start();
         }
 
         while(true) {

@@ -1,7 +1,9 @@
 package com.regrx.serena.common;
 
 public class Setting {
-    public static final boolean TEST_LABEL = false;
+    public static final boolean TEST_LABEL = true;
+
+    public static final boolean USE_INJECT_HISTORY = true;
 
     public static final boolean TREND_FOLLOW_MA = false;
 
@@ -43,7 +45,7 @@ public class Setting {
 
     public static final int FOLLOW_RETRY_INTERVAL = 10000;
 
-    public static final int MAX_LENGTH = TEST_LABEL ? Integer.MAX_VALUE : 1000;
+    public static final int MAX_LENGTH = Integer.MAX_VALUE;
 
     public static final int MAX_DECISION_QUEUE_SIZE = 1;
 
@@ -76,6 +78,9 @@ public class Setting {
     public static final int PUT_BUYING_LIMIT = 1;
 
     public static final int SHORT_SELLING_LIMIT = 1;
+
+    // history update
+    public static final int HISTORY_UPDATE_INTERVAL = 1800 * 1000; // millisecond
 
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";

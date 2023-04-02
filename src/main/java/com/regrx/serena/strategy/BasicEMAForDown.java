@@ -19,6 +19,7 @@ public class BasicEMAForDown extends AbstractStrategy {
     public BasicEMAForDown(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_BASIC_EMA_PRIORITY);
         super.setName("Basic EMA For Down");
+        hasInit = false;
     }
 
     private void init() {

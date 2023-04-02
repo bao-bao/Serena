@@ -13,22 +13,47 @@ import com.regrx.serena.data.base.ExPrice;
 import org.apache.commons.lang3.StringUtils;
 import com.google.gson.Gson;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
 import static com.regrx.serena.common.utils.FileUtil.readLastLine;
 
-public class HistoryDownloader {
+public class HistoryDownloader implements Runnable {
+    private final String type;
+    private final IntervalEnum interval;
+    private final FutureType breed;
+
+    public HistoryDownloader(String type, IntervalEnum interval, FutureType breed) {
+        this.type = type;
+        this.interval = interval;
+        this.breed = breed;
+    }
+
+    @Override
+    public void run() {
+        while (true) {
+            fetchHistoryData(type, interval, breed, false);
+            try {
+                Thread.sleep(Setting.HISTORY_UPDATE_INTERVAL);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
     // open/highest/lowest/close(from website) -> open/close/highest/lowest(local csv data)
     public static MinutesData getHistoryData(String type, IntervalEnum interval, FutureType breed) {
-        HistoryData[] historyData = fetchHistoryData(type, interval, breed, false);
+        HistoryData[] historyData;
+        if (Setting.USE_INJECT_HISTORY) {
+            historyData = readHistoryDataFromCsv(type, interval);
+        } else {
+            historyData = fetchHistoryData(type, interval, breed, false);
+        }
         MinutesData records = new MinutesData(interval);
         for (HistoryData data : historyData) {
             ExPrice newData = new ExPrice();
@@ -116,5 +141,29 @@ public class HistoryDownloader {
             System.exit(ErrorType.IO_ERROR_CODE.getCode());
 
         }
+    }
+
+    private static HistoryData[] readHistoryDataFromCsv(String type, IntervalEnum interval) {
+        ArrayList<HistoryData> historyDataList = new ArrayList<>();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("History_" + type + '_' + interval + ".csv"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] data = line.split(",");
+                HistoryData newData = new HistoryData();
+                newData.setDate(data[0]);
+                newData.setOpenPrice(Double.parseDouble(data[1]));
+                newData.setClosePrice(Double.parseDouble(data[2]));
+                newData.setHighestPrice(Double.parseDouble(data[3]));
+                newData.setLowestPrice(Double.parseDouble(data[4]));
+                newData.setVolume(Integer.parseInt(data[5]));
+                historyDataList.add(newData);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        HistoryData[] historyData = new HistoryData[historyDataList.size()];
+        return historyDataList.toArray(historyData);
     }
 }

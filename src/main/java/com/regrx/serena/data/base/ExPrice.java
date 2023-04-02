@@ -40,6 +40,7 @@ public class ExPrice {
 
     @Override
     public String toString() {
-        return String.format("%.2f", price);
+        return "Price: " + String.format("%.2f", price) + "; " +
+                "Time: " + time;
     }
 }
