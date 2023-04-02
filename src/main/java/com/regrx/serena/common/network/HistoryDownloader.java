@@ -50,7 +50,7 @@ public class HistoryDownloader implements Runnable {
     public static MinutesData getHistoryData(String type, IntervalEnum interval, FutureType breed) {
         HistoryData[] historyData;
         if (Setting.USE_INJECT_HISTORY) {
-            historyData = readHistoryDataFromCsv(type, interval);
+            historyData = readHistoryDataFromCsv(type, interval, breed);
         } else {
             historyData = fetchHistoryData(type, interval, breed, false);
         }
@@ -143,7 +143,7 @@ public class HistoryDownloader implements Runnable {
         }
     }
 
-    private static HistoryData[] readHistoryDataFromCsv(String type, IntervalEnum interval) {
+    private static HistoryData[] readHistoryDataFromCsv(String type, IntervalEnum interval, FutureType breed) {
         ArrayList<HistoryData> historyDataList = new ArrayList<>();
         try {
             BufferedReader reader = new BufferedReader(new FileReader("History_" + type + '_' + interval + ".csv"));
@@ -161,7 +161,9 @@ public class HistoryDownloader implements Runnable {
             }
             reader.close();
         } catch (IOException e) {
-            e.printStackTrace();
+            LogUtil.getInstance().warning("Fail to read history data (type: " + type + ", interval: " + interval + "), try fetch from remote...");
+            Setting.USE_INJECT_HISTORY = false;
+            return fetchHistoryData(type, interval, breed, false);
         }
         HistoryData[] historyData = new HistoryData[historyDataList.size()];
         return historyDataList.toArray(historyData);

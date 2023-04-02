@@ -3,7 +3,7 @@ package com.regrx.serena.common;
 public class Setting {
     public static final boolean TEST_LABEL = true;
 
-    public static final boolean USE_INJECT_HISTORY = true;
+    public static boolean USE_INJECT_HISTORY = true;
 
     public static final boolean TREND_FOLLOW_MA = false;
 

@@ -39,12 +39,12 @@ public class PreparationUtil {
         }
 
         if(breed == FutureType.STOCK) {
-            return hour >= 9 && (hour != 9 || minute >= 30) && (hour != 11 || minute <= 30)     // (9:30 - 11:30)
+            return hour >= 9 && (hour != 9 || minute >= 30) && (hour != 11 || minute < 30)     // (9:30 - 11:30)
                     && hour != 12 && hour <= 14;                                                // (13:00 - 15:00)
         } else {
             final boolean dayTimeRange =
-                    hour >= 9 && (hour != 10 || minute <= 15 || minute >= 30)   // (9:00 - 10:15)
-                            && (hour != 11 || minute <= 30) && hour != 12               // (10:30 - 11:30)
+                    hour >= 9 && (hour != 10 || minute < 15 || minute >= 30)   // (9:00 - 10:15)
+                            && (hour != 11 || minute < 30) && hour != 12               // (10:30 - 11:30)
                             && (hour != 13 || minute >= 30) && hour <= 14;              // (13:30 - 15:00)
             if (breed == FutureType.FUTURE_NO_NIGHT) {
                 return dayTimeRange;
@@ -53,7 +53,7 @@ public class PreparationUtil {
             } else if (breed == FutureType.FUTURE_NIGHT_0100) {
                 return dayTimeRange || (hour >= 21 || hour == 0);                                   // (21:00 - 1:00)
             } else if (breed == FutureType.FUTURE_NIGHT_0230) {
-                return dayTimeRange || (hour >= 21 || hour <= 1 || (hour == 2 && minute <= 30));    // (21:00 - 2:30)
+                return dayTimeRange || (hour >= 21 || hour <= 1 || (hour == 2 && minute < 30));    // (21:00 - 2:30)
             } else {
                 return false;
             }
