@@ -21,19 +21,19 @@ public class Setting {
     public static double FILL_GAP_THRESHOLD = 10;
 
     // exponential moving average settings ( should be falling within (0,1] )
-    public static double[] EMA_ALPHA = {410, 490, 100, 200};
+    public static double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};
 
-    public static double EMA_UP_PROFIT_THRESHOLD = 0.02;
+    public static double EMA_UP_PROFIT_THRESHOLD = 0.006;
 
-    public static double EMA_UP_PROFIT_LIMIT = 0.6;
+    public static double EMA_UP_PROFIT_LIMIT = 0.7;
 
-    public static double EMA_UP_LOSS_LIMIT = 0.01;
+    public static double EMA_UP_LOSS_LIMIT = 0.003;
 
-    public static double EMA_DOWN_PROFIT_THRESHOLD = 0.02;
+    public static double EMA_DOWN_PROFIT_THRESHOLD = 0.015;
 
     public static double EMA_DOWN_PROFIT_LIMIT = 0.6;
 
-    public static double EMA_DOWN_LOSS_LIMIT = 0.01;
+    public static double EMA_DOWN_LOSS_LIMIT = 0.0075;
 
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!

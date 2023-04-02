@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class ExportDataPreprocess {
 
     public static void main(String[] args) {
-        String originalFile = "testdata\\stock\\ic2212.csv";
+        String originalFile = "TestData\\ic2255-2276.csv";
         String type = "IC2212";
         int interval = 1;
         minuteData(originalFile, "History_" + type + "_" + interval + ".csv", interval);

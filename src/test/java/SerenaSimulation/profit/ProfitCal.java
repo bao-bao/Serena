@@ -79,7 +79,7 @@ public class ProfitCal {
             e.printStackTrace();
         }
 
-        profit = profit - (lineCount / 2 * 1.1);
+        profit = profit - (lineCount / 2 * 3.0);
 
         System.out.println("Profit: " + String.format("%.2f", profit));
 

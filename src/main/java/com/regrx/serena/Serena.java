@@ -10,7 +10,7 @@ public class Serena {
         // 3. 多品种并行
         // 5. 交互界面
         // 6. 极值点的分析(长期工作)
-        Controller controller = Controller.getInstance("IC2212");
+        Controller controller = Controller.getInstance("IF0");
 
         controller.addDataTrack(IntervalEnum.MIN_1);
 //        controller.addDataTrack(IntervalEnum.MIN_2);
