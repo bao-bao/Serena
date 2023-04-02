@@ -60,12 +60,12 @@ public class SerenaSimulation {
         int EMAUpperBound = 500;
         int step = 10;
         double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};
-        double upProfitThreshold = 0.006;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double upProfitLimit = 0.7;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double upLossLimit = 0.003;           // 损失超过开仓时收盘价的 x% 就平仓
-        double downProfitThreshold = 0.015;     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
-        double downProfitLimit = 0.6;          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
-        double downLossLimit = 0.0075;           // 损失超过开仓时收盘价的 x% 就平仓
+        double[] upProfitThreshold = {0.006, 0.007};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] upProfitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] upLossLimit = {0.003};           // 损失超过开仓时收盘价的 x% 就平仓
+        double[] downProfitThreshold = {0.015};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] downProfitLimit = {0.6};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] downLossLimit = {0.0075};           // 损失超过开仓时收盘价的 x% 就平仓
         // 下面代码不要动
         ArrayList<double[]> EMAs = new ArrayList<>();
         if (upSide & downSide) {
@@ -83,33 +83,55 @@ public class SerenaSimulation {
         } else {
             total = 1;
         }
+        total *= upProfitThreshold.length * upProfitLimit.length * upLossLimit.length * downProfitThreshold.length * downProfitLimit.length * downLossLimit.length;
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
 
         int count = 1;
         for (double[] EMA : EMAs) {
-            System.out.println("current running: " + count++ + "/" + total + ", EMA: [" + (int) EMA[0] + ", " + (int) EMA[1] + ", " + (int) EMA[2] + ", " + (int) EMA[3] + "]...");
-            Setting.EMA_UP_PROFIT_THRESHOLD = upProfitThreshold;
-            Setting.EMA_UP_PROFIT_LIMIT = upProfitLimit;
-            Setting.EMA_UP_LOSS_LIMIT = upLossLimit;
-            Setting.EMA_DOWN_PROFIT_THRESHOLD = downProfitThreshold;
-            Setting.EMA_DOWN_PROFIT_LIMIT = downProfitLimit;
-            Setting.EMA_DOWN_LOSS_LIMIT = downLossLimit;
-            Setting.EMA_ALPHA = EMA;
-            simulation();
-            try {
-                Thread.sleep(500);
-                ControllerTest.stop();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            EMACombination newRes = new EMACombination(EMA, upProfitThreshold, upProfitLimit, upLossLimit, downProfitThreshold, downProfitLimit, downLossLimit);
-            newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
-            queue.add(newRes);
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            for(double upPT : upProfitThreshold) {
+                for(double upPL : upProfitLimit) {
+                    for(double upLL : upLossLimit) {
+                        for(double downPT : downProfitThreshold) {
+                            for(double downPL : downProfitLimit) {
+                                for(double downLL : downLossLimit) {
+                                    System.out.println(
+                                            "current running: " + count++ + "/" + total + ", " +
+                                                    "EMA: [" + (int) EMA[0] + ", " + (int) EMA[1] + ", " + (int) EMA[2] + ", " + (int) EMA[3] + "], " +
+                                                    "upProfitThreshold: " + upPT + ", " +
+                                                    "upProfitLimit: " + upPL + ", " +
+                                                    "upLossLimit: " + upLL + ", " +
+                                                    "downProfitThreshold: " + downPT + ", " +
+                                                    "downProfitLimit: " + downPL + ", " +
+                                                    "downLossLimit: " + downLL
+                                            );
+                                    Setting.EMA_UP_PROFIT_THRESHOLD = upPT;
+                                    Setting.EMA_UP_PROFIT_LIMIT = upPL;
+                                    Setting.EMA_UP_LOSS_LIMIT = upLL;
+                                    Setting.EMA_DOWN_PROFIT_THRESHOLD = downPT;
+                                    Setting.EMA_DOWN_PROFIT_LIMIT = downPL;
+                                    Setting.EMA_DOWN_LOSS_LIMIT = downLL;
+                                    Setting.EMA_ALPHA = EMA;
+                                    simulation();
+                                    try {
+                                        Thread.sleep(500);
+                                        ControllerTest.stop();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
+                                    newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
+                                    queue.add(newRes);
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             }
         }
         ArrayList<EMACombination> resList = new ArrayList<>();
