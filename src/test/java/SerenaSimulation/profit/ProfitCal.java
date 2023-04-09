@@ -1,6 +1,8 @@
 package SerenaSimulation.profit;
 
 
+import com.regrx.serena.common.constant.TradingType;
+
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -55,14 +57,14 @@ public class ProfitCal {
                         profit += st.profit;
                         status = 0;
                         break;
-                    case "PutBuying":
+                    case "Long":
                         st = new SingleTrade(lastHistory[2] + " " + lastHistory[3]);
                         st.setTradeType("Long");
                         st.setOpenReason(reason);
                         status = 1;
                         tradeInPrice = currPrice;
                         break;
-                    case "ShortSelling":
+                    case "Short":
                         st = new SingleTrade(lastHistory[2] + " " + lastHistory[3]);
                         st.setTradeType("Short");
                         st.setOpenReason(reason);

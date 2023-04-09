@@ -142,6 +142,8 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
+
         for (EMACombination res : resList) {
             System.out.print(res);
         }

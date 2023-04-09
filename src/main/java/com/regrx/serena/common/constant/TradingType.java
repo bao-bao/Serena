@@ -2,8 +2,8 @@ package com.regrx.serena.common.constant;
 
 public enum TradingType {
     NO_ACTION("Null"),
-    SHORT_SELLING("ShortSelling"),
-    PUT_BUYING("PutBuying"),
+    SHORT_SELLING("Short"),
+    PUT_BUYING("Long"),
     EMPTY("Empty");
 
     private final String value;

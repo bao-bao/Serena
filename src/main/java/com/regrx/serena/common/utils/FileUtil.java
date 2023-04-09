@@ -146,29 +146,29 @@ public class FileUtil {
             while ((line = reader.readLine()) != null) {
                 if (line.contains("MA cross")) {
                     String[] lastHistory = line.split(" ");
-                    if (lastHistory[lastHistory.length - 1].equals("Empty")) {
+                    if (lastHistory[lastHistory.length - 1].equals(TradingType.EMPTY.toString())) {
                         line = reader.readLine();
                         if (line != null) {
                             lastHistory = line.split(" ");
-                            if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                            if (lastHistory[lastHistory.length - 1].equals(TradingType.PUT_BUYING.toString())) {
                                 res = TrendType.TREND_DOWN;
-                            } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                            } else if (lastHistory[lastHistory.length - 1].equals(TradingType.SHORT_SELLING.toString())) {
                                 res = TrendType.TREND_UP;
                             }
                         }
                     } else {
-                        if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                        if (lastHistory[lastHistory.length - 1].equals(TradingType.PUT_BUYING.toString())) {
                             res = TrendType.TREND_UP;
-                        } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                        } else if (lastHistory[lastHistory.length - 1].equals(TradingType.SHORT_SELLING.toString())) {
                             res = TrendType.TREND_DOWN;
                         }
                     }
                     break;
                 } else if (line.contains("empty")) {
                     String[] lastHistory = line.split(" ");
-                    if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                    if (lastHistory[lastHistory.length - 1].equals(TradingType.PUT_BUYING.toString())) {
                         res = TrendType.TREND_UP;
-                    } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                    } else if (lastHistory[lastHistory.length - 1].equals(TradingType.SHORT_SELLING.toString())) {
                         res = TrendType.TREND_DOWN;
                     }
                     break;
