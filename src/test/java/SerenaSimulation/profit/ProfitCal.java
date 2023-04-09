@@ -1,8 +1,6 @@
 package SerenaSimulation.profit;
 
 
-import org.apache.commons.io.input.ReversedLinesFileReader;
-
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.PriorityQueue;
@@ -13,8 +11,9 @@ public class ProfitCal {
         int status = 0;
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
         int putProfitCount = 0, putLossCount = 0, shortProfitCount = 0, shortLossCount = 0, count = 0;
-        double maximumContinuousLoss = 0.0, continuousLoss = 0.0;
-        String maximumContinuousLossTime = "";
+
+        int profitCount = 0, lossCount = 0;
+        double totalProfit = 0.0, totalLoss = 0.0;
         PriorityQueue<SingleTrade> trades = new PriorityQueue<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line;
@@ -33,21 +32,22 @@ public class ProfitCal {
                         count++;
                         if(status == 1 && st.profit >= 0) {
                             putProfitCount++;
+                            profitCount++;
                         } else if(status == 1 && st.profit < 0) {
                             putLossCount++;
+                            lossCount++;
                         } else if(status == 2 && st.profit >= 0) {
                             shortProfitCount++;
+                            profitCount++;
                         } else {
                             shortLossCount++;
+                            lossCount++;
                         }
                         if(st.profit >= 0) {
-                            if(continuousLoss < maximumContinuousLoss) {
-                                maximumContinuousLoss = continuousLoss;
-                                maximumContinuousLossTime = st.openTime;
-                            }
-                            continuousLoss = 0.0;
+
+                            totalProfit += st.profit;
                         } else {
-                            continuousLoss += st.profit;
+                            totalLoss += -1 * st.profit;
                         }
                         trades.add(st);
                         profit += st.profit;
@@ -68,10 +68,6 @@ public class ProfitCal {
                         tradeInPrice = currPrice;
                         break;
                 }
-            }
-            if(continuousLoss < maximumContinuousLoss) {
-                maximumContinuousLoss = continuousLoss;
-                maximumContinuousLossTime = st.openTime;
             }
         } catch (FileNotFoundException e) {
             System.out.println("No such file.");
@@ -100,16 +96,28 @@ public class ProfitCal {
             System.out.println("Loss\t" + putLossCount + "\t" + shortLossCount);
             System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
 
+            double averageProfit = (totalProfit / profitCount);
+            double averageLoss = (totalLoss / lossCount);
             System.out.println();
-            System.out.println("Maximum Continous Loss: " + String.format("%.2f", maximumContinuousLoss) + ", Occurred until: " + maximumContinuousLossTime);
+            System.out.println("APPT: " + String.format("%.2f", averageProfit - averageLoss));
+
+            int totalCount = profitCount + lossCount;
+            double winRate = (double)profitCount / (double)totalCount;
+            double lossRate = (double)lossCount / (double)totalCount;
+            System.out.println("EVPT: " + String.format("%.2f", (winRate * averageProfit) - (lossRate * averageLoss)));
+
+            double odds = averageProfit / averageLoss;
+            System.out.println("Odds: " + String.format("%.2f", odds));
+            System.out.println("Kelly: " + String.format("%.2f", (((winRate * (odds + 1)) - 1) / odds) * 100) + "%");
+
+            double risk = averageLoss;
+            System.out.println("EVUR: " + String.format("%.2f", (winRate * averageProfit * odds / risk) - (lossRate * averageLoss / risk)));
         }
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
         testResult.setShortProfit(shortProfitCount);
         testResult.setPutLoss(putLossCount);
         testResult.setShortLoss(shortLossCount);
-        testResult.setContinousLoss(maximumContinuousLoss);
-        testResult.setCLTime(maximumContinuousLossTime);
         return testResult;
     }
 }

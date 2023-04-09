@@ -313,7 +313,6 @@ public class SerenaSimulation {
                 writer.append(String.valueOf(testResult.getShortProfit())).append(',');
                 writer.append(String.valueOf(testResult.getShortLoss())).append(',');
                 writer.append(String.valueOf(testResult.getTotalCount())).append(',');
-                writer.append(String.valueOf(testResult.getContinousLoss())).append(',');
                 writer.append(String.valueOf(testResult.getCLTime())).append('\n');
             }
             writer.flush();
