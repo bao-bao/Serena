@@ -8,6 +8,13 @@ public class TestResult implements Comparable<TestResult> {
     int sProfit;
     String CLTime;
 
+    double APPT;
+    double EVPT;
+    double Odds;
+    double Kelly;
+    double EVUR;
+    double maxLoss;
+
     public double getTotalProfit() {
         return totalProfit;
     }
@@ -58,6 +65,54 @@ public class TestResult implements Comparable<TestResult> {
 
     public void setCLTime(String CLTime) {
         this.CLTime = CLTime;
+    }
+
+    public double getAPPT() {
+        return APPT;
+    }
+
+    public void setAPPT(double APPT) {
+        this.APPT = APPT;
+    }
+
+    public double getEVPT() {
+        return EVPT;
+    }
+
+    public void setEVPT(double EVPT) {
+        this.EVPT = EVPT;
+    }
+
+    public double getOdds() {
+        return Odds;
+    }
+
+    public void setOdds(double odds) {
+        Odds = odds;
+    }
+
+    public double getKelly() {
+        return Kelly;
+    }
+
+    public void setKelly(double kelly) {
+        Kelly = kelly;
+    }
+
+    public double getEVUR() {
+        return EVUR;
+    }
+
+    public void setEVUR(double EVUR) {
+        this.EVUR = EVUR;
+    }
+
+    public double getMaxLoss() {
+        return maxLoss;
+    }
+
+    public void setMaxLoss(double maxLoss) {
+        this.maxLoss = maxLoss;
     }
 
     @Override

@@ -64,25 +64,31 @@ public class EMACombination implements Comparable<EMACombination> {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("Profit: ").append(String.format("%.2f", profit.getTotalProfit()));
-
-        sb.append(", Total Count: ").append(profit.getTotalCount());
         double winCount = profit.getShortProfit() + profit.getPutProfit();
-        sb.append(", Win Rate: ").append(String.format("%.2f", (winCount / profit.getTotalCount()) * 100)).append("%");
 
-        sb.append(", EMA: [");
+        sb.append(String.format("%.2f", profit.getTotalProfit())).append(",");
+        sb.append(profit.getTotalCount()).append(",");
+        sb.append(String.format("%.2f", (winCount / profit.getTotalCount()) * 100)).append("%,");
+        sb.append(String.format("%.2f", profit.getAPPT())).append(",");
+        sb.append(String.format("%.2f", profit.getEVPT())).append(",");
+        sb.append(String.format("%.2f", profit.getEVUR())).append(",");
+        sb.append(String.format("%.2f", profit.getKelly())).append("%,");
+        sb.append(String.format("%.2f", profit.getOdds())).append(",");
+        sb.append(String.format("%.2f", profit.getMaxLoss())).append(",");
+
+        sb.append("[");
         for(double val : EMA) {
-            sb.append(val).append(", ");
+            sb.append(val).append(" ");
         }
         sb.setLength(sb.length() - 2);
-        sb.append("]");
+        sb.append("],");
 
-        sb.append(", Up Profit Threshold: ").append(String.format("%.2f", profitThreshold * 100)).append("%");
-        sb.append(", Up Profit Limit: ").append(String.format("%.2f", profitLimit * 100)).append("%");
-        sb.append(", Up Loss Limit: ").append(String.format("%.2f", lossLimit * 100)).append("%");
-        sb.append(", Down Profit Threshold: ").append(String.format("%.2f", dProfitThreshold * 100)).append("%");
-        sb.append(", Down Profit Limit: ").append(String.format("%.2f", dProfitLimit * 100)).append("%");
-        sb.append(", Down Loss Limit: ").append(String.format("%.2f", dLossLimit * 100)).append("%");
+        sb.append(String.format("%.2f", profitThreshold * 100)).append("%,");
+        sb.append(String.format("%.2f", profitLimit * 100)).append("%,");
+        sb.append(String.format("%.2f", lossLimit * 100)).append("%,");
+        sb.append(String.format("%.2f", dProfitThreshold * 100)).append("%,");
+        sb.append(String.format("%.2f", dProfitLimit * 100)).append("%,");
+        sb.append(String.format("%.2f", dLossLimit * 100)).append("%");
         sb.append("\n");
         return sb.toString();
     }

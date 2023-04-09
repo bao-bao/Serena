@@ -149,6 +149,22 @@ public class SerenaSimulation {
         String filename = type + '_' + Calendar.getInstance().getTime().getTime();
         FileUtil.newFile(filename + ".csv");
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            writer.append("Profit,")
+                    .append("Total Count,")
+                    .append("Win Rate,")
+                    .append("APPT,")
+                    .append("EVPT,")
+                    .append("EVUR,")
+                    .append("Kelly,")
+                    .append("Odds,")
+                    .append("Max Loss,")
+                    .append("EMA,")
+                    .append("Up Profit Threshold,")
+                    .append("Up Profit Limit,")
+                    .append("Up Loss Limit,")
+                    .append("Down Profit Threshold,")
+                    .append("Down Profit Limit,")
+                    .append("Down Loss Limit\n");
             for (EMACombination res : resList) {
                 writer.append(res.toString());
             }

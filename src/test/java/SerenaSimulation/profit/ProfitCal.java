@@ -79,45 +79,53 @@ public class ProfitCal {
 
         profit = profit - (lineCount / 2 * 3.0);
 
-        System.out.println("Profit: " + String.format("%.2f", profit));
 
+
+        double averageProfit = (totalProfit / profitCount);
+        double averageLoss = (totalLoss / lossCount);
+        int totalCount = profitCount + lossCount;
+        double winRate = (double) profitCount / (double) totalCount;
+        double lossRate = (double) lossCount / (double) totalCount;
+        double odds = averageProfit / averageLoss;
+        double risk = averageLoss;
+
+        double APPT = averageProfit - averageLoss;
+        double EVPT = (winRate * averageProfit) - (lossRate * averageLoss);
+        double EVUR = (winRate * averageProfit * odds / risk) - (lossRate * averageLoss / risk);
+        double Kelly = (((winRate * (odds + 1)) - 1) / odds) * 100;
+
+
+        ArrayList<Double> profitList = new ArrayList<>();
+        for (int i = 0; i < count; i++) {
+            SingleTrade trade = trades.poll();
+            if (trade != null && outputDetail) {
+                profitList.add(trade.profit);
+                System.out.println(trade.openTime + "," + trade.closeTime + "," +
+                        trade.tradeType + "," + String.format("%.2f", trade.profit) +
+                        ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
+            }
+        }
+        double maxLoss = findMaxLoss(profitList);
+
+        System.out.println("Profit: " + String.format("%.2f", profit));
         if (outputDetail) {
             System.out.println("Final Status: " + (status == 1 ? "PutBuying" : status == 2 ? "ShortSelling" : "Empty"));
             System.out.println("Profit Count: " + (putProfitCount + shortProfitCount) + "\t" + "Loss Count: " + (putLossCount + shortLossCount));
-
-            ArrayList<Double> profitList = new ArrayList<>();
-            for (int i = 0; i < count; i++) {
-                SingleTrade trade = trades.poll();
-                if (trade != null) {
-                    profitList.add(trade.profit);
-                    System.out.println(trade.openTime + "," + trade.closeTime + "," +
-                            trade.tradeType + "," + String.format("%.2f", trade.profit) +
-                            ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
-                }
-            }
 
             System.out.println("\n\t\tPut\tShort");
             System.out.println("Loss\t" + putLossCount + "\t" + shortLossCount);
             System.out.println("Profit\t" + putProfitCount + "\t" + shortProfitCount);
 
-            double averageProfit = (totalProfit / profitCount);
-            double averageLoss = (totalLoss / lossCount);
             System.out.println();
-            System.out.println("APPT: " + String.format("%.2f", averageProfit - averageLoss));
+            System.out.println("APPT: " + String.format("%.2f", APPT));
 
-            int totalCount = profitCount + lossCount;
-            double winRate = (double) profitCount / (double) totalCount;
-            double lossRate = (double) lossCount / (double) totalCount;
-            System.out.println("EVPT: " + String.format("%.2f", (winRate * averageProfit) - (lossRate * averageLoss)));
+            System.out.println("EVPT: " + String.format("%.2f", EVPT));
 
-            double odds = averageProfit / averageLoss;
             System.out.println("Odds: " + String.format("%.2f", odds));
-            System.out.println("Kelly: " + String.format("%.2f", (((winRate * (odds + 1)) - 1) / odds) * 100) + "%");
+            System.out.println("Kelly: " + String.format("%.2f", Kelly) + "%");
 
-            double risk = averageLoss;
-            System.out.println("EVUR: " + String.format("%.2f", (winRate * averageProfit * odds / risk) - (lossRate * averageLoss / risk)));
+            System.out.println("EVUR: " + String.format("%.2f", EVUR));
 
-            double maxLoss = findMaxLoss(profitList);
             System.out.println("Max Loss: " +  String.format("%.2f", maxLoss));
         }
         testResult.setTotalProfit(profit);
@@ -125,6 +133,13 @@ public class ProfitCal {
         testResult.setShortProfit(shortProfitCount);
         testResult.setPutLoss(putLossCount);
         testResult.setShortLoss(shortLossCount);
+        testResult.setAPPT(APPT);
+        testResult.setEVPT(EVPT);
+        testResult.setEVUR(EVUR);
+        testResult.setKelly(Kelly);
+        testResult.setOdds(odds);
+        testResult.setMaxLoss(maxLoss);
+
         return testResult;
     }
 
