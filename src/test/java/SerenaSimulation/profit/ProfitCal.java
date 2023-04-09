@@ -3,6 +3,7 @@ package SerenaSimulation.profit;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class ProfitCal {
@@ -14,6 +15,7 @@ public class ProfitCal {
 
         int profitCount = 0, lossCount = 0;
         double totalProfit = 0.0, totalLoss = 0.0;
+
         PriorityQueue<SingleTrade> trades = new PriorityQueue<>();
         try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line;
@@ -30,20 +32,20 @@ public class ProfitCal {
                         st.setProfit(status == 1 ? (emptyPrice - tradeInPrice) : (tradeInPrice - emptyPrice));
                         st.setCloseReason(reason);
                         count++;
-                        if(status == 1 && st.profit >= 0) {
+                        if (status == 1 && st.profit >= 0) {
                             putProfitCount++;
                             profitCount++;
-                        } else if(status == 1 && st.profit < 0) {
+                        } else if (status == 1 && st.profit < 0) {
                             putLossCount++;
                             lossCount++;
-                        } else if(status == 2 && st.profit >= 0) {
+                        } else if (status == 2 && st.profit >= 0) {
                             shortProfitCount++;
                             profitCount++;
                         } else {
                             shortLossCount++;
                             lossCount++;
                         }
-                        if(st.profit >= 0) {
+                        if (st.profit >= 0) {
 
                             totalProfit += st.profit;
                         } else {
@@ -79,13 +81,15 @@ public class ProfitCal {
 
         System.out.println("Profit: " + String.format("%.2f", profit));
 
-        if(outputDetail) {
+        if (outputDetail) {
             System.out.println("Final Status: " + (status == 1 ? "PutBuying" : status == 2 ? "ShortSelling" : "Empty"));
             System.out.println("Profit Count: " + (putProfitCount + shortProfitCount) + "\t" + "Loss Count: " + (putLossCount + shortLossCount));
 
+            ArrayList<Double> profitList = new ArrayList<>();
             for (int i = 0; i < count; i++) {
                 SingleTrade trade = trades.poll();
                 if (trade != null) {
+                    profitList.add(trade.profit);
                     System.out.println(trade.openTime + "," + trade.closeTime + "," +
                             trade.tradeType + "," + String.format("%.2f", trade.profit) +
                             ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
@@ -102,8 +106,8 @@ public class ProfitCal {
             System.out.println("APPT: " + String.format("%.2f", averageProfit - averageLoss));
 
             int totalCount = profitCount + lossCount;
-            double winRate = (double)profitCount / (double)totalCount;
-            double lossRate = (double)lossCount / (double)totalCount;
+            double winRate = (double) profitCount / (double) totalCount;
+            double lossRate = (double) lossCount / (double) totalCount;
             System.out.println("EVPT: " + String.format("%.2f", (winRate * averageProfit) - (lossRate * averageLoss)));
 
             double odds = averageProfit / averageLoss;
@@ -112,6 +116,9 @@ public class ProfitCal {
 
             double risk = averageLoss;
             System.out.println("EVUR: " + String.format("%.2f", (winRate * averageProfit * odds / risk) - (lossRate * averageLoss / risk)));
+
+            double maxLoss = findMaxLoss(profitList);
+            System.out.println("Max Loss: " +  String.format("%.2f", maxLoss));
         }
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
@@ -119,5 +126,20 @@ public class ProfitCal {
         testResult.setPutLoss(putLossCount);
         testResult.setShortLoss(shortLossCount);
         return testResult;
+    }
+
+    private static double findMaxLoss(ArrayList<Double> list) {
+        double[][] dp = new double[list.size()][list.size()];
+        double res = 0.0;
+        for (int i = 0; i < dp.length; i++) {
+            dp[0][i] = list.get(i);
+        }
+        for (int i = 1; i < dp.length; i++) {
+            for (int j = i; j < dp.length; j++) {
+                dp[i][j] = dp[i - 1][j - 1] + list.get(j);
+                res = Math.min(res, dp[i][j]);
+            }
+        }
+        return res;
     }
 }
