@@ -1,5 +1,6 @@
 package com.regrx.serena.common.utils;
 
+import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.constant.FutureType;
 

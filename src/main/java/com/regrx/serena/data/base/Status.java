@@ -103,13 +103,6 @@ public class Status {
 
     @Override
     public String toString() {
-        if(status == TradingType.EMPTY) {
-            return "Empty";
-        } else if(status == TradingType.SHORT_SELLING) {
-            return "Short Selling";
-        } else if(status == TradingType.PUT_BUYING) {
-            return "Put Buying";
-        }
-        return "";
+        return status.toString();
     }
 }

@@ -53,10 +53,10 @@ public class FileUtil {
             case "Empty":
                 status.setStatus(TradingType.EMPTY);
                 break;
-            case "PutBuying":
+            case "Long":
                 status.setStatus(TradingType.PUT_BUYING);
                 break;
-            case "ShortSelling":
+            case "Short":
                 status.setStatus(TradingType.SHORT_SELLING);
                 break;
         }
