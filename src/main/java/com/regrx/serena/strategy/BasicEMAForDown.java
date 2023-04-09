@@ -2,11 +2,12 @@ package com.regrx.serena.strategy;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.*;
+import com.regrx.serena.common.utils.FileUtil;
+import com.regrx.serena.controller.Controller;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.ExpMovingAverage;
-import com.regrx.serena.service.DataServiceManager;
 
 public class BasicEMAForDown extends AbstractStrategy {
 
@@ -22,22 +23,23 @@ public class BasicEMAForDown extends AbstractStrategy {
         hasInit = false;
     }
 
-    private void init() {
-        active = Status.getInstance().getStatus() == TradingType.SHORT_SELLING;
-        lastCrossPrice = DataServiceManager.getInstance().queryData(interval).getLastEMACrossPrice(EMAEnum.DOWN_SHORT_TERM_EMA, EMAEnum.DOWN_LONG_TERM_EMA);
-        profit = 0.0;
-        profitMaximum = 0.0;
+    private void init(ExPrice price) {
+        double[] prior = FileUtil.readEmaLog(Controller.getInstance().getType(), interval, false);
+        lastCrossPrice = prior[0];
+        active = lastCrossPrice != 0.0;
+        profit = active ? lastCrossPrice - price.getPrice() : 0.0;
+        profitMaximum = prior[1];
         hasInit = true;
     }
 
     @Override
     public Decision execute(ExPrice price) {
         if(!hasInit) {
-            init();
+            init(price);
         }
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, interval);
         ExpMovingAverage EMA = dataSvcMgr.queryData(interval).getExpMAvgs();
-        if(EMA.getSize() == 0) {
+        if (EMA.getSize() == 0) {
             return decision;
         }
 
@@ -50,6 +52,7 @@ public class BasicEMAForDown extends AbstractStrategy {
         if (!active && currentShortTermEMA < currentLongTermEMA && lastShortTermEMA > lastLongTermEMA) {
             active = true;
             lastCrossPrice = price.getPrice();
+            FileUtil.emaLog(Controller.getInstance().getType(), interval, false, true, lastCrossPrice, price.getTime());
             if (status.getTrendEMA() == TrendType.TREND_UP) {
                 decision.make(TradingType.EMPTY, "EMA cross down");
             } else {
@@ -74,7 +77,7 @@ public class BasicEMAForDown extends AbstractStrategy {
                     decision.make(TradingType.PUT_BUYING, "EMA down ends by loss limit");
                     status.setTrendEMA(TrendType.TREND_UP);
                 }
-                reset();
+                reset(price);
                 return decision;
             }
 
@@ -89,18 +92,19 @@ public class BasicEMAForDown extends AbstractStrategy {
                     decision.make(TradingType.PUT_BUYING, "EMA down ends by profit limit");
                     status.setTrendEMA(TrendType.TREND_UP);
                 }
-                reset();
+                reset(price);
                 return decision;
             }
         }
         return decision;
     }
 
-    private void reset() {
+    private void reset(ExPrice price) {
         Status status = Status.getInstance();
         if(status.getTrendEMA() == TrendType.TREND_DOWN) {
             status.setTrendEMA(TrendType.NULL);
         }
+        FileUtil.emaLog(Controller.getInstance().getType(), interval, false, false, lastCrossPrice, price.getTime());
         active = false;
         lastCrossPrice = 0.0;
         profit = 0.0;

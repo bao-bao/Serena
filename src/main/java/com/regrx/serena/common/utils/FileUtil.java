@@ -10,12 +10,12 @@ import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.MovingAverage;
 
+import com.regrx.serena.service.DataServiceManager;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 public class FileUtil {
@@ -45,14 +45,20 @@ public class FileUtil {
     public static void readTradeHistory(String filename) {
         Status status = Status.getInstance();
         List<String> logs = readLastLine(new File(filename + ".log"), 1);
-        if(logs.size() == 0) {
+        if (logs.size() == 0) {
             return;
         }
         String[] lastHistory = logs.get(0).split(" ");
         switch (lastHistory[lastHistory.length - 1]) {
-            case "Empty": status.setStatus(TradingType.EMPTY); break;
-            case "PutBuying": status.setStatus(TradingType.PUT_BUYING); break;
-            case "ShortSelling": status.setStatus(TradingType.SHORT_SELLING); break;
+            case "Empty":
+                status.setStatus(TradingType.EMPTY);
+                break;
+            case "PutBuying":
+                status.setStatus(TradingType.PUT_BUYING);
+                break;
+            case "ShortSelling":
+                status.setStatus(TradingType.SHORT_SELLING);
+                break;
         }
 
         // load interval and last trade price
@@ -68,7 +74,7 @@ public class FileUtil {
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(file, StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null && result.size() < numLastLineToRead) {
-                if(!line.equals("")) {
+                if (!line.equals("")) {
                     result.add(line);
                 }
             }
@@ -138,31 +144,31 @@ public class FileUtil {
         try (ReversedLinesFileReader reader = new ReversedLinesFileReader(new File(filename), StandardCharsets.UTF_8)) {
             String line;
             while ((line = reader.readLine()) != null) {
-                if(line.contains("MA cross")) {
+                if (line.contains("MA cross")) {
                     String[] lastHistory = line.split(" ");
-                    if(lastHistory[lastHistory.length - 1].equals("Empty")) {
+                    if (lastHistory[lastHistory.length - 1].equals("Empty")) {
                         line = reader.readLine();
-                        if(line != null) {
+                        if (line != null) {
                             lastHistory = line.split(" ");
-                            if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                            if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
                                 res = TrendType.TREND_DOWN;
-                            } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                            } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
                                 res = TrendType.TREND_UP;
                             }
                         }
                     } else {
-                        if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                        if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
                             res = TrendType.TREND_UP;
-                        } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                        } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
                             res = TrendType.TREND_DOWN;
                         }
                     }
                     break;
-                } else if(line.contains("empty")) {
+                } else if (line.contains("empty")) {
                     String[] lastHistory = line.split(" ");
-                    if(lastHistory[lastHistory.length - 1].equals("PutBuying")) {
+                    if (lastHistory[lastHistory.length - 1].equals("PutBuying")) {
                         res = TrendType.TREND_UP;
-                    } else if(lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
+                    } else if (lastHistory[lastHistory.length - 1].equals("ShortSelling")) {
                         res = TrendType.TREND_DOWN;
                     }
                     break;
@@ -176,4 +182,60 @@ public class FileUtil {
         return res;
     }
 
+    public static void emaLog(String type, IntervalEnum interval, boolean isForUp, boolean isActive, double price, String time) {
+        String filename = "EMA_" + type + "_" + interval.getValue() + ".log";
+        try (FileWriter writer = new FileWriter(filename, true)) {
+            writer.append(time).append("--");
+            writer.append(isForUp ? "UP" : "DOWN").append("--");
+            writer.append(Boolean.toString(isActive)).append("--");
+            writer.append(String.format("%.2f", price)).append('\n');
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            newFile(filename);
+            emaLog(type, interval, isForUp, isActive, price, time);
+        } catch (IOException e) {
+            LogUtil.getInstance().severe("Error occurred when opening file \"" + filename);
+            System.exit(ErrorType.IO_ERROR_CODE.getCode());
+        }
+    }
+
+    public static double[] readEmaLog(String type, IntervalEnum interval, boolean isForUp) {
+        double lastPrice = 0.0;
+        double profitMax = 0.0;
+        Long crossTime = Calendar.getInstance().getTime().getTime();
+
+        String filename = "EMA_" + type + "_" + interval.getValue() + ".log";
+        List<String> revLog = readLastLine(new File(filename), Integer.MAX_VALUE);
+        for (String line : revLog) {
+            String[] parts = line.split("--");
+            if (isForUp && Objects.equals(parts[1], "UP")) {
+                if (Boolean.parseBoolean(parts[2])) {
+                    lastPrice = Double.parseDouble(parts[3]);
+                    crossTime = TimeUtil.getDateFromString(parts[0]).getTime();
+                }
+                break;
+            }
+            if (!isForUp && Objects.equals(parts[1], "DOWN")) {
+                if (Boolean.parseBoolean(parts[2])) {
+                    lastPrice = Double.parseDouble(parts[3]);
+                    crossTime = TimeUtil.getDateFromString(parts[0]).getTime();
+                }
+                break;
+            }
+        }
+        if (lastPrice == 0.0) {
+            return new double[]{lastPrice, 0.0};
+        }
+
+        for(ExPrice price : DataServiceManager.getInstance().queryData(interval).getPrices()) {
+            if(TimeUtil.getDateFromString(price.getTime()).getTime() > crossTime) {
+                if(isForUp) {
+                    profitMax = Math.max(profitMax, price.getPrice() - lastPrice);
+                } else {
+                    profitMax = Math.max(profitMax, lastPrice - price.getPrice());
+                }
+            }
+        }
+        return new double[]{lastPrice, profitMax};
+    }
 }

@@ -1,9 +1,7 @@
 package com.regrx.serena.common.utils;
 
 import com.regrx.serena.common.Setting;
-import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.data.base.Decision;
-import com.regrx.serena.data.base.ExPrice;
 
 import java.io.File;
 import java.io.FileNotFoundException;
