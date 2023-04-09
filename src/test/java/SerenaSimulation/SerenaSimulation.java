@@ -143,7 +143,7 @@ public class SerenaSimulation {
             }
         }
         for (EMACombination res : resList) {
-            System.out.println(res);
+            System.out.print(res);
         }
 
         String filename = type + '_' + Calendar.getInstance().getTime().getTime();
