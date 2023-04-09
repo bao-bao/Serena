@@ -57,7 +57,7 @@ public class ProfitCal {
                         break;
                     case "PutBuying":
                         st = new SingleTrade(lastHistory[2] + " " + lastHistory[3]);
-                        st.setTradeType("Put");
+                        st.setTradeType("Long");
                         st.setOpenReason(reason);
                         status = 1;
                         tradeInPrice = currPrice;
