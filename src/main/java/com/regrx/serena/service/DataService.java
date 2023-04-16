@@ -29,16 +29,8 @@ public class DataService implements Runnable {
         this.interval = interval;
         this.minutesData = new MinutesData(interval);
         this.lock = new SyncLock();
-    }
-
-    @Override
-    public void run() {
 
         FutureType breed = PreparationUtil.getBreed(type);
-        LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
-        // https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var=/InnerFuturesNewService.getFewMinLine?symbol=RB0&type=15
-        String url = "https://hq.sinajs.cn/list=nf_" + type;
-
         if(interval == IntervalEnum.MIN_2 || interval == IntervalEnum.MIN_3) {
             minutesData = HistoryDownloader.getHistoryDataForSpecialInterval(type, interval, breed);
         } else {
@@ -47,6 +39,14 @@ public class DataService implements Runnable {
             Thread thread = new Thread(historyDownloader);
             thread.start();
         }
+    }
+
+    @Override
+    public void run() {
+        FutureType breed = PreparationUtil.getBreed(type);
+        LogUtil.getInstance().info(type + ": Start fetching " + interval.getValue() + " minute(s) data...");
+        // https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var=/InnerFuturesNewService.getFewMinLine?symbol=RB0&type=15
+        String url = "https://hq.sinajs.cn/list=nf_" + type;
 
         while(true) {
             if(!PreparationUtil.isTrading(breed)) {

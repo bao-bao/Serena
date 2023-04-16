@@ -20,6 +20,8 @@ public class Status {
         trading = true;
         count = 0;
         status = TradingType.EMPTY;
+        trend = TrendType.NULL;
+        trendEMA = TrendType.NULL;
         interval = IntervalEnum.NULL;
         strategy = StrategyEnum.STRATEGY_NULL;
         lastTradePrice = 0;

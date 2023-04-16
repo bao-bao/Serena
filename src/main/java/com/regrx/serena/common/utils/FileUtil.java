@@ -202,7 +202,8 @@ public class FileUtil {
     public static double[] readEmaLog(String type, IntervalEnum interval, boolean isForUp) {
         double lastPrice = 0.0;
         double profitMax = 0.0;
-        Long crossTime = Calendar.getInstance().getTime().getTime();
+        double currPrice = 0.0;
+        long crossTime = Calendar.getInstance().getTime().getTime();
 
         String filename = "EMA_" + type + "_" + interval.getValue() + ".log";
         List<String> revLog = readLastLine(new File(filename), Integer.MAX_VALUE);
@@ -224,11 +225,12 @@ public class FileUtil {
             }
         }
         if (lastPrice == 0.0) {
-            return new double[]{lastPrice, 0.0};
+            return new double[]{lastPrice, 0.0, 0.0};
         }
 
         for(ExPrice price : DataServiceManager.getInstance().queryData(interval).getPrices()) {
             if(TimeUtil.getDateFromString(price.getTime()).getTime() > crossTime) {
+                currPrice = price.getPrice();
                 if(isForUp) {
                     profitMax = Math.max(profitMax, price.getPrice() - lastPrice);
                 } else {
@@ -236,6 +238,18 @@ public class FileUtil {
                 }
             }
         }
-        return new double[]{lastPrice, profitMax};
+
+        Status status = Status.getInstance();
+        if(isForUp && status.getTrendEMA() == TrendType.NULL) {
+            status.setTrendEMA(TrendType.TREND_UP);
+        } else if(isForUp && status.getTrendEMA() == TrendType.TREND_DOWN) {
+            status.setTrendEMA(TrendType.TREND_BOTH);
+        } else if(!isForUp && status.getTrendEMA() == TrendType.NULL) {
+            status.setTrendEMA(TrendType.TREND_DOWN);
+        } else if(!isForUp && status.getTrendEMA() == TrendType.TREND_UP) {
+            status.setTrendEMA(TrendType.TREND_BOTH);
+        }
+
+        return new double[]{lastPrice, currPrice, profitMax};
     }
 }
