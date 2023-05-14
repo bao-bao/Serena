@@ -67,7 +67,7 @@ public class BasicEMAForUp extends AbstractStrategy {
                     decision.make(TradingType.EMPTY, "EMA up ends by loss limit");
                 }
                 if(status.getTrendEMA() == TrendType.TREND_BOTH && status.getStatus() == TradingType.EMPTY) {
-                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
+                    decision.make(TradingType.SHORT_SELLING, "EMA up ends by loss limit");
                 }
                 reset(price);
                 return decision;

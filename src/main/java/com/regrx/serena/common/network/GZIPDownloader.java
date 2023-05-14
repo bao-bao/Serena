@@ -1,5 +1,6 @@
 package com.regrx.serena.common.network;
 
+import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.ErrorType;
 import com.regrx.serena.common.utils.TradeUtil;
 import com.regrx.serena.common.utils.LogUtil;
@@ -49,6 +50,9 @@ public class GZIPDownloader {
                 return res;
             }
             LogUtil.getInstance().warning("download error, remaining retry " + retry + " time(s)");
+            try {
+                Thread.sleep(Setting.DOWNLOAD_RETRY_TIME);
+            } catch (Exception ignored) {}
         }
         // empty before exit
         LogUtil.getInstance().severe("Cannot fetch price data! Check network connection!");

@@ -14,7 +14,10 @@ import com.regrx.serena.data.MinutesData;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 
+import java.io.IOException;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.ArrayBlockingQueue;
 
 public class DataService implements Runnable {
@@ -31,7 +34,7 @@ public class DataService implements Runnable {
         this.lock = new SyncLock();
 
         FutureType breed = PreparationUtil.getBreed(type);
-        if(interval == IntervalEnum.MIN_2 || interval == IntervalEnum.MIN_3) {
+        if (interval == IntervalEnum.MIN_2 || interval == IntervalEnum.MIN_3) {
             minutesData = HistoryDownloader.getHistoryDataForSpecialInterval(type, interval, breed);
         } else {
             minutesData = HistoryDownloader.getHistoryData(type, interval, breed);
@@ -48,10 +51,21 @@ public class DataService implements Runnable {
         // https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var=/InnerFuturesNewService.getFewMinLine?symbol=RB0&type=15
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
-        while(true) {
-            if(!PreparationUtil.isTrading(breed)) {
-                try{
+        while (true) {
+            if (!PreparationUtil.isTrading(breed)) {
+                try {
                     Thread.sleep(30000);
+                    // try shutdown after normal daily trade
+                    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                    int hour = calendar.get(Calendar.HOUR_OF_DAY);
+                    int minute = calendar.get(Calendar.MINUTE);
+                    if (breed == FutureType.STOCK && hour == 15 && minute > 5) {
+                        try {
+                            Runtime.getRuntime().exec("shutdown /s /t 0");
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -69,7 +83,7 @@ public class DataService implements Runnable {
                 }
 
                 ExPrice newPrice;
-                if(breed == FutureType.STOCK) {
+                if (breed == FutureType.STOCK) {
                     newPrice = PriceDownloader.getPriceDataForStockFutures(url, type);
                 } else {
                     newPrice = PriceDownloader.getPriceDataForOtherFutures(url, type);
@@ -82,7 +96,7 @@ public class DataService implements Runnable {
     }
 
     private void callback(ExPrice newPrice) {
-        if(interval != DataServiceManager.getInstance().getMinimumInterval()) {
+        if (interval != DataServiceManager.getInstance().getMinimumInterval()) {
             return;
         }
         LogUtil.getInstance().info("Making trade decision on point " + newPrice + "...");

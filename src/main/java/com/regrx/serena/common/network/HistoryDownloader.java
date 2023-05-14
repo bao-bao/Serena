@@ -94,7 +94,7 @@ public class HistoryDownloader implements Runnable {
                 "/InnerFuturesNewService.getFewMinLine?" +
                 "symbol=" + type + "&" +
                 "type=" + interval.getValue();
-        String originString = GZIPDownloader.download(urlString, type, 3);
+        String originString = GZIPDownloader.download(urlString, type, Setting.DOWNLOAD_RETRY_COUNT);
         if (StringUtils.ordinalIndexOf(originString, "(null)", 1) != -1) {
             LogUtil.getInstance().severe("Wrong content fetched! Check url availability!");
             System.exit(ErrorType.DOWNLOAD_ERROR_CODE.getCode());

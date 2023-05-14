@@ -88,4 +88,9 @@ public class Setting {
     public static final String STOCK_FUTURE_PRICE_DATA_TIME_PATTERN = "yyyy-MM-dd,HH:mm:ss";
 
     public static final String OTHER_FUTURE_PRICE_DATA_TIME_PATTERN = "yyyy-MM-dd HHmmss";
+
+    // network retry
+    public static final int DOWNLOAD_RETRY_COUNT = 10;
+
+    public static final int DOWNLOAD_RETRY_TIME = 3000;
 }
