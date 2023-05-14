@@ -18,26 +18,26 @@ public class TradeUtil {
 
     private TradeUtil() {}
 
-    public static boolean trade(Decision decision) {
+    public static boolean trade(Decision decision, String type) {
         Status stat = Status.getInstance();
         boolean result  = false;
         switch (decision.getTradingType()) {
             case PUT_BUYING:
                 if(stat.getStatus() == TradingType.SHORT_SELLING) {
-                    result = submit('A');
+                    result = submit('A', type);
                 } else {
-                    result = submit('P');
+                    result = submit('P', type);
                 }
                 break;
             case SHORT_SELLING:
                 if(stat.getStatus() == TradingType.PUT_BUYING) {
-                    result = submit('B');
+                    result = submit('B', type);
                 } else {
-                    result = submit('S');
+                    result = submit('S', type);
                 }
                 break;
             case EMPTY:
-                result = submit('E'); break;
+                result = submit('E', type); break;
             case NO_ACTION: break;
         }
         if(result) {
@@ -49,9 +49,9 @@ public class TradeUtil {
         return result;
     }
 
-    private static boolean submit(char label) {
+    private static boolean submit(char label, String type) {
         if(!Setting.TEST_LABEL) {
-            Future<Boolean> future = threadPool.submit(new KeySprite(label));
+            Future<Boolean> future = threadPool.submit(new KeySprite(label, type));
             try {
                 return future.get();
             } catch (InterruptedException | ExecutionException ignored) {
@@ -61,7 +61,7 @@ public class TradeUtil {
         return true;
     }
 
-    public static void forceEmpty() {
-        submit('E');
+    public static void forceEmpty(String type) {
+        submit('E', type);
     }
 }

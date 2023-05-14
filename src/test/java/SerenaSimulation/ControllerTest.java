@@ -88,7 +88,7 @@ public class ControllerTest implements Runnable {
                             LogUtil.tradeLog(type, emptyDecision);
                         }
                         LogUtil.tradeLog(type, decision);
-                        TradeUtil.trade(decision);
+                        TradeUtil.trade(decision, type);
                     }
                 }
             }

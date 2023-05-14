@@ -56,7 +56,7 @@ public class GZIPDownloader {
         }
         // empty before exit
         LogUtil.getInstance().severe("Cannot fetch price data! Check network connection!");
-        TradeUtil.forceEmpty();
+        TradeUtil.forceEmpty(type);
         System.exit(ErrorType.DOWNLOAD_ERROR_CODE.getCode());
         return null;
     }

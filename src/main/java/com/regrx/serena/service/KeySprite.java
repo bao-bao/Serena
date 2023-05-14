@@ -6,35 +6,74 @@ import com.regrx.trade.constant.Constant;
 
 import java.awt.*;
 import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.concurrent.Callable;
 
 public class KeySprite implements Callable<Boolean> {
     private final char operate;
+    private final String type;
 
 
-    public KeySprite(char operate) {
+    public KeySprite(char operate, String type) {
         this.operate = operate;
+        this.type = type;
     }
 
     @Override
     public Boolean call() {
         switch (operate) {
-            case 'P': return KeySprite.PutBuying();
-            case 'S': return KeySprite.ShortSelling();
-            case 'E': return KeySprite.Empty();
-            case 'A': return KeySprite.Empty() && KeySprite.PutBuying();
-            case 'B': return KeySprite.Empty() && KeySprite.ShortSelling();
+            case 'P': return PutBuying();
+            case 'S': return ShortSelling();
+            case 'E': return Empty();
+            case 'A': return Empty() && PutBuying();
+            case 'B': return Empty() && ShortSelling();
             default:
                 return false;
         }
     }
 
-    // consume 0.5s + (n x 11.5) s
-    public static boolean PutBuying() {
+    private boolean Select() {
         try {
             Robot r = new Robot();
+            // press input block
+            r.mouseMove(260, 845);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(20);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            // delete former string
+            r.keyPress(KeyEvent.VK_BACK_SPACE);
+            r.keyRelease(KeyEvent.VK_BACK_SPACE);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            // input new
+            for(char c : type.substring(0, 2).toCharArray()) {
+                r.keyPress(c);
+                r.keyRelease(c);
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            }
+            // choose new string
+            r.mouseMove(260, 865);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            return true;
+        } catch (AWTException ignored) {
+            LogUtil.getInstance().severe("AWT Error!");
+            return false;
+        }
+    }
+
+    // consume 0.5s + (n x 11.5) s
+    public boolean PutBuying() {
+        try {
+            Robot r = new Robot();
+            if(!Select()) {
+                return false;
+            }
             // press put buying
-            r.mouseMove(260, 870);
+            r.mouseMove(260, 880);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -50,11 +89,14 @@ public class KeySprite implements Callable<Boolean> {
     }
 
     // consume 0.5s + (n x 11.5) s
-    public static boolean ShortSelling() {
+    public boolean ShortSelling() {
         try {
             Robot r = new Robot();
+            if(!Select()) {
+                return false;
+            }
             // press put buying
-            r.mouseMove(370, 870);
+            r.mouseMove(370, 880);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -70,11 +112,14 @@ public class KeySprite implements Callable<Boolean> {
     }
 
     // consume 1s + (n x 11.5) s
-    public static boolean Empty() {
+    public boolean Empty() {
         try {
             Robot r = new Robot();
+            if(!Select()) {
+                return false;
+            }
             // press put buying
-            r.mouseMove(480, 870);
+            r.mouseMove(480, 880);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
