@@ -41,7 +41,7 @@ public class Setting {
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 
     // mouse control settings
-    public static final int OPERATION_SPEED_MULTIPLIER = 200;   // unit is millisecond
+    public static final int OPERATION_SPEED_MULTIPLIER = 2000;   // unit is millisecond
 
     public static final int FOLLOW_RETRY_INTERVAL = 10000;
 
