@@ -1,8 +1,6 @@
 package com.regrx.serena.common.network;
 
 import com.regrx.serena.common.Setting;
-import com.regrx.serena.common.constant.ErrorType;
-import com.regrx.serena.common.utils.TradeUtil;
 import com.regrx.serena.common.utils.LogUtil;
 
 import java.io.ByteArrayOutputStream;
@@ -54,10 +52,12 @@ public class GZIPDownloader {
                 Thread.sleep(Setting.DOWNLOAD_RETRY_TIME);
             } catch (Exception ignored) {}
         }
+
         // empty before exit
-        LogUtil.getInstance().severe("Cannot fetch price data! Check network connection!");
-        TradeUtil.forceEmpty(type);
-        System.exit(ErrorType.DOWNLOAD_ERROR_CODE.getCode());
+//        LogUtil.getInstance().severe("Cannot fetch price data! Check network connection!");
+//        TradeUtil.forceEmpty(type);
+//        System.exit(ErrorType.DOWNLOAD_ERROR_CODE.getCode());
+
         return null;
     }
 }

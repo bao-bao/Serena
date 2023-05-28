@@ -88,6 +88,15 @@ public class DataService implements Runnable {
                 } else {
                     newPrice = PriceDownloader.getPriceDataForOtherFutures(url, type);
                 }
+
+                if (newPrice == null) {
+                    LogUtil.getInstance().severe("Download error! Restarting track thread...");
+                    DataServiceManager manager = DataServiceManager.getInstance(type);
+                    manager.removeDataTrackThread(interval);
+                    manager.addDataTrackThread(interval);
+                    return;
+                }
+
                 minutesData.update(newPrice, type);
                 lock.lockOff();
                 callback(newPrice);

@@ -17,6 +17,10 @@ public class PriceDownloader {
         ExPrice newPrice = new ExPrice();
         String originString = GZIPDownloader.download(urlString, type, Setting.DOWNLOAD_RETRY_COUNT);
 
+        if(originString == null) {
+            return null;
+        }
+
         String finalString = originString.substring(
                 StringUtils.ordinalIndexOf(originString, ",", 3) + 1,
                 StringUtils.ordinalIndexOf(originString, ",", 4));
@@ -40,6 +44,10 @@ public class PriceDownloader {
     public static ExPrice getPriceDataForOtherFutures(String urlString, String type) {
         ExPrice newPrice = new ExPrice();
         String originString = GZIPDownloader.download(urlString, type, Setting.DOWNLOAD_RETRY_COUNT);
+
+        if(originString == null) {
+            return null;
+        }
 
         String finalString = originString.substring(
                 StringUtils.ordinalIndexOf(originString, ",", 8) + 1,

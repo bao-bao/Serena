@@ -56,7 +56,7 @@ public class DataServiceManager {
             return;
         }
         Future<?> future = dataRef.get(interval);
-        future.cancel(true);
+        future.cancel(false);
         dataRef.remove(interval);
         dataList.remove(interval);
         LogUtil.getInstance().info("Successful remove data service for " + interval + " min(s) interval");

@@ -95,10 +95,17 @@ public class HistoryDownloader implements Runnable {
                 "symbol=" + type + "&" +
                 "type=" + interval.getValue();
         String originString = GZIPDownloader.download(urlString, type, Setting.DOWNLOAD_RETRY_COUNT);
+
         if (StringUtils.ordinalIndexOf(originString, "(null)", 1) != -1) {
             LogUtil.getInstance().severe("Wrong content fetched! Check url availability!");
             System.exit(ErrorType.DOWNLOAD_ERROR_CODE.getCode());
         }
+
+        if (originString == null) {
+            LogUtil.getInstance().severe("Network issue, retry fetch!");
+            return fetchHistoryData(type, interval, breed, isSpecial);
+        }
+
         String jsonString = originString.substring(
                 StringUtils.ordinalIndexOf(originString, "[", 1),
                 StringUtils.ordinalIndexOf(originString, "]", 1) + 1);
