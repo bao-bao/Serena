@@ -59,7 +59,7 @@ public class DataService implements Runnable {
                     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if (breed == FutureType.STOCK && (hour == 15 && minute > 5 && minute < 10)) {
+                    if (!Setting.TEST_LABEL && breed == FutureType.STOCK && (hour == 15 && minute > 5 && minute < 10)) {
                         try {
                             Runtime.getRuntime().exec("shutdown /s /t 0");
                         } catch (IOException e) {

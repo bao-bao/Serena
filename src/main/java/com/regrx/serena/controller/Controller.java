@@ -63,7 +63,7 @@ public class Controller implements Runnable {
                 if(decision != null) {
                     LogUtil.getInstance().info("Decision in this minute: " + decision);
                     if(decision.isExecute()) {
-                        LogUtil.getInstance().info("Perform trade...");
+                        LogUtil.getInstance().info("Perform trade... Decision: " + decision.getTradingType() + ", Current: " + Status.getInstance().getStatus());
                         if((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
                            (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
                             Decision emptyDecision = new Decision();

@@ -1,7 +1,7 @@
 package com.regrx.serena.common;
 
 public class Setting {
-    public static final boolean TEST_LABEL = true;
+    public static final boolean TEST_LABEL = false;
 
     public static boolean USE_INJECT_HISTORY = true;
 
