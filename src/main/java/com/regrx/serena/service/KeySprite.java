@@ -53,11 +53,12 @@ public class KeySprite implements Callable<Boolean> {
                 r.keyRelease(c);
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             }
-            // choose new string
-            r.mouseMove(250, 865);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            // double-click enter to choose new item
+            for (int i = 0; i < 2; i++) {
+                r.keyPress(KeyEvent.VK_ENTER);
+                r.keyRelease(KeyEvent.VK_ENTER);
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            }
             return true;
         } catch (AWTException ignored) {
             LogUtil.getInstance().severe("AWT Error!");
