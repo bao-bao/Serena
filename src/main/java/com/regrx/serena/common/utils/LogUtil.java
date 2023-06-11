@@ -20,11 +20,7 @@ public class LogUtil {
             logger = Logger.getLogger("SerenaLog");
             if(!Setting.TEST_LABEL) {
                 try {
-                    Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-                    int currYear = currTime.get(Calendar.YEAR);
-                    int currMouth = currTime.get(Calendar.MONTH) + 1;
-                    int currDate = currTime.get(Calendar.DATE);
-                    logger.addHandler(new FileHandler("Serena" + "_" + currYear + "_" + currMouth + "_" + currDate + "_" + currTime.getTime().getTime() + ".log"));
+                    logger.addHandler(new FileHandler("Serena.log"));
                 } catch (IOException e) {
                     logger.warning("Log file handler link fail!");
                 }
