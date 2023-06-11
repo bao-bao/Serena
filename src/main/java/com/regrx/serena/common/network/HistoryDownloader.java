@@ -49,11 +49,10 @@ public class HistoryDownloader implements Runnable {
     // open/highest/lowest/close(from website) -> open/close/highest/lowest(local csv data)
     public static MinutesData getHistoryData(String type, IntervalEnum interval, FutureType breed) {
         HistoryData[] historyData;
-        if (Setting.USE_INJECT_HISTORY) {
-            historyData = readHistoryDataFromCsv(type, interval, breed);
-        } else {
-            historyData = fetchHistoryData(type, interval, breed, false);
+        if (!Setting.TEST_LABEL) {
+            fetchHistoryData(type, interval, breed, false);  // refresh history before read
         }
+        historyData = readHistoryDataFromCsv(type, interval, breed); // TODO: check seq consistency
         MinutesData records = new MinutesData(interval);
         for (HistoryData data : historyData) {
             ExPrice newData = new ExPrice();
