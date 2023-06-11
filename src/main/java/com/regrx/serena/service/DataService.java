@@ -57,13 +57,16 @@ public class DataService implements Runnable {
                     Thread.sleep(30000);
                     // try shutdown after normal daily trade
                     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                    int weekday = calendar.get(Calendar.DAY_OF_WEEK);
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
                     if (!Setting.TEST_LABEL && breed == FutureType.STOCK && (hour == 15 && minute > 5 && minute < 10)) {
-                        try {
-                            Runtime.getRuntime().exec("shutdown /s /t 0");
-                        } catch (IOException e) {
-                            e.printStackTrace();
+                        if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
+                            try {
+                                Runtime.getRuntime().exec("shutdown /s /t 0");
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 } catch (InterruptedException e) {
