@@ -46,6 +46,7 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
     }
 
     private void execOperation() {
+        System.out.println("start login");
         try {
             Robot r = new Robot();
             KeySprite.MouseClick(r, ACCOUNT_BUTT_POS_X, ACCOUNT_BUTT_POS_Y);
