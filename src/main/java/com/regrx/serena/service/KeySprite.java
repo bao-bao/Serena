@@ -218,9 +218,6 @@ public class KeySprite implements Callable<Boolean> {
         r.mouseMove(x, y);
         r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
         r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-        r.delay(20);
-        r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-        r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         return true;
     }
 }
