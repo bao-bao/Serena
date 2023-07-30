@@ -18,7 +18,7 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
     private static final int ACCOUNT_BUTT_POS_X = 0;
     private static final int ACCOUNT_BUTT_POS_Y = 0;
 
-    private static final String PASSWORD = "test_password";
+    private static final String PASSWORD = "testTEST123";
 
     public LoginAccount(int hour, int minute) {
         super(IntervalEnum.NULL);
@@ -33,9 +33,9 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if (!Setting.TEST_LABEL && this.isTriggered(hour, minute)) {
-            if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
+            //if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
                 execOperation();
-            }
+            //}
         }
         return null;
     }
@@ -51,8 +51,19 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
             KeySprite.MouseClick(r, ACCOUNT_BUTT_POS_X, ACCOUNT_BUTT_POS_Y);
             r.delay(OP_INTERVAL);
             for (char c : PASSWORD.toCharArray()) {
-                r.keyPress(c);
-                r.keyRelease(c);
+                if(Character.isAlphabetic(c) && Character.isLowerCase(c)) {
+                    c = Character.toUpperCase(c);
+                    r.keyPress(c);
+                    r.keyRelease(c);
+                } else if(Character.isAlphabetic(c) && Character.isUpperCase(c)) {
+                    r.keyPress(KeyEvent.VK_SHIFT);
+                    r.keyPress(c);
+                    r.keyRelease(c);
+                    r.keyRelease(KeyEvent.VK_SHIFT);
+                } else {
+                    r.keyPress(c);
+                    r.keyRelease(c);
+                }
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             }
             r.delay(OP_INTERVAL);
@@ -68,7 +79,7 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         while (true) {
             try {
                 this.execute(null);
-                Thread.sleep(30000);
+                Thread.sleep(60000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
