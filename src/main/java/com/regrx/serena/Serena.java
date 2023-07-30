@@ -11,7 +11,7 @@ public class Serena {
         // 3. 多品种并行
         // 5. 交互界面
         // 6. 极值点的分析(长期工作)
-        new LoginAccount(9, 0).run();
+        new Thread(new LoginAccount(9, 0)).start();
 
         Controller controller = Controller.getInstance("IF0");
 
