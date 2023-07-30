@@ -67,8 +67,8 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
     public void run() {
         while (true) {
             try {
-                Thread.sleep(30000);
                 this.execute(null);
+                Thread.sleep(30000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
