@@ -6,9 +6,12 @@ import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.service.KeySprite;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -17,6 +20,21 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
 
     private static final int ACCOUNT_BUTT_POS_X = 0;
     private static final int ACCOUNT_BUTT_POS_Y = 0;
+
+    private static final int POP_WINDOW_1_POS_X = 300;
+    private static final int POP_WINDOW_1_POS_Y = 500;
+    private static final int POP_WINDOW_2_POS_X = 900;
+    private static final int POP_WINDOW_2_POS_Y = 500;
+    private static final int POP_WINDOW_3_POS_X = 1300;
+    private static final int POP_WINDOW_3_POS_Y = 500;
+
+    private static final ArrayList<Pair<Integer, Integer>> POP_WINDOWS = new ArrayList<>(
+            Arrays.asList(
+                    Pair.of(POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y),
+                    Pair.of(POP_WINDOW_2_POS_X, POP_WINDOW_2_POS_Y),
+                    Pair.of(POP_WINDOW_3_POS_X, POP_WINDOW_3_POS_Y)
+            )
+    );
 
     private static final String PASSWORD = "testTEST123";
 
@@ -34,7 +52,7 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         int minute = calendar.get(Calendar.MINUTE);
         if (!Setting.TEST_LABEL && this.isTriggered(hour, minute)) {
             //if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
-                execOperation();
+            execOperation();
             //}
         }
         return null;
@@ -52,11 +70,11 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
             KeySprite.MouseClick(r, ACCOUNT_BUTT_POS_X, ACCOUNT_BUTT_POS_Y);
             r.delay(OP_INTERVAL);
             for (char c : PASSWORD.toCharArray()) {
-                if(Character.isAlphabetic(c) && Character.isLowerCase(c)) {
+                if (Character.isAlphabetic(c) && Character.isLowerCase(c)) {
                     c = Character.toUpperCase(c);
                     r.keyPress(c);
                     r.keyRelease(c);
-                } else if(Character.isAlphabetic(c) && Character.isUpperCase(c)) {
+                } else if (Character.isAlphabetic(c) && Character.isUpperCase(c)) {
                     r.keyPress(KeyEvent.VK_SHIFT);
                     r.keyPress(c);
                     r.keyRelease(c);
@@ -70,6 +88,10 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
             r.delay(OP_INTERVAL);
             r.keyPress(KeyEvent.VK_ENTER);
             r.keyRelease(KeyEvent.VK_ENTER);
+            for (Pair<Integer, Integer> pos : POP_WINDOWS) {
+                r.delay(OP_INTERVAL);
+                KeySprite.MouseClick(r, pos.getLeft(), pos.getRight());
+            }
         } catch (AWTException ignored) {
             LogUtil.getInstance().severe("AWT Error!");
         }
