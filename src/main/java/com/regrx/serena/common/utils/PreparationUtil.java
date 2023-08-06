@@ -13,7 +13,7 @@ public class PreparationUtil {
 
         boolean dayTime = ((hour == 14 && minute >= 55) || hour == 15);     // 14:55:00 - 15:59:59
 
-        if(breed == FutureType.STOCK || breed == FutureType.FUTURE_NO_NIGHT) {
+        if (breed == FutureType.STOCK || breed == FutureType.FUTURE_NO_NIGHT) {
             return dayTime;
         } else if (breed == FutureType.FUTURE_NIGHT_2300) {
             return dayTime || ((hour == 22 && minute >= 55) || hour == 23); // daytime || 22:54:00 - 23:59:59
@@ -26,7 +26,7 @@ public class PreparationUtil {
     }
 
     public static boolean isTrading(FutureType breed) {
-        if(breed == FutureType.ERROR_BREED) {
+        if (breed == FutureType.ERROR_BREED) {
             LogUtil.getInstance().severe("NO such breed index " + breed);
             System.exit(ErrorType.BREED_ERROR_CODE.getCode());
         }
@@ -39,7 +39,7 @@ public class PreparationUtil {
             return false;
         }
 
-        if(breed == FutureType.STOCK) {
+        if (breed == FutureType.STOCK) {
             return hour >= 9 && (hour != 9 || minute >= 29) && (hour != 11 || minute < 30)     // (9:29 - 11:30)
                     && hour != 12 && hour <= 14;                                                // (13:00 - 15:00)
         } else {
@@ -62,7 +62,7 @@ public class PreparationUtil {
     }
 
     public static FutureType getBreed(String type) {
-        if(type.startsWith("IC") || type.startsWith("IF") || type.startsWith("IH") || type.startsWith("IM")) {
+        if (type.startsWith("IC") || type.startsWith("IF") || type.startsWith("IH") || type.startsWith("IM")) {
             return FutureType.STOCK;
         } else if (type.startsWith("AU") || type.startsWith("AG") || type.startsWith("SC")) {
             return FutureType.FUTURE_NIGHT_0230;
@@ -75,7 +75,7 @@ public class PreparationUtil {
                 || type.startsWith("RI") || type.startsWith("RS") || type.startsWith("PK")
                 || type.startsWith("UR") || type.startsWith("CJ") || type.startsWith("AP")
                 || type.startsWith("BB") || type.startsWith("FB") || type.startsWith("LH")
-                || type.startsWith("JD") || type.startsWith("WR")) {
+                || type.startsWith("JD") || type.startsWith("WR") || type.startsWith("LC")) {
             return FutureType.FUTURE_NO_NIGHT;
         } else if (type.startsWith("FG") || type.startsWith("SA") || type.startsWith("MA")
                 || type.startsWith("SR") || type.startsWith("TA") || type.startsWith("RM")
