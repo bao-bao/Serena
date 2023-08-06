@@ -54,7 +54,7 @@ public class DataService implements Runnable {
         while (true) {
             if (!PreparationUtil.isTrading(breed)) {
                 try {
-                    Thread.sleep(30000);
+                    Thread.sleep(8000);
                     // try shutdown after normal daily trade
                     Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
                     int weekday = calendar.get(Calendar.DAY_OF_WEEK);
@@ -77,13 +77,25 @@ public class DataService implements Runnable {
                 long current = System.currentTimeMillis();
                 Date currentDate = new Date(current);
                 long nextPoint = TimeUtil.getNextMillisEveryNMinutes(currentDate, interval.getValue());
-                try {
-                    Thread.sleep((nextPoint - current) / 2);
-                    lock.lockOn();
-                    Thread.sleep((nextPoint - current) / 2);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+
+                Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                if (calendar.get(Calendar.HOUR) == 9 && calendar.get(Calendar.MINUTE) == 30) {
+                    try {
+                        Thread.sleep(2000);
+                        lock.lockOn();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    try {
+                        Thread.sleep((nextPoint - current) / 2);
+                        lock.lockOn();
+                        Thread.sleep((nextPoint - current) / 2);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                 }
+
 
                 ExPrice newPrice;
                 if (breed == FutureType.STOCK) {

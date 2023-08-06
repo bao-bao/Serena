@@ -51,6 +51,10 @@ public class MinutesData {
     }
 
     public void update(ExPrice newPrice, String type) {
+        if (newPrice.getTime().contains("09:30")) { // NOT update anything at 9:30
+            LogUtil.getInstance().info("processing strategies at " + newPrice.getTime() + ", skip update phase...");
+            return;
+        }
         updateWithoutWrite(newPrice);
         FileUtil.writeMinutesDataToCsv("Minute_" + type + "_" + interval.getValue(), this);
 

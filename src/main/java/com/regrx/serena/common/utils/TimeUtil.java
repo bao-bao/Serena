@@ -21,8 +21,8 @@ public class TimeUtil {
         Calendar calendar = getBaseTime(baseTime);
         int minute = calendar.get(Calendar.MINUTE);
         if (minute < 60 - n) {
-            int add = minute%n == 0 ? n : n - minute%n;
-            calendar.add(Calendar.MINUTE,add);
+            int add = minute % n == 0 ? n : n - minute % n;
+            calendar.add(Calendar.MINUTE, add);
             calendar.set(Calendar.SECOND, 0);
             calendar.set(Calendar.MILLISECOND, 0);
             return calendar.getTime().getTime();
@@ -39,7 +39,7 @@ public class TimeUtil {
     public static long getLastMillisEveryNMinutes(Date baseTime, int n) {
         Calendar calendar = getBaseTime(baseTime);
         int minute = calendar.get(Calendar.MINUTE);
-        int target = minute - minute%n;
+        int target = minute - minute % n;
         calendar.set(Calendar.MINUTE, target);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
@@ -67,7 +67,7 @@ public class TimeUtil {
         int second = calendar.get(Calendar.SECOND);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        if(second > 30) {
+        if (second > 55) {
             return getFormattedTime(DateUtils.addMinutes(calendar.getTime(), 1));
         } else {
             return getFormattedTime(calendar.getTime());
