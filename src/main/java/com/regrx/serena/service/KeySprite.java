@@ -217,6 +217,7 @@ public class KeySprite implements Callable<Boolean> {
     public static boolean MouseClick(Robot r, int x, int y) {
         r.mouseMove(x, y);
         r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        r.delay(Setting.MOUSE_CLICK_PRESS_TIME);
         r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         return true;
     }

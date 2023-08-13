@@ -43,6 +43,8 @@ public class Setting {
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 200;   // unit is millisecond
 
+    public static final int MOUSE_CLICK_PRESS_TIME = 75; // release when pressed 75ms
+
     public static final int FOLLOW_RETRY_INTERVAL = 10000;
 
     public static final int MAX_LENGTH = Integer.MAX_VALUE;
