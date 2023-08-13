@@ -67,7 +67,7 @@ public class TimeUtil {
         int second = calendar.get(Calendar.SECOND);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        if (second > 55) {
+        if (second > 50) {
             return getFormattedTime(DateUtils.addMinutes(calendar.getTime(), 1));
         } else {
             return getFormattedTime(calendar.getTime());

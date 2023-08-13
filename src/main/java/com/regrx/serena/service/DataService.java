@@ -79,9 +79,9 @@ public class DataService implements Runnable {
                 long nextPoint = TimeUtil.getNextMillisEveryNMinutes(currentDate, interval.getValue());
 
                 Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-                if (calendar.get(Calendar.HOUR) == 9 && calendar.get(Calendar.MINUTE) == 30) {
+                if (calendar.get(Calendar.HOUR) == 9 && calendar.get(Calendar.MINUTE) == 30 && calendar.get(Calendar.SECOND) < 45) {
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(7500);
                         lock.lockOn();
                     } catch (InterruptedException e) {
                         e.printStackTrace();
