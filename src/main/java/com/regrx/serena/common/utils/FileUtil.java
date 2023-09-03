@@ -228,10 +228,10 @@ public class FileUtil {
             return new double[]{lastPrice, 0.0, 0.0};
         }
 
-        for(ExPrice price : DataServiceManager.getInstance().queryData(interval).getPrices()) {
-            if(TimeUtil.getDateFromString(price.getTime()).getTime() > crossTime) {
+        for (ExPrice price : DataServiceManager.getInstance().queryData(interval).getPrices()) {
+            if (TimeUtil.getDateFromString(price.getTime()).getTime() > crossTime) {
                 currPrice = price.getPrice();
-                if(isForUp) {
+                if (isForUp) {
                     profitMax = Math.max(profitMax, price.getPrice() - lastPrice);
                 } else {
                     profitMax = Math.max(profitMax, lastPrice - price.getPrice());
@@ -240,16 +240,46 @@ public class FileUtil {
         }
 
         Status status = Status.getInstance();
-        if(isForUp && status.getTrendEMA() == TrendType.NULL) {
+        if (isForUp && status.getTrendEMA() == TrendType.NULL) {
             status.setTrendEMA(TrendType.TREND_UP);
-        } else if(isForUp && status.getTrendEMA() == TrendType.TREND_DOWN) {
+        } else if (isForUp && status.getTrendEMA() == TrendType.TREND_DOWN) {
             status.setTrendEMA(TrendType.TREND_BOTH);
-        } else if(!isForUp && status.getTrendEMA() == TrendType.NULL) {
+        } else if (!isForUp && status.getTrendEMA() == TrendType.NULL) {
             status.setTrendEMA(TrendType.TREND_DOWN);
-        } else if(!isForUp && status.getTrendEMA() == TrendType.TREND_UP) {
+        } else if (!isForUp && status.getTrendEMA() == TrendType.TREND_UP) {
             status.setTrendEMA(TrendType.TREND_BOTH);
         }
 
         return new double[]{lastPrice, currPrice, profitMax};
+    }
+
+    // time -- logType -- price
+    public static double[] readBollingerLog(String type, IntervalEnum interval) {
+        double isUp = 0.0;
+        double lastPrice = 0.0;
+        double isEST = 0.0;
+        double enableEmpty = 0.0;
+        String filename = "Bollinger_" + type + "_" + interval.getValue() + ".log";
+        List<String> revLog = readLastLine(new File(filename), Integer.MAX_VALUE);
+        for (String line : revLog) {
+            String[] parts = line.split("--");
+            if (Objects.equals(parts[1], "LONG") || Objects.equals(parts[1], "SHORT")) {
+                isUp = Objects.equals(parts[1], "LONG") ? 1 : -1;
+                lastPrice = Double.parseDouble(parts[2]);
+                break;
+            }
+            if (Objects.equals(parts[1], "EMPTY")) {
+                break;
+            }
+            if (Objects.equals(parts[1], "EST")) {
+                isEST = Objects.equals(parts[3], "EST") ? 1 : 0;   // EST need last buy in type
+                continue;
+            }
+            if (Objects.equals(parts[1], "CROSS_MID")) {
+                enableEmpty = 1;
+            }
+        }
+
+        return new double[]{isUp, lastPrice, isEST, enableEmpty};
     }
 }

@@ -3,6 +3,8 @@ package com.regrx.serena.data.base;
 
 public class ExPrice {
     private double price;
+    private double highest;
+    private double lowest;
     private String time;
 
     public ExPrice(double price, String time) {
@@ -32,6 +34,22 @@ public class ExPrice {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public double getHighest() {
+        return highest;
+    }
+
+    public void setHighest(double highest) {
+        this.highest = highest;
+    }
+
+    public double getLowest() {
+        return lowest;
+    }
+
+    public void setLowest(double lowest) {
+        this.lowest = lowest;
     }
 
     public static ExPrice add(ExPrice price1, ExPrice price2) {

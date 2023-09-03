@@ -16,10 +16,7 @@ import com.google.gson.Gson;
 import java.io.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.List;
+import java.util.*;
 
 import static com.regrx.serena.common.utils.FileUtil.readLastLine;
 
@@ -62,6 +59,16 @@ public class HistoryDownloader implements Runnable {
         }
         LogUtil.getInstance().info("Success load history data (" + interval + " min), last record time is " + records.getNewRecordTime());
         return records;
+    }
+
+    public static HistoryData getHistoryDataByTime(String type, IntervalEnum interval, String time) {
+        HistoryData[] allData = fetchHistoryData(type, interval, PreparationUtil.getBreed(type), true);
+        HistoryData last = allData[allData.length-1];
+        if(Objects.equals(last.getDate(), time)) {
+            return last;
+        } else {
+            return null;
+        }
     }
 
     public static MinutesData getHistoryDataForSpecialInterval(String type, IntervalEnum interval, FutureType breed) {

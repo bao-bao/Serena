@@ -1,7 +1,9 @@
 package com.regrx.serena.common;
 
+import com.regrx.serena.common.constant.MAEnum;
+
 public class Setting {
-    public static final boolean TEST_LABEL = false;
+    public static final boolean TEST_LABEL = true;
 
     public static boolean USE_INJECT_HISTORY = true;
 
@@ -37,6 +39,28 @@ public class Setting {
 
     public static double EMA_DOWN_LOSS_LIMIT = 0.0075;
 
+    // bollinger settings
+    public static MAEnum BOLLINGER_MA_BASE = MAEnum.MA5;
+
+    public static int BOLLINGER_AGGREGATE_COUNT = 180;
+
+    public static double BOLLINGER_DEVIATION_MULTIPLIER = 1.3;
+
+    public static double BOLLINGER_B_PRICE_RATIO = 0.5;
+
+    public static double BOLLINGER_S_PRICE_RATIO = 0.5;
+
+    public static double BOLLINGER_B_PRICE_REFERENCE = 5;
+
+    public static double BOLLINGER_S_PRICE_REFERENCE = 5;
+
+    public static double BOLLINGER_B_FALLBACK = 10;
+
+    public static double BOLLINGER_S_FALLBACK = 10;
+
+    public static double BOLLINGER_B_LOSE_LIMIT = 10;
+
+    public static double BOLLINGER_S_LOSE_LIMIT = 10;
 
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 

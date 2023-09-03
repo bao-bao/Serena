@@ -11,6 +11,7 @@ import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.Status;
 import com.regrx.serena.service.DataServiceManager;
 import com.regrx.serena.service.StrategyManager;
+import com.regrx.serena.strategy.AbstractStrategy;
 
 import java.util.concurrent.ArrayBlockingQueue;
 
@@ -90,6 +91,10 @@ public class Controller implements Runnable {
 
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {
         strategyMgr.addStrategy(strategy, interval);
+    }
+
+    public void addStrategyWithOption(StrategyEnum name, AbstractStrategy strategy) {
+        strategyMgr.addStrategyWithOption(name, strategy);
     }
 
     public String getType() {

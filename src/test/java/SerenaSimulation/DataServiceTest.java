@@ -40,6 +40,8 @@ public class DataServiceTest implements Runnable {
             while ((line = reader.readLine()) != null) {
                 String[] data = line.split(",");
                 newPrice = new ExPrice(Double.parseDouble(data[2]), data[0]); // close price
+                newPrice.setHighest(Double.parseDouble(data[3]));
+                newPrice.setLowest(Double.parseDouble(data[4]));
                 minutesData.updateWithoutWrite(newPrice);
                 if(interval == IntervalEnum.MIN_1 && count % 5 == 0) {
                     minutesData_5.updateWithoutWrite(newPrice);

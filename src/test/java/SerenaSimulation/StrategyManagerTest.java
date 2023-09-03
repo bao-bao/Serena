@@ -84,13 +84,23 @@ public class StrategyManagerTest {
             case STRATEGY_EMA_520:
                 strategyList.put(strategy, new EMA520(interval));
                 break;
-
+            case STRATEGY_BOLLINGER:
+                strategyList.put(strategy, new Bollinger(interval));
 
             default:
                 //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;
         }
         //LogUtil.getInstance().info("Successful add strategy " + strategy);
+        return true;
+    }
+
+    public boolean addStrategyWithOption(StrategyEnum name, AbstractStrategy strategy) {
+        if (strategyList.containsKey(name) || forceTriggerStrategyList.containsKey(name)) {
+            LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
+            return false;
+        }
+        strategyList.put(name, strategy);
         return true;
     }
 

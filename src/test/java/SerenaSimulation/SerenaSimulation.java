@@ -1,13 +1,13 @@
 package SerenaSimulation;
 
-import SerenaSimulation.profit.EMACombination;
-import SerenaSimulation.profit.ParaCombination;
-import SerenaSimulation.profit.ProfitCal;
-import SerenaSimulation.profit.TestResult;
+import SerenaSimulation.profit.*;
+import SerenaSimulation.strategy.AbstractStrategy;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.utils.FileUtil;
+import SerenaSimulation.strategy.Bollinger;
+import com.regrx.serena.strategy.StrategyOption;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -24,7 +24,8 @@ public class SerenaSimulation {
 //        runner();
 //        simulation();
 //        findRunner();
-        EMARunner();
+//        EMARunner();
+        BollingerRunner();
     }
 
     public static void simulation() {
@@ -35,28 +36,136 @@ public class SerenaSimulation {
         ControllerTest controller = ControllerTest.getInstance(type);
 
         controller.addDataTrack(IntervalEnum.MIN_1);
-//        controller.addDataTrack(IntervalEnum.MIN_5);
-        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FIND_MAX_PERCENT_REVERSE, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_LOSS_LIMIT, IntervalEnum.MIN_2);
-//        controller.addStrategy(StrategyEnum.STRATEGY_PROFIT_LIMIT, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_MA_520, IntervalEnum.MIN_5);
-//        controller.addStrategy(StrategyEnum.STRATEGY_EMA_520, IntervalEnum.MIN_1);
-//        controller.addStrategy(StrategyEnum.STRATEGY_FILL_GAP, IntervalEnum.MIN_2);
-//        controller.addStrategy(StrategyEnum.STRATEGY_CLOSE_ON_END, IntervalEnum.NULL);
-//        controller.addStrategy(StrategyEnum.STRATEGY_ONLY_ONE_PER_DAY, IntervalEnum.NULL);
+        controller.addStrategy(StrategyEnum.STRATEGY_BOLLINGER, IntervalEnum.MIN_1);
 
         controller.filename = "find_percent_" + type + ".csv";
         controller.run();
         int i = 0;
     }
 
+
+    public static void BollingerRunner() {
+        int[] options = {
+                StrategyOption.BollingerLongByDefault,          // B1
+                StrategyOption.BollingerLongByTail,             // B2
+                StrategyOption.BollingerLongCoverByLose,        // LC1
+                StrategyOption.BollingerLongCoverByFallback,    // LC2
+                StrategyOption.BollingerShortByDefault,         // S1
+                StrategyOption.BollingerShortByTail,            // S2
+                StrategyOption.BollingerShortCoverByLose,       // SC1
+                StrategyOption.BollingerShortCoverByFallback,   // SC2
+                StrategyOption.DefaultNST,                      // NST
+        };
+        double[] B2 = {1};
+        double[] LC1 = {1};
+        double[] LC2 = {5};
+        double[] S2 = {5};
+        double[] SC1 = {7};
+        double[] SC2 = {7, 8};
+
+        Bollinger bollinger = new Bollinger(IntervalEnum.MIN_1);
+        for(int option : options) {
+            bollinger = bollinger.withOption(option);
+        }
+        double total = B2.length * LC1.length * LC2.length * S2.length * SC1.length * SC2.length;
+        System.out.println("Estimate running count is " + total + " ...");
+        PriorityQueue<BollingerCombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
+        for (double a : B2) {
+            for (double b : LC1) {
+                for (double c : LC2) {
+                    for (double d : S2) {
+                        for (double e : SC1) {
+                            for (double f : SC2) {
+                                Setting.BOLLINGER_B_PRICE_REFERENCE = a;
+                                Setting.BOLLINGER_B_FALLBACK = b;
+                                Setting.BOLLINGER_B_LOSE_LIMIT = c;
+                                Setting.BOLLINGER_S_PRICE_REFERENCE = d;
+                                Setting.BOLLINGER_S_FALLBACK = e;
+                                Setting.BOLLINGER_S_LOSE_LIMIT = f;
+                                simulationWithStrategy(StrategyEnum.STRATEGY_BOLLINGER, bollinger);
+                                try {
+                                    Thread.sleep(500);
+                                    ControllerTest.stop();
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
+                                BollingerCombination newRes = new BollingerCombination(a, b, c, d, e, f);
+                                newRes.setProfit(ProfitCal.cal(type, false));
+                                queue.add(newRes);
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException ex) {
+                                    ex.printStackTrace();
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        ArrayList<BollingerCombination> resList = new ArrayList<>();
+        System.out.println("\nTop Best Parameters: ");
+        for (int i = 0; i < 4000; i++) {
+            BollingerCombination candidate = queue.poll();
+            if (candidate != null) {
+                resList.add(candidate);
+            }
+        }
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss || \tB2\tLC1\tLC2\tS2\tSC1\tSC2");
+
+        for (BollingerCombination res : resList) {
+            System.out.print(res);
+        }
+
+        String filename = type + '_' + Calendar.getInstance().getTime().getTime();
+        FileUtil.newFile(filename + ".csv");
+        try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            writer.append("Profit,")
+                    .append("Total Count,")
+                    .append("Win Rate,")
+                    .append("APPT,")
+                    .append("EVPT,")
+                    .append("EVUR,")
+                    .append("Kelly,")
+                    .append("Odds,")
+                    .append("Max Loss,")
+                    .append("EMA,")
+                    .append("Up Profit Threshold,")
+                    .append("Up Profit Limit,")
+                    .append("Up Loss Limit,")
+                    .append("Down Profit Threshold,")
+                    .append("Down Profit Limit,")
+                    .append("Down Loss Limit\n");
+            for (BollingerCombination res : resList) {
+                writer.append(res.toString());
+            }
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void simulationWithStrategy(StrategyEnum name, AbstractStrategy strategy) {
+        String type = SerenaSimulation.type;
+
+        clearTradeHistory(type);
+
+        ControllerTest controller = ControllerTest.getInstance(type);
+
+        controller.addDataTrack(IntervalEnum.MIN_1);
+
+        controller.addStrategyWithOption(name, strategy);
+
+        controller.filename = "find_percent_" + type + ".csv";
+        controller.run();
+    }
+
+
     public static void EMARunner() {
         boolean upSide = true; // 都是true为单测，都是false为两边同时测
         boolean downSide = true;
-        int EMALowerBound = 400;
+        int EMALowerBound = 100;
         int EMAUpperBound = 500;
         int step = 10;
         double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};
@@ -89,12 +198,12 @@ public class SerenaSimulation {
 
         int count = 1;
         for (double[] EMA : EMAs) {
-            for(double upPT : upProfitThreshold) {
-                for(double upPL : upProfitLimit) {
-                    for(double upLL : upLossLimit) {
-                        for(double downPT : downProfitThreshold) {
-                            for(double downPL : downProfitLimit) {
-                                for(double downLL : downLossLimit) {
+            for (double upPT : upProfitThreshold) {
+                for (double upPL : upProfitLimit) {
+                    for (double upLL : upLossLimit) {
+                        for (double downPT : downProfitThreshold) {
+                            for (double downPL : downProfitLimit) {
+                                for (double downLL : downLossLimit) {
                                     System.out.println(
                                             "current running: " + count++ + "/" + total + ", " +
                                                     "EMA: [" + (int) EMA[0] + ", " + (int) EMA[1] + ", " + (int) EMA[2] + ", " + (int) EMA[3] + "], " +
@@ -104,7 +213,7 @@ public class SerenaSimulation {
                                                     "downProfitThreshold: " + downPT + ", " +
                                                     "downProfitLimit: " + downPL + ", " +
                                                     "downLossLimit: " + downLL
-                                            );
+                                    );
                                     Setting.EMA_UP_PROFIT_THRESHOLD = upPT;
                                     Setting.EMA_UP_PROFIT_LIMIT = upPL;
                                     Setting.EMA_UP_LOSS_LIMIT = upLL;

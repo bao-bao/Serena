@@ -1,5 +1,6 @@
 package SerenaSimulation;
 
+import SerenaSimulation.strategy.AbstractStrategy;
 import SerenaSimulation.strategy.FindProfitMaxPercent;
 import SerenaSimulation.strategy.FindProfitMaxPercentReverse;
 import com.regrx.serena.common.Setting;
@@ -126,6 +127,10 @@ public class ControllerTest implements Runnable {
 
     public void addStrategy(StrategyEnum strategy, IntervalEnum interval) {
         strategyMgr.addStrategy(strategy, interval);
+    }
+
+    public void addStrategyWithOption(StrategyEnum name, AbstractStrategy strategy) {
+        strategyMgr.addStrategyWithOption(name, strategy);
     }
 
     public void setSignal(boolean signal) {

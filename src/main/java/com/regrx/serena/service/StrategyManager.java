@@ -80,6 +80,15 @@ public class StrategyManager {
         return true;
     }
 
+    public boolean addStrategyWithOption(StrategyEnum name, AbstractStrategy strategy) {
+        if (strategyList.containsKey(name) || forceTriggerStrategyList.containsKey(name)) {
+            LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");
+            return false;
+        }
+        strategyList.put(name, strategy);
+        return true;
+    }
+
     public void changeStrategy(StrategyEnum strategy, ForceTriggerStrategy newStrategy) {
         if (forceTriggerStrategyList.containsKey(strategy)) {
             LogUtil.getInstance().info("Fail to add strategy " + strategy + ", already contain");

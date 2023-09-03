@@ -23,4 +23,22 @@ public class Calculator {
         }
         return eAvg;
     }
+
+    public static double avgUtil(List<Double> list) {
+        return list.stream().reduce(0.0, Double::sum) / list.size();
+    }
+
+    public static double squareDeviation(List<Double> list) {
+        double avg = avgUtil(list);
+        double squareDeviation = 0;
+        for (Double val : list) {
+            squareDeviation += Math.pow(val - avg, 2);
+        }
+        squareDeviation = squareDeviation / (list.size() - 1);
+        return squareDeviation;
+    }
+
+    public static double standardDeviation(List<Double> list) {
+        return Math.sqrt(squareDeviation(list));
+    }
 }
