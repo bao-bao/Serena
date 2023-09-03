@@ -14,7 +14,6 @@ public class Setting {
     public static final int FILL_GAP_BY_MA = 20;
 
     //TODO: add final HERE
-    public static int FOLLOW_TIME = 2;
 
     public static double LOSS_LIMIT_THRESHOLD = 23;
 
@@ -71,7 +70,9 @@ public class Setting {
 
     public static final int MOUSE_CLICK_PRESS_TIME = 75; // release when pressed 75ms
 
-    public static final int FOLLOW_RETRY_INTERVAL = 10000;
+    public static int FOLLOW_TIME = 3;
+
+    public static final int FOLLOW_RETRY_INTERVAL = 5000;
 
     public static final int MAX_LENGTH = Integer.MAX_VALUE;
 
