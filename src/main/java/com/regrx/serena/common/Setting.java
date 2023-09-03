@@ -14,6 +14,8 @@ public class Setting {
     public static final int FILL_GAP_BY_MA = 20;
 
     //TODO: add final HERE
+    public static int FOLLOW_TIME = 2;
+
     public static double LOSS_LIMIT_THRESHOLD = 23;
 
     public static double PROFIT_LIMIT_THRESHOLD = 15;
