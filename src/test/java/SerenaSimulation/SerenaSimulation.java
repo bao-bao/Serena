@@ -56,6 +56,7 @@ public class SerenaSimulation {
                 StrategyOption.BollingerShortCoverByFallback,   // SC2
                 StrategyOption.DefaultNST,                      // NST
         };
+        double[] SD = {1.4};
         double[] B2 = {1};
         double[] LC1 = {1};
         double[] LC2 = {5};
@@ -64,38 +65,41 @@ public class SerenaSimulation {
         double[] SC2 = {7, 8};
 
         Bollinger bollinger = new Bollinger(IntervalEnum.MIN_1);
-        for(int option : options) {
+        for (int option : options) {
             bollinger = bollinger.withOption(option);
         }
         double total = B2.length * LC1.length * LC2.length * S2.length * SC1.length * SC2.length;
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<BollingerCombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
-        for (double a : B2) {
-            for (double b : LC1) {
-                for (double c : LC2) {
-                    for (double d : S2) {
-                        for (double e : SC1) {
-                            for (double f : SC2) {
-                                Setting.BOLLINGER_B_PRICE_REFERENCE = a;
-                                Setting.BOLLINGER_B_FALLBACK = b;
-                                Setting.BOLLINGER_B_LOSE_LIMIT = c;
-                                Setting.BOLLINGER_S_PRICE_REFERENCE = d;
-                                Setting.BOLLINGER_S_FALLBACK = e;
-                                Setting.BOLLINGER_S_LOSE_LIMIT = f;
-                                simulationWithStrategy(StrategyEnum.STRATEGY_BOLLINGER, bollinger);
-                                try {
-                                    Thread.sleep(500);
-                                    ControllerTest.stop();
-                                } catch (InterruptedException ex) {
-                                    ex.printStackTrace();
-                                }
-                                BollingerCombination newRes = new BollingerCombination(a, b, c, d, e, f);
-                                newRes.setProfit(ProfitCal.cal(type, false));
-                                queue.add(newRes);
-                                try {
-                                    Thread.sleep(500);
-                                } catch (InterruptedException ex) {
-                                    ex.printStackTrace();
+        for (double z : SD) {
+            for (double a : B2) {
+                for (double b : LC1) {
+                    for (double c : LC2) {
+                        for (double d : S2) {
+                            for (double e : SC1) {
+                                for (double f : SC2) {
+                                    Setting.BOLLINGER_DEVIATION_MULTIPLIER = z;
+                                    Setting.BOLLINGER_B_PRICE_REFERENCE = a;
+                                    Setting.BOLLINGER_B_FALLBACK = b;
+                                    Setting.BOLLINGER_B_LOSE_LIMIT = c;
+                                    Setting.BOLLINGER_S_PRICE_REFERENCE = d;
+                                    Setting.BOLLINGER_S_FALLBACK = e;
+                                    Setting.BOLLINGER_S_LOSE_LIMIT = f;
+                                    simulationWithStrategy(StrategyEnum.STRATEGY_BOLLINGER, bollinger);
+                                    try {
+                                        Thread.sleep(500);
+                                        ControllerTest.stop();
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    }
+                                    BollingerCombination newRes = new BollingerCombination(z, a, b, c, d, e, f);
+                                    newRes.setProfit(ProfitCal.cal(type, false));
+                                    queue.add(newRes);
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException ex) {
+                                        ex.printStackTrace();
+                                    }
                                 }
                             }
                         }
@@ -112,7 +116,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss || \tB2\tLC1\tLC2\tS2\tSC1\tSC2");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tSD\tB2\tLC1\tLC2\tS2\tSC1\tSC2");
 
         for (BollingerCombination res : resList) {
             System.out.print(res);
@@ -131,12 +135,13 @@ public class SerenaSimulation {
                     .append("Odds,")
                     .append("Max Loss,")
                     .append("EMA,")
-                    .append("Up Profit Threshold,")
-                    .append("Up Profit Limit,")
-                    .append("Up Loss Limit,")
-                    .append("Down Profit Threshold,")
-                    .append("Down Profit Limit,")
-                    .append("Down Loss Limit\n");
+                    .append("SD,")
+                    .append("B2,")
+                    .append("LC1,")
+                    .append("LC2,")
+                    .append("S2,")
+                    .append("SC1,")
+                    .append("SC2\n");
             for (BollingerCombination res : resList) {
                 writer.append(res.toString());
             }
