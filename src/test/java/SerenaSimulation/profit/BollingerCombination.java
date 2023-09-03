@@ -4,6 +4,7 @@ import com.regrx.serena.common.Setting;
 
 public class BollingerCombination implements Comparable<BollingerCombination> {
     TestResult profit;
+    int aggrCount;
     double SD;
     double B2;
     double LC1;
@@ -13,7 +14,8 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
     double SC2;
 
 
-    public BollingerCombination(double z, double a, double b, double c, double d, double e, double f) {
+    public BollingerCombination(int cnt, double z, double a, double b, double c, double d, double e, double f) {
+        aggrCount = cnt;
         SD = z;
         B2 = a;
         LC1 = b;
@@ -47,6 +49,7 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
         sb.append(String.format("%.2f", profit.getOdds())).append(",");
         sb.append(String.format("%.2f", profit.getMaxLoss())).append(",");
 
+        sb.append(String.format("%d", aggrCount)).append(",");
         sb.append(String.format("%.2f", SD)).append(",");
         sb.append(String.format("%.2f", B2)).append(",");
         sb.append(String.format("%.2f", LC1)).append(",");
