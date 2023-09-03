@@ -143,12 +143,12 @@ public class KeySprite implements Callable<Boolean> {
         try {
             Robot r = new Robot();
             // select the possible stacked
-            r.mouseMove(660, 995);
+            r.mouseMove(610, 1001);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // press follow button
-            r.mouseMove(1813, 1034);
+            r.mouseMove(654, 1052);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
