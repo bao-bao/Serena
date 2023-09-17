@@ -7,14 +7,16 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
     int aggrCount;
     double SD;
     double B2;
+    double LCP;
     double LC1;
     double LC2;
     double S2;
+    double SCP;
     double SC1;
     double SC2;
 
 
-    public BollingerCombination(int cnt, double z, double a, double b, double c, double d, double e, double f) {
+    public BollingerCombination(int cnt, double z, double a, double b, double c, double d, double e, double f,double g, double h) {
         aggrCount = cnt;
         SD = z;
         B2 = a;
@@ -23,6 +25,8 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
         S2 = d;
         SC1 = e;
         SC2 = f;
+        LCP = g;
+        SCP = h;
     }
 
     public void setProfit(TestResult profit) {
@@ -52,9 +56,11 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
         sb.append(String.format("%d", aggrCount)).append(",");
         sb.append(String.format("%.2f", SD)).append(",");
         sb.append(String.format("%.2f", B2)).append(",");
+        sb.append(String.format("%.2f", LCP)).append(",");
         sb.append(String.format("%.2f", LC1)).append(",");
         sb.append(String.format("%.2f", LC2)).append(",");
         sb.append(String.format("%.2f", S2)).append(",");
+        sb.append(String.format("%.2f", SCP)).append(",");
         sb.append(String.format("%.2f", SC1)).append(",");
         sb.append(String.format("%.2f", SC2)).append(",");
         sb.append("\n");

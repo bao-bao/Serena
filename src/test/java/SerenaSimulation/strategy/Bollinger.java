@@ -3,6 +3,7 @@ package SerenaSimulation.strategy;
 import SerenaSimulation.DataServiceManagerTest;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
+import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.network.HistoryDownloader;
@@ -42,29 +43,26 @@ public class Bollinger extends AbstractStrategy {
     public Decision execute(ExPrice price) {
         Decision decision = new Decision(price, StrategyEnum.STRATEGY_BOLLINGER, interval);
         MovingAverage currentMA = DataServiceManagerTest.getInstance().queryData(interval).getNewMAvg();
-        LinkedList<MovingAverage> mAvgs = DataServiceManagerTest.getInstance().queryData(interval).getMAvgs();
-        if (mAvgs.size() == 0) {
+        LinkedList<ExPrice> prices = DataServiceManagerTest.getInstance().queryData(interval).getPrices();
+        if (prices.size() == 0) {
             return decision;
         }
 
-        double midLine = currentMA.getMAByIndex(Setting.BOLLINGER_MA_BASE);
-        ArrayList<Double> MASequence = new ArrayList<>();
-        ListIterator<MovingAverage> iterator = mAvgs.listIterator(0);
+        double midLine = currentMA.getMAByIndex(MAEnum.fromInt(Setting.BOLLINGER_AGGREGATE_COUNT));
+        ArrayList<Double> CloseSequence = new ArrayList<>();
+        ListIterator<ExPrice> iterator = prices.listIterator(0);
         for (int i = 0; i < Setting.BOLLINGER_AGGREGATE_COUNT; i++) {
             if (iterator.hasNext()) {
-                MovingAverage movingAverage = iterator.next();
-                if (movingAverage.getMAByIndex(Setting.BOLLINGER_MA_BASE) != 0) {
-                    MASequence.add(movingAverage.getMAByIndex(Setting.BOLLINGER_MA_BASE));
-                }
+                ExPrice historyPrice = iterator.next();
+                CloseSequence.add(historyPrice.getPrice());
             } else {
-                // LogUtil.getInstance().warning("MA Sequence not enough...");
                 return decision;
             }
         }
 
-        double stdDeviation = Calculator.standardDeviation(MASequence);
-        double upperBound = midLine + stdDeviation * Setting.BOLLINGER_DEVIATION_MULTIPLIER;
-        double lowerBound = midLine - stdDeviation * Setting.BOLLINGER_DEVIATION_MULTIPLIER;
+        double stdDeviation = Calculator.standardDeviation(CloseSequence);
+        double upperBound = midLine + (stdDeviation * Setting.BOLLINGER_DEVIATION_MULTIPLIER);
+        double lowerBound = midLine - (stdDeviation * Setting.BOLLINGER_DEVIATION_MULTIPLIER);
 
         int count = 0;
         HistoryData lastMinuteInfo = new HistoryData();
@@ -235,7 +233,7 @@ public class Bollinger extends AbstractStrategy {
 
     private void bollingerLongCoverByLose(Decision decision, ExPrice price) {
         if (active && isUp) {
-            double profit = Math.abs(price.getPrice() - tradeInPrice);
+            double profit = price.getPrice() - tradeInPrice;
             if (profit < 0 - Setting.BOLLINGER_B_LOSE_LIMIT) {
                 decision.make(TradingType.EMPTY, "LC2");
                 active = false;
@@ -246,7 +244,7 @@ public class Bollinger extends AbstractStrategy {
 
     private void bollingerShortCoverByLose(Decision decision, ExPrice price) {
         if (active && !isUp) {
-            double profit = Math.abs(tradeInPrice - price.getPrice());
+            double profit = tradeInPrice - price.getPrice();
             if (profit < 0 - Setting.BOLLINGER_S_LOSE_LIMIT) {
                 decision.make(TradingType.EMPTY, "SC2");
                 active = false;

@@ -41,9 +41,9 @@ public class Setting {
     public static double EMA_DOWN_LOSS_LIMIT = 0.0075;
 
     // bollinger settings
-    public static MAEnum BOLLINGER_MA_BASE = MAEnum.MA5;
+    public static MAEnum BOLLINGER_MA_BASE = MAEnum.MA30;
 
-    public static int BOLLINGER_AGGREGATE_COUNT = 180;
+    public static int BOLLINGER_AGGREGATE_COUNT = 30;
 
     public static double BOLLINGER_DEVIATION_MULTIPLIER = 1.3;
 

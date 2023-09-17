@@ -17,8 +17,8 @@ public class Calculator {
             return avg(list);
         }
         double eAvg = 0;
-        for(ExPrice price : list) {
-            eAvg = ((1-alpha) * eAvg) + (alpha * price.getPrice());
+        for (ExPrice price : list) {
+            eAvg = ((1 - alpha) * eAvg) + (alpha * price.getPrice());
             history.addFirst(eAvg);
         }
         return eAvg;
