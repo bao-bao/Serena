@@ -75,7 +75,8 @@ public class PreparationUtil {
                 || type.startsWith("RI") || type.startsWith("RS") || type.startsWith("PK")
                 || type.startsWith("UR") || type.startsWith("CJ") || type.startsWith("AP")
                 || type.startsWith("BB") || type.startsWith("FB") || type.startsWith("LH")
-                || type.startsWith("JD") || type.startsWith("WR") || type.startsWith("LC")) {
+                || type.startsWith("JD") || type.startsWith("WR") || type.startsWith("LC")
+                || type.startsWith("EC")) {
             return FutureType.FUTURE_NO_NIGHT;
         } else if (type.startsWith("FG") || type.startsWith("SA") || type.startsWith("MA")
                 || type.startsWith("SR") || type.startsWith("TA") || type.startsWith("RM")
@@ -85,7 +86,8 @@ public class PreparationUtil {
                 || type.startsWith("EG") || type.startsWith("PG") || type.startsWith("RR")
                 || type.startsWith("FU") || type.startsWith("RU") || type.startsWith("BU")
                 || type.startsWith("SP") || type.startsWith("RB") || type.startsWith("HC")
-                || type.startsWith("LU") || type.startsWith("NR") || type.startsWith("SI")) {
+                || type.startsWith("LU") || type.startsWith("NR") || type.startsWith("SI")
+                || type.startsWith("SH") || type.startsWith("PX")) {
             return FutureType.FUTURE_NIGHT_2300;
         }
         LogUtil.getInstance().severe("NO such breed called " + type);
