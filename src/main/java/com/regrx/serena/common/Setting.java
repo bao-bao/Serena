@@ -55,6 +55,10 @@ public class Setting {
 
     public static double BOLLINGER_S_PRICE_REFERENCE = 5;
 
+    public static double BOLLINGER_B_PROFIT_TREAT = 15;
+
+    public static double BOLLINGER_S_PROFIT_TREAT = 15;
+
     public static double BOLLINGER_B_FALLBACK = 10;
 
     public static double BOLLINGER_S_FALLBACK = 10;

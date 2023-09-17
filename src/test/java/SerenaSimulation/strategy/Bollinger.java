@@ -200,7 +200,7 @@ public class Bollinger extends AbstractStrategy {
             }
             if (enableProfitLimit) {
                 peekProfitPrice = Math.max(peekProfitPrice, price.getPrice());
-                if (
+                if (peekProfitPrice - tradeInPrice > Setting.BOLLINGER_B_PROFIT_TREAT &&
                         peekProfitPrice - price.getPrice() > Setting.BOLLINGER_B_FALLBACK) {
                     decision.make(TradingType.EMPTY, "LC1");
                     active = false;
@@ -221,7 +221,8 @@ public class Bollinger extends AbstractStrategy {
             }
             if (enableProfitLimit) {
                 peekProfitPrice = Math.min(peekProfitPrice, price.getPrice());
-                if (price.getPrice() - peekProfitPrice > Setting.BOLLINGER_S_FALLBACK) {
+                if (tradeInPrice - peekProfitPrice > Setting.BOLLINGER_S_PROFIT_TREAT &&
+                        price.getPrice() - peekProfitPrice > Setting.BOLLINGER_S_FALLBACK) {
                     decision.make(TradingType.EMPTY, "SC1");
                     active = false;
                     enableProfitLimit = false;
