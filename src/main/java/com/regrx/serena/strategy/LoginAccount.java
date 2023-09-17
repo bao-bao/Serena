@@ -16,27 +16,31 @@ import java.util.Calendar;
 import java.util.TimeZone;
 
 public class LoginAccount extends ForceTriggerStrategy implements Runnable {
-    private static final int OP_INTERVAL = 5000;     // ms
+    private static final int OP_INTERVAL = 60000;     // ms
 
-    private static final int ACCOUNT_BUTT_POS_X = 0;
-    private static final int ACCOUNT_BUTT_POS_Y = 0;
+    private static final int ACCOUNT_BUTT_POS_X = 1676;
+    private static final int ACCOUNT_BUTT_POS_Y = 1063;
 
-    private static final int POP_WINDOW_1_POS_X = 300;
-    private static final int POP_WINDOW_1_POS_Y = 500;
-    private static final int POP_WINDOW_2_POS_X = 900;
-    private static final int POP_WINDOW_2_POS_Y = 500;
-    private static final int POP_WINDOW_3_POS_X = 1300;
-    private static final int POP_WINDOW_3_POS_Y = 500;
+    private static final int POP_WINDOW_1_POS_X = 1193;
+    private static final int POP_WINDOW_1_POS_Y = 358;
+    private static final int POP_WINDOW_2_POS_X = 639;
+    private static final int POP_WINDOW_2_POS_Y = 794;
+    private static final int POP_WINDOW_3_POS_X = 561;
+    private static final int POP_WINDOW_3_POS_Y = 792;
+    private static final int POP_WINDOW_4_POS_X = 514;
+    private static final int POP_WINDOW_4_POS_Y = 767;
 
     private static final ArrayList<Pair<Integer, Integer>> POP_WINDOWS = new ArrayList<>(
             Arrays.asList(
                     Pair.of(POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y),
+                    Pair.of(POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y),
                     Pair.of(POP_WINDOW_2_POS_X, POP_WINDOW_2_POS_Y),
-                    Pair.of(POP_WINDOW_3_POS_X, POP_WINDOW_3_POS_Y)
+                    Pair.of(POP_WINDOW_3_POS_X, POP_WINDOW_3_POS_Y),
+                    Pair.of(POP_WINDOW_4_POS_X, POP_WINDOW_4_POS_Y)
             )
     );
 
-    private static final String PASSWORD = "testTEST123";
+    private static final String PASSWORD = "A12345";
 
     public LoginAccount(int hour, int minute) {
         super(IntervalEnum.NULL);
