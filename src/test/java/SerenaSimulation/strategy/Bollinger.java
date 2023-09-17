@@ -23,8 +23,8 @@ import java.util.ListIterator;
 public class Bollinger extends AbstractStrategy {
     private boolean active; // need log
     private boolean isUp;   // need log
-    private boolean aboveLowerBound;
-    private boolean belowUpperBound;
+    private boolean belowLowerBound;
+    private boolean aboveUpperBound;
     private boolean enableProfitLimit;  // need log
     private double tradeInPrice;    // need log
     private double peekProfitPrice; // need log
@@ -85,13 +85,13 @@ public class Bollinger extends AbstractStrategy {
                     shortByTail(decision, price, lastMinuteInfo, upperBound);
                     break;
                 case StrategyOption.BollingerLongCoverByFallback:
-                    bollingerLongCoverByFallback(decision, price, midLine);
+                    bollingerLongCoverByFallback(decision, price, lastMinuteInfo);
                     break;
                 case StrategyOption.BollingerLongCoverByLose:
                     bollingerLongCoverByLose(decision, price);
                     break;
                 case StrategyOption.BollingerShortCoverByFallback:
-                    bollingerShortCoverByFallback(decision, price, midLine);
+                    bollingerShortCoverByFallback(decision, price, lastMinuteInfo);
                     break;
                 case StrategyOption.BollingerShortCoverByLose:
                     bollingerShortCoverByLose(decision, price);
@@ -108,8 +108,8 @@ public class Bollinger extends AbstractStrategy {
         }
 
         if (decision.getTradingType() == TradingType.NO_ACTION) {
-            aboveLowerBound = price.getPrice() > lowerBound;
-            belowUpperBound = price.getPrice() < upperBound;
+            belowLowerBound = price.getPrice() < lowerBound;
+            aboveUpperBound = price.getPrice() > upperBound;
         }
 
         return decision;
@@ -124,8 +124,8 @@ public class Bollinger extends AbstractStrategy {
         if (NST && isUp) {
             return;
         }
-        if (!active && aboveLowerBound && price.getPrice() < lower) {
-            aboveLowerBound = false;
+        if (!active && belowLowerBound && price.getPrice() > lower) {
+            belowLowerBound = false;
             decision.make(TradingType.PUT_BUYING, "B1");
             active = true;
             isUp = true;
@@ -138,8 +138,8 @@ public class Bollinger extends AbstractStrategy {
         if (NST && !isUp) {
             return;
         }
-        if (!active && belowUpperBound && price.getPrice() > upper) {
-            belowUpperBound = false;
+        if (!active && aboveUpperBound && price.getPrice() < upper) {
+            aboveUpperBound = false;
             decision.make(TradingType.SHORT_SELLING, "S1");
             active = true;
             isUp = false;
@@ -170,7 +170,7 @@ public class Bollinger extends AbstractStrategy {
     }
 
     private void shortByTail(Decision decision, ExPrice price, HistoryData lastMinuteInfo, double upper) {
-        if (NST && isUp) {
+        if (NST && !isUp) {
             return;
         }
         double tail = Math.abs(lastMinuteInfo.getHighestPrice() - lastMinuteInfo.getClosePrice());
@@ -190,42 +190,40 @@ public class Bollinger extends AbstractStrategy {
         }
     }
 
-    private void bollingerLongCoverByFallback(Decision decision, ExPrice price, double mid) {
+    private void bollingerLongCoverByFallback(Decision decision, ExPrice price, HistoryData lastMinuteInfo) {
         if (active && isUp) {
-            if (!enableProfitLimit && price.getPrice() > mid) {
+            if (!enableProfitLimit) {
                 enableProfitLimit = true;
-                peekProfitPrice = price.getPrice();
+                peekProfitPrice = lastMinuteInfo.getHighestPrice();
             }
             if (enableProfitLimit) {
-                peekProfitPrice = Math.max(peekProfitPrice, price.getPrice());
-                if (peekProfitPrice - tradeInPrice > Setting.BOLLINGER_B_PROFIT_TREAT &&
-                        peekProfitPrice - price.getPrice() > Setting.BOLLINGER_B_FALLBACK) {
+                peekProfitPrice = Math.max(peekProfitPrice, lastMinuteInfo.getHighestPrice());
+                double peekProfit = peekProfitPrice - tradeInPrice;
+                double profit = price.getPrice() - tradeInPrice;
+                if (peekProfit > Setting.BOLLINGER_B_PROFIT_TREAT &&
+                        profit / peekProfit < Setting.BOLLINGER_B_FALLBACK) {
                     decision.make(TradingType.EMPTY, "LC1");
-                    active = false;
-                    enableProfitLimit = false;
-                    peekProfitPrice = 0.0;
-                    tradeInPrice = 0.0;
+                    bollingerReset();
                 }
             }
         }
     }
 
 
-    private void bollingerShortCoverByFallback(Decision decision, ExPrice price, double mid) {
+    private void bollingerShortCoverByFallback(Decision decision, ExPrice price, HistoryData lastMinuteInfo) {
         if (active && !isUp) {
-            if (!enableProfitLimit && price.getPrice() < mid) {
+            if (!enableProfitLimit) {
                 enableProfitLimit = true;
-                peekProfitPrice = price.getPrice();
+                peekProfitPrice = lastMinuteInfo.getLowestPrice();
             }
             if (enableProfitLimit) {
-                peekProfitPrice = Math.min(peekProfitPrice, price.getPrice());
-                if (tradeInPrice - peekProfitPrice > Setting.BOLLINGER_S_PROFIT_TREAT &&
-                        price.getPrice() - peekProfitPrice > Setting.BOLLINGER_S_FALLBACK) {
+                peekProfitPrice = Math.min(peekProfitPrice, lastMinuteInfo.getLowestPrice());
+                double peekProfit = tradeInPrice - peekProfitPrice;
+                double profit = tradeInPrice - price.getPrice();
+                if (peekProfit > Setting.BOLLINGER_S_PROFIT_TREAT &&
+                        profit / peekProfit < Setting.BOLLINGER_S_FALLBACK) {
                     decision.make(TradingType.EMPTY, "SC1");
-                    active = false;
-                    enableProfitLimit = false;
-                    peekProfitPrice = 0.0;
-                    tradeInPrice = 0.0;
+                    bollingerReset();
                 }
             }
         }
@@ -236,8 +234,7 @@ public class Bollinger extends AbstractStrategy {
             double profit = price.getPrice() - tradeInPrice;
             if (profit < 0 - Setting.BOLLINGER_B_LOSE_LIMIT) {
                 decision.make(TradingType.EMPTY, "LC2");
-                active = false;
-                tradeInPrice = 0.0;
+                bollingerReset();
             }
         }
     }
@@ -247,8 +244,7 @@ public class Bollinger extends AbstractStrategy {
             double profit = tradeInPrice - price.getPrice();
             if (profit < 0 - Setting.BOLLINGER_S_LOSE_LIMIT) {
                 decision.make(TradingType.EMPTY, "SC2");
-                active = false;
-                tradeInPrice = 0.0;
+                bollingerReset();
             }
         }
     }
@@ -257,5 +253,12 @@ public class Bollinger extends AbstractStrategy {
         if (!NST && decision.getTradingType() == TradingType.EMPTY) {
             NST = true;
         }
+    }
+
+    private void bollingerReset() {
+        active = false;
+        enableProfitLimit = false;
+        peekProfitPrice = 0.0;
+        tradeInPrice = 0.0;
     }
 }

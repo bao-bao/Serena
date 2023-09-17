@@ -15,7 +15,7 @@ import java.util.*;
 
 // TODO: 加几个输出值
 public class SerenaSimulation {
-    public static String type = "IF1";
+    public static String type = "IF9999";
 
     public static void main(String[] args) {
 //        runner();
@@ -47,22 +47,22 @@ public class SerenaSimulation {
 //                StrategyOption.BollingerLongByTail,             // B2
                 StrategyOption.BollingerLongCoverByLose,        // LC1
                 StrategyOption.BollingerLongCoverByFallback,    // LC2
-//                StrategyOption.BollingerShortByDefault,         // S1
+                StrategyOption.BollingerShortByDefault,         // S1
 //                StrategyOption.BollingerShortByTail,            // S2
-//                StrategyOption.BollingerShortCoverByLose,       // SC1
-//                StrategyOption.BollingerShortCoverByFallback,   // SC2
-//                StrategyOption.DefaultNST,                      // NST
+                StrategyOption.BollingerShortCoverByLose,       // SC1
+                StrategyOption.BollingerShortCoverByFallback,   // SC2
+                StrategyOption.DefaultNST,                      // NST
         };
         int[] aggrCount = {30};
         double[] SD = {2};
-        double[] B2 = {1};
+        double[] B2 = {2};
         double[] LCP = {10};
-        double[] LC1 = {5};
+        double[] LC1 = {0.5};
         double[] LC2 = {10};
-        double[] S2 = {5};
-        double[] SCP = {1};
-        double[] SC1 = {7};
-        double[] SC2 = {7};
+        double[] S2 = {2};
+        double[] SCP = {10};
+        double[] SC1 = {0.5};
+        double[] SC2 = {10};
 
         Bollinger bollinger = new Bollinger(IntervalEnum.MIN_1);
         for (int option : options) {

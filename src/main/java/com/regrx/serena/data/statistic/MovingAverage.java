@@ -6,6 +6,8 @@ import com.regrx.serena.data.base.ExPrice;
 
 import java.util.LinkedList;
 
+// Warning: Sina has no data for 9:30, daily data starts from 9:31 (not aligned with 同花顺)
+
 public class MovingAverage {
     private Double MA5;
     private Double MA10;
