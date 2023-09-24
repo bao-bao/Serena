@@ -54,7 +54,8 @@ public class SerenaSimulation {
 //                StrategyOption.BollingerShortCoverByFallback,   // SC2
 //                StrategyOption.DefaultNST,                      // NST
         };
-        int[] aggrCount = {35};
+
+        int[] aggrCount = genList(5, 100, 5);
         double[] SD = {2};
         double[] B2 = {2};
         double[] LCP = {5};
@@ -478,5 +479,13 @@ public class SerenaSimulation {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public static int[] genList(int start, int end, int step) {
+        int[] res = new int[((end-start) / step) + 1];
+        for(int i = 0; i <= (end-start) / step; i++) {
+            res[i] = start + (i * step);
+        }
+        return res;
     }
 }
