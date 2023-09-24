@@ -75,6 +75,7 @@ public class EMACombination implements Comparable<EMACombination> {
         sb.append(String.format("%.2f", profit.getKelly())).append("%,");
         sb.append(String.format("%.2f", profit.getOdds())).append(",");
         sb.append(String.format("%.2f", profit.getMaxLoss())).append(",");
+        sb.append(String.format("%.2f", profit.getStdDev())).append(",");
         sb.append(String.format("%.2f", profit.getSharpRatio())).append(",");
 
         sb.append("[");

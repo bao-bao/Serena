@@ -137,7 +137,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tSharp Ratio\tCNT\tSD\tB2\tLCP\tLC1\tLC2\tS2\tSCP\tSC1\tSC2");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tCNT\tSD\tB2\tLCP\tLC1\tLC2\tS2\tSCP\tSC1\tSC2");
 
         for (BollingerCombination res : resList) {
             System.out.print(res);
@@ -155,6 +155,7 @@ public class SerenaSimulation {
                     .append("Kelly,")
                     .append("Odds,")
                     .append("Max Loss,")
+                    .append("Std Dev,")
                     .append("Sharp Ratio,")
                     .append("CNT,")
                     .append("SD,")
@@ -285,7 +286,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tSharp Ratio\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
 
         for (EMACombination res : resList) {
             System.out.print(res);
@@ -303,6 +304,7 @@ public class SerenaSimulation {
                     .append("Kelly,")
                     .append("Odds,")
                     .append("Max Loss,")
+                    .append("Std Dev,")
                     .append("Sharp Ratio,")
                     .append("EMA,")
                     .append("Up Profit Threshold,")

@@ -135,6 +135,7 @@ public class ProfitCal {
             System.out.println("EVUR: " + String.format("%.2f", EVUR));
 
             System.out.println("Max Loss: " +  String.format("%.2f", maxLoss));
+            System.out.println("Std Dev: " + String.format("%.2f", ProfitStdDeviation));
             System.out.println("Sharp Ratio: " + String.format("%.2f", SharpRatio));
         }
         testResult.setTotalProfit(profit);
@@ -148,6 +149,7 @@ public class ProfitCal {
         testResult.setKelly(Kelly);
         testResult.setOdds(odds);
         testResult.setMaxLoss(maxLoss);
+        testResult.setStdDev(ProfitStdDeviation);
         testResult.setSharpRatio(SharpRatio);
 
         return testResult;
