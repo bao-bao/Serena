@@ -2,6 +2,7 @@ package SerenaSimulation.profit;
 
 
 import com.regrx.serena.common.constant.TradingType;
+import com.regrx.serena.common.utils.Calculator;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -74,7 +75,7 @@ public class ProfitCal {
                 }
             }
         } catch (FileNotFoundException e) {
-            System.out.println("No such file.");
+            System.out.println("No such file. No-Trade-Action under this params");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -100,14 +101,19 @@ public class ProfitCal {
         ArrayList<Double> profitList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SingleTrade trade = trades.poll();
-            if (trade != null && outputDetail) {
+            if (trade != null) {
                 profitList.add(trade.profit);
-                System.out.println(trade.openTime + "," + trade.closeTime + "," +
-                        trade.tradeType + "," + String.format("%.2f", trade.profit) +
-                        ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
+                if (outputDetail){
+                    System.out.println(trade.openTime + "," + trade.closeTime + "," +
+                            trade.tradeType + "," + String.format("%.2f", trade.profit) +
+                            ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
+                }
             }
         }
         double maxLoss = findMaxLoss(profitList);
+
+        double ProfitStdDeviation = Calculator.standardDeviation(profitList);
+        double SharpRatio = (EVPT - 0.045) / ProfitStdDeviation;
 
         System.out.println("Profit: " + String.format("%.2f", profit));
         if (outputDetail) {
@@ -129,6 +135,7 @@ public class ProfitCal {
             System.out.println("EVUR: " + String.format("%.2f", EVUR));
 
             System.out.println("Max Loss: " +  String.format("%.2f", maxLoss));
+            System.out.println("Sharp Ratio: " + String.format("%.2f", SharpRatio));
         }
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
@@ -141,6 +148,7 @@ public class ProfitCal {
         testResult.setKelly(Kelly);
         testResult.setOdds(odds);
         testResult.setMaxLoss(maxLoss);
+        testResult.setSharpRatio(SharpRatio);
 
         return testResult;
     }

@@ -52,6 +52,7 @@ public class BollingerCombination implements Comparable<BollingerCombination> {
         sb.append(String.format("%.2f", profit.getKelly())).append("%,");
         sb.append(String.format("%.2f", profit.getOdds())).append(",");
         sb.append(String.format("%.2f", profit.getMaxLoss())).append(",");
+        sb.append(String.format("%.2f", profit.getSharpRatio())).append(",");
 
         sb.append(String.format("%d", aggrCount)).append(",");
         sb.append(String.format("%.2f", SD)).append(",");

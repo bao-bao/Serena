@@ -137,7 +137,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tCNT\tSD\tB2\tLCP\tLC1\tLC2\tS2\tSCP\tSC1\tSC2");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tSharp Ratio\tCNT\tSD\tB2\tLCP\tLC1\tLC2\tS2\tSCP\tSC1\tSC2");
 
         for (BollingerCombination res : resList) {
             System.out.print(res);
@@ -155,6 +155,7 @@ public class SerenaSimulation {
                     .append("Kelly,")
                     .append("Odds,")
                     .append("Max Loss,")
+                    .append("Sharp Ratio,")
                     .append("CNT,")
                     .append("SD,")
                     .append("B2,")
@@ -262,7 +263,7 @@ public class SerenaSimulation {
                                         e.printStackTrace();
                                     }
                                     EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
-                                    newRes.setProfit(ProfitCal.cal(path, type, upSide && downSide));
+                                    newRes.setProfit(ProfitCal.cal(path, type, true));
                                     queue.add(newRes);
                                     try {
                                         Thread.sleep(500);
@@ -284,7 +285,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tSharp Ratio\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
 
         for (EMACombination res : resList) {
             System.out.print(res);
@@ -302,6 +303,7 @@ public class SerenaSimulation {
                     .append("Kelly,")
                     .append("Odds,")
                     .append("Max Loss,")
+                    .append("Sharp Ratio,")
                     .append("EMA,")
                     .append("Up Profit Threshold,")
                     .append("Up Profit Limit,")

@@ -13,6 +13,7 @@ public class TestResult implements Comparable<TestResult> {
     double Odds;
     double Kelly;
     double EVUR;
+    double SharpRatio;
     double maxLoss;
 
     public double getTotalProfit() {
@@ -113,6 +114,14 @@ public class TestResult implements Comparable<TestResult> {
 
     public void setMaxLoss(double maxLoss) {
         this.maxLoss = maxLoss;
+    }
+
+    public double getSharpRatio() {
+        return SharpRatio;
+    }
+
+    public void setSharpRatio(double sharpRatio) {
+        SharpRatio = sharpRatio;
     }
 
     @Override
