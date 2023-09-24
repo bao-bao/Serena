@@ -26,17 +26,17 @@ public class SerenaSimulation {
         BollingerRunner();
     }
 
-    public static void simulation() {
+    public static void simulation(String path) {
         String type = SerenaSimulation.type;
 
-        clearTradeHistory(".", type);
+        clearTradeHistory(path, type);
 
-        ControllerTest controller = ControllerTest.getInstance(type);
+        ControllerTest controller = new ControllerTest(path, type);
 
         controller.addDataTrack(IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_BOLLINGER, IntervalEnum.MIN_1);
 
-        controller.filename = "find_percent_" + type + ".csv";
+        controller.filename = path + "/find_percent_" + type + ".csv";
         controller.run();
         int i = 0;
     }
@@ -75,7 +75,7 @@ public class SerenaSimulation {
         for(int option : options) {
             strategyName.append(StrategyOption.getName(option));
         }
-        String path = "./" + type + "_" + strategyName + "_" + Calendar.getInstance().getTime().getTime();
+        String path = "./test_result/" + type + "_" + strategyName + "_" + Calendar.getInstance().getTime().getTime();
         File file = new File(path);
         file.mkdir();
 
@@ -223,6 +223,11 @@ public class SerenaSimulation {
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
 
+        // create file folder
+        String path = "./test_result/" + type + "_" + Calendar.getInstance().getTime().getTime();
+        File file = new File(path);
+        file.mkdir();
+
         int count = 1;
         for (double[] EMA : EMAs) {
             for (double upPT : upProfitThreshold) {
@@ -248,7 +253,7 @@ public class SerenaSimulation {
                                     Setting.EMA_DOWN_PROFIT_LIMIT = downPL;
                                     Setting.EMA_DOWN_LOSS_LIMIT = downLL;
                                     Setting.EMA_ALPHA = EMA;
-                                    simulation();
+                                    simulation(path);
                                     try {
                                         Thread.sleep(500);
                                         ControllerTest.stop();
@@ -256,7 +261,7 @@ public class SerenaSimulation {
                                         e.printStackTrace();
                                     }
                                     EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
-                                    newRes.setProfit(ProfitCal.cal(".", type, upSide && downSide));
+                                    newRes.setProfit(ProfitCal.cal(path, type, upSide && downSide));
                                     queue.add(newRes);
                                     try {
                                         Thread.sleep(500);
@@ -284,7 +289,7 @@ public class SerenaSimulation {
             System.out.print(res);
         }
 
-        String filename = type + '_' + Calendar.getInstance().getTime().getTime();
+        String filename = path + "/" + type + "_analyze_summary";
         FileUtil.newFile(filename + ".csv");
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
             writer.append("Profit,")
@@ -338,7 +343,7 @@ public class SerenaSimulation {
                             Setting.RESTORE_THRESHOLD = restore;
                             Setting.TRADE_THRESHOLD = ma520;
                             Setting.FILL_GAP_THRESHOLD = fill;
-                            simulation();
+                            simulation(".");
                             try {
                                 Thread.sleep(500);
                                 ControllerTest.stop();
@@ -396,7 +401,7 @@ public class SerenaSimulation {
 
                 Setting.EMA_ALPHA[0] = i;
                 Setting.EMA_ALPHA[1] = j;
-                simulation();
+                simulation(".");
                 try {
                     Thread.sleep(500);
                     ControllerTest.stop();

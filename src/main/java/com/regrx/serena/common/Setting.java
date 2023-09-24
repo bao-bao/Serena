@@ -20,9 +20,9 @@ public class Setting {
     public static final int MORNING_CLOSE_MINUTE = 30;
 
     public static final int AFTERNOON_START_HOUR = 13;
-    public static final int AFTERNOON_START_MINUTE = 1;
+    public static final int AFTERNOON_START_MINUTE = 0;
     public static final int AFTERNOON_CLOSE_HOUR = 15;
-    public static final int AFTERNOON_CLOSE_MINUTE = 1;
+    public static final int AFTERNOON_CLOSE_MINUTE = 0;
 
     public static final int SHUTDOWN_HOUR = 15;
     public static final int SHUTDOWN_MINUTE = 10;
