@@ -22,27 +22,27 @@ import java.util.concurrent.ArrayBlockingQueue;
 
 public class ControllerTest implements Runnable {
     private boolean signal;
+    private final String path;
     private final String type;
     private final DataServiceManagerTest dataSvcMgr;
     private final StrategyManagerTest strategyMgr;
-    private static ControllerTest controller;
+    public static ControllerTest controller;
     public String filename;
 
     private static final ArrayBlockingQueue<Decision> decisionQueue = new ArrayBlockingQueue<>(Setting.MAX_DECISION_QUEUE_SIZE);
 
 
-    private ControllerTest(String type) {
+    public ControllerTest(String path, String type) {
         this.signal = true;
         this.type = type;
         this.dataSvcMgr = DataServiceManagerTest.getInstance(type);
         this.strategyMgr = StrategyManagerTest.getInstance();
-        FileUtil.readTradeHistory("Trade_" + type);
+        this.path = path;
+        FileUtil.readTradeHistory(path + "/Trade_" + type);
+        controller = this;
     }
 
     public static ControllerTest getInstance(String type) {
-        if(controller == null) {
-            controller = new ControllerTest(type);
-        }
         return controller;
     }
 
@@ -86,9 +86,9 @@ public class ControllerTest implements Runnable {
                             Decision emptyDecision = new Decision();
                             emptyDecision.copy(decision);
                             emptyDecision.setTradingType(TradingType.EMPTY);
-                            LogUtil.tradeLog(type, emptyDecision);
+                            LogUtil.testTradeLog(path, type, emptyDecision);
                         }
-                        LogUtil.tradeLog(type, decision);
+                        LogUtil.testTradeLog(path, type, decision);
                         TradeUtil.trade(decision, type);
                     }
                 }

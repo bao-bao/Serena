@@ -11,6 +11,7 @@ import com.regrx.serena.strategy.StrategyOption;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.sql.Timestamp;
 import java.util.*;
 
 // TODO: 加几个输出值
@@ -28,7 +29,7 @@ public class SerenaSimulation {
     public static void simulation() {
         String type = SerenaSimulation.type;
 
-        clearTradeHistory(type);
+        clearTradeHistory(".", type);
 
         ControllerTest controller = ControllerTest.getInstance(type);
 
@@ -47,18 +48,18 @@ public class SerenaSimulation {
 //                StrategyOption.BollingerLongByTail,             // B2
                 StrategyOption.BollingerLongCoverByLose,        // LC1
                 StrategyOption.BollingerLongCoverByFallback,    // LC2
-                StrategyOption.BollingerShortByDefault,         // S1
+//                StrategyOption.BollingerShortByDefault,         // S1
 //                StrategyOption.BollingerShortByTail,            // S2
-                StrategyOption.BollingerShortCoverByLose,       // SC1
-                StrategyOption.BollingerShortCoverByFallback,   // SC2
-                StrategyOption.DefaultNST,                      // NST
+//                StrategyOption.BollingerShortCoverByLose,       // SC1
+//                StrategyOption.BollingerShortCoverByFallback,   // SC2
+//                StrategyOption.DefaultNST,                      // NST
         };
-        int[] aggrCount = {30};
+        int[] aggrCount = {35};
         double[] SD = {2};
         double[] B2 = {2};
-        double[] LCP = {10};
-        double[] LC1 = {0.5};
-        double[] LC2 = {10};
+        double[] LCP = {5};
+        double[] LC1 = {0.8};
+        double[] LC2 = {5};
         double[] S2 = {2};
         double[] SCP = {10};
         double[] SC1 = {0.5};
@@ -68,6 +69,16 @@ public class SerenaSimulation {
         for (int option : options) {
             bollinger = bollinger.withOption(option);
         }
+
+        // create file folder
+        StringBuilder strategyName = new StringBuilder();
+        for(int option : options) {
+            strategyName.append(StrategyOption.getName(option));
+        }
+        String path = "./" + type + "_" + strategyName + "_" + Calendar.getInstance().getTime().getTime();
+        File file = new File(path);
+        file.mkdir();
+
         double total = aggrCount.length * SD.length * B2.length * LCP.length * LC1.length * LC2.length * S2.length * SCP.length * SC1.length * SC2.length;
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<BollingerCombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
@@ -91,7 +102,7 @@ public class SerenaSimulation {
                                                 Setting.BOLLINGER_S_PROFIT_TREAT = h;
                                                 Setting.BOLLINGER_S_FALLBACK = e;
                                                 Setting.BOLLINGER_S_LOSE_LIMIT = f;
-                                                simulationWithStrategy(StrategyEnum.STRATEGY_BOLLINGER, bollinger);
+                                                simulationWithStrategy(path, StrategyEnum.STRATEGY_BOLLINGER, bollinger);
                                                 try {
                                                     Thread.sleep(500);
                                                     ControllerTest.stop();
@@ -99,7 +110,7 @@ public class SerenaSimulation {
                                                     ex.printStackTrace();
                                                 }
                                                 BollingerCombination newRes = new BollingerCombination(cnt, z, a, b, c, d, e, f, g, h);
-                                                newRes.setProfit(ProfitCal.cal(type, false));
+                                                newRes.setProfit(ProfitCal.cal(path, type, false));
                                                 queue.add(newRes);
                                                 try {
                                                     Thread.sleep(500);
@@ -131,7 +142,7 @@ public class SerenaSimulation {
             System.out.print(res);
         }
 
-        String filename = type + '_' + Calendar.getInstance().getTime().getTime();
+        String filename = path + "/" + type + "_analyze_summary";
         FileUtil.newFile(filename + ".csv");
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
             writer.append("Profit,")
@@ -162,18 +173,18 @@ public class SerenaSimulation {
         }
     }
 
-    public static void simulationWithStrategy(StrategyEnum name, AbstractStrategy strategy) {
+    public static void simulationWithStrategy(String path, StrategyEnum name, AbstractStrategy strategy) {
         String type = SerenaSimulation.type;
 
-        clearTradeHistory(type);
+        clearTradeHistory(path, type);
 
-        ControllerTest controller = ControllerTest.getInstance(type);
+        ControllerTest controller = new ControllerTest(path, type);
 
         controller.addDataTrack(IntervalEnum.MIN_1);
 
         controller.addStrategyWithOption(name, strategy);
 
-        controller.filename = "find_percent_" + type + ".csv";
+        controller.filename = path + "/find_percent_" + type + ".csv";
         controller.run();
     }
 
@@ -245,7 +256,7 @@ public class SerenaSimulation {
                                         e.printStackTrace();
                                     }
                                     EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
-                                    newRes.setProfit(ProfitCal.cal(type, upSide && downSide));
+                                    newRes.setProfit(ProfitCal.cal(".", type, upSide && downSide));
                                     queue.add(newRes);
                                     try {
                                         Thread.sleep(500);
@@ -335,7 +346,7 @@ public class SerenaSimulation {
                                 e.printStackTrace();
                             }
                             ParaCombination newRes = new ParaCombination();
-                            newRes.setProfit(ProfitCal.cal(type, false));
+                            newRes.setProfit(ProfitCal.cal(".", type, false));
                             newRes.setParaArray(lossLimit, profitLimit, restore, ma520, fill);
                             queue.add(newRes);
                             try {
@@ -433,8 +444,8 @@ public class SerenaSimulation {
         }
     }
 
-    private static void clearTradeHistory(String type) {
-        File tradeHistory = new File("Trade_" + type + ".log");
+    private static void clearTradeHistory(String path, String type) {
+        File tradeHistory = new File(path + "/Trade_" + type + ".log");
         try {
             Files.deleteIfExists(tradeHistory.toPath());
         } catch (IOException ignored) {

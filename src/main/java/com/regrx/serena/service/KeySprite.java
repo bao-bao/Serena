@@ -20,15 +20,18 @@ public class KeySprite implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-        switch (operate) {
-            case 'P': return PutBuying();
-            case 'S': return ShortSelling();
-            case 'E': return Empty();
-            case 'A': return Empty() && PutBuying();
-            case 'B': return Empty() && ShortSelling();
-            default:
-                return false;
+        boolean res = false;
+        for(int i = 0; i < Setting.TRADE_OPERATE_REPEAT; i++) {
+            switch (operate) {
+                case 'P': res |= PutBuying();
+                case 'S': res |= ShortSelling();
+                case 'E': res |= Empty();
+                case 'A': res |= Empty() && PutBuying();
+                case 'B': res |= Empty() && ShortSelling();
+                default:
+            }
         }
+        return res;
     }
 
     private boolean Select() {

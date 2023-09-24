@@ -40,8 +40,15 @@ public class PreparationUtil {
         }
 
         if (breed == FutureType.STOCK) {
-            return hour >= 9 && (hour != 9 || minute >= 29) && (hour != 11 || minute < 30)     // (9:29 - 11:30)
-                    && hour != 12 && hour <= 14;                                                // (13:00 - 15:00)
+            return (hour >= Setting.MORNING_START_HOUR &&
+                    (hour != Setting.MORNING_START_HOUR || minute >= Setting.MORNING_START_MINUTE) &&
+                    hour <= Setting.MORNING_CLOSE_HOUR &&
+                    (hour != Setting.MORNING_CLOSE_HOUR || minute < Setting.MORNING_CLOSE_MINUTE))
+                    ||     // (9:29 - 11:30)
+                    (hour >= Setting.AFTERNOON_START_HOUR &&
+                            (hour != Setting.AFTERNOON_START_HOUR || minute >= Setting.AFTERNOON_START_MINUTE) &&
+                            hour <= Setting.AFTERNOON_CLOSE_HOUR &&
+                            (hour != Setting.AFTERNOON_CLOSE_HOUR || minute < Setting.AFTERNOON_CLOSE_MINUTE));  // (13:00 - 15:00)
         } else {
             final boolean dayTimeRange =
                     hour >= 9 && (hour != 10 || minute < 15 || minute >= 30)   // (9:00 - 10:15)

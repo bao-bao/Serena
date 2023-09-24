@@ -42,4 +42,8 @@ public class LogUtil {
         //logger.info(basicTradeLog(decision));
     }
 
+    public static void testTradeLog(String path, String type, Decision decision) {
+        FileUtil.writeTradeHistory(path + "/Trade_" + type, basicTradeLog(decision));
+        //logger.info(basicTradeLog(decision));
+    }
 }

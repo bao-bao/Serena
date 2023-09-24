@@ -48,7 +48,7 @@ public class Bollinger extends AbstractStrategy {
             return decision;
         }
 
-        double midLine = currentMA.getMAByIndex(MAEnum.fromInt(Setting.BOLLINGER_AGGREGATE_COUNT));
+        double midLine = currentMA.getMAByAggrCount(Setting.BOLLINGER_AGGREGATE_COUNT);
         ArrayList<Double> CloseSequence = new ArrayList<>();
         ListIterator<ExPrice> iterator = prices.listIterator(0);
         for (int i = 0; i < Setting.BOLLINGER_AGGREGATE_COUNT; i++) {

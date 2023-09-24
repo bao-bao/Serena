@@ -13,6 +13,23 @@ public class Setting {
 
     public static final int FILL_GAP_BY_MA = 20;
 
+    // opening window
+    public static final int MORNING_START_HOUR = 9;
+    public static final int MORNING_START_MINUTE = 29;
+    public static final int MORNING_CLOSE_HOUR = 11;
+    public static final int MORNING_CLOSE_MINUTE = 30;
+
+    public static final int AFTERNOON_START_HOUR = 13;
+    public static final int AFTERNOON_START_MINUTE = 1;
+    public static final int AFTERNOON_CLOSE_HOUR = 15;
+    public static final int AFTERNOON_CLOSE_MINUTE = 1;
+
+    public static final int SHUTDOWN_HOUR = 15;
+    public static final int SHUTDOWN_MINUTE = 10;
+
+    // repeat trade action
+    public static final int TRADE_OPERATE_REPEAT = 3;
+
     //TODO: add final HERE
 
     public static double LOSS_LIMIT_THRESHOLD = 23;
@@ -24,6 +41,8 @@ public class Setting {
     public static double TRADE_THRESHOLD = 0;
 
     public static double FILL_GAP_THRESHOLD = 10;
+
+    public static int MA_MAX_AGGREGATE = 100;
 
     // exponential moving average settings ( should be falling within (0,1] )
     public static double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};

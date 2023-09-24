@@ -60,7 +60,12 @@ public class DataService implements Runnable {
                     int weekday = calendar.get(Calendar.DAY_OF_WEEK);
                     int hour = calendar.get(Calendar.HOUR_OF_DAY);
                     int minute = calendar.get(Calendar.MINUTE);
-                    if (!Setting.TEST_LABEL && breed == FutureType.STOCK && (hour == 15 && minute > 5 && minute < 10)) {
+                    if (!Setting.TEST_LABEL &&
+                            breed == FutureType.STOCK &&
+                            (hour == Setting.SHUTDOWN_HOUR &&
+                                    minute > Setting.SHUTDOWN_MINUTE &&
+                                    minute < Setting.SHUTDOWN_MINUTE + 5)
+                    ) {
                         if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
                             try {
                                 Runtime.getRuntime().exec("shutdown /s /t 0");

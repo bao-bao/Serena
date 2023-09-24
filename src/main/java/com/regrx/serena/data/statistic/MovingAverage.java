@@ -1,5 +1,6 @@
 package com.regrx.serena.data.statistic;
 
+import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.MAEnum;
 import com.regrx.serena.common.utils.Calculator;
 import com.regrx.serena.data.base.ExPrice;
@@ -9,6 +10,7 @@ import java.util.LinkedList;
 // Warning: Sina has no data for 9:30, daily data starts from 9:31 (not aligned with 同花顺)
 
 public class MovingAverage {
+    private final int range = Setting.MA_MAX_AGGREGATE;
     private Double MA5;
     private Double MA10;
     private Double MA20;
@@ -17,6 +19,7 @@ public class MovingAverage {
     private Double MA90;
     private Double MA120;
     private Double MA240;
+    private double[] MAList;
 
     public MovingAverage() {
         this.MA5 = 0.0;
@@ -27,6 +30,7 @@ public class MovingAverage {
         this.MA90 = 0.0;
         this.MA120 = 0.0;
         this.MA240 = 0.0;
+        this.MAList = new double[range];
     }
 
     public Double getMA5() {
@@ -93,18 +97,38 @@ public class MovingAverage {
         this.MA240 = MA240;
     }
 
+    public double[] getMAList() {
+        return MAList;
+    }
+
+    public void setMAList(double[] MAList) {
+        this.MAList = MAList;
+    }
+
     public Double getMAByIndex(MAEnum index) {
         switch (index) {
-            case MA5: return MA5;
-            case MA10: return MA10;
-            case MA20: return MA20;
-            case MA30: return MA30;
-            case MA60: return MA60;
-            case MA90: return MA90;
-            case MA120: return MA120;
-            case MA250: return MA240;
+            case MA5:
+                return MA5;
+            case MA10:
+                return MA10;
+            case MA20:
+                return MA20;
+            case MA30:
+                return MA30;
+            case MA60:
+                return MA60;
+            case MA90:
+                return MA90;
+            case MA120:
+                return MA120;
+            case MA250:
+                return MA240;
         }
         return null;
+    }
+
+    public Double getMAByAggrCount(int count) {
+        return MAList[count];
     }
 
     public MovingAverage(LinkedList<ExPrice> prices) {
@@ -116,30 +140,38 @@ public class MovingAverage {
         this.MA90 = 0.0;
         this.MA120 = 0.0;
         this.MA240 = 0.0;
+        this.MAList = new double[range];
 
-        if(prices.size() >= 240) {
+        if (prices.size() >= 240) {
             this.MA240 = Calculator.avg(prices.subList(0, 240));
         }
-        if(prices.size() >= 120) {
+        if (prices.size() >= 120) {
             this.MA120 = Calculator.avg(prices.subList(0, 120));
         }
-        if(prices.size() >= 90) {
+        if (prices.size() >= 90) {
             this.MA90 = Calculator.avg(prices.subList(0, 90));
         }
-        if(prices.size() >= 60) {
+        if (prices.size() >= 60) {
             this.MA60 = Calculator.avg(prices.subList(0, 60));
         }
-        if(prices.size() >= 30) {
+        if (prices.size() >= 30) {
             this.MA30 = Calculator.avg(prices.subList(0, 30));
         }
-        if(prices.size() >= 20) {
+        if (prices.size() >= 20) {
             this.MA20 = Calculator.avg(prices.subList(0, 20));
         }
-        if(prices.size() >= 10) {
+        if (prices.size() >= 10) {
             this.MA10 = Calculator.avg(prices.subList(0, 10));
         }
-        if(prices.size() >= 5) {
+        if (prices.size() >= 5) {
             this.MA5 = Calculator.avg(prices.subList(0, 5));
+        }
+        for (int i = 1; i < range && i <= prices.size(); i++) {
+            if (i == 1) {
+                this.MAList[i] = prices.get(0).getPrice();
+            } else {
+                this.MAList[i] = (prices.get(i-1).getPrice() + this.MAList[i-1]*(i-1)) / i;
+            }
         }
     }
 
@@ -162,20 +194,20 @@ public class MovingAverage {
 
     public static double evalLastCrossPrice(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2) {
         int iterator = findLastCross(movingAverages, ind_1, ind_2, 0);
-        if(iterator == 0) {
+        if (iterator == 0) {
             return 0;
         }
         return evalCrossPrice(movingAverages.get(iterator), movingAverages.get(iterator + 1), ind_1, ind_2);
     }
 
     public static int findLastCross(LinkedList<MovingAverage> movingAverages, MAEnum ind_1, MAEnum ind_2, int from) {
-        if(from == movingAverages.size() - 1 || movingAverages.size() < 2) {
+        if (from == movingAverages.size() - 1 || movingAverages.size() < 2) {
             return 0;
         }
         MovingAverage ma1 = movingAverages.get(0);
         MovingAverage ma2 = movingAverages.get(1);
         int res = 0;
-        while(res < movingAverages.size() - 2 && (ma1.getMAByIndex(ind_1) - ma1.getMAByIndex(ind_2)) * (ma2.getMAByIndex(ind_1) - ma2.getMAByIndex(ind_2)) > 0) {
+        while (res < movingAverages.size() - 2 && (ma1.getMAByIndex(ind_1) - ma1.getMAByIndex(ind_2)) * (ma2.getMAByIndex(ind_1) - ma2.getMAByIndex(ind_2)) > 0) {
             res++;
             ma1 = movingAverages.get(res);
             ma2 = movingAverages.get(res + 1);
@@ -188,7 +220,7 @@ public class MovingAverage {
         double value1_2 = ma1.getMAByIndex(ind_2);
         double value2_1 = ma2.getMAByIndex(ind_1);
         double value2_2 = ma2.getMAByIndex(ind_2);
-        if((value1_1 - value1_2) * (value2_1 - value2_2) < 0) {
+        if ((value1_1 - value1_2) * (value2_1 - value2_2) < 0) {
             return (value1_1 + value1_2 + value2_1 + value2_2) / 4;
         }
         return 0;

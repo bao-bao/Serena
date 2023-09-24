@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.PriorityQueue;
 
 public class ProfitCal {
-    public static TestResult cal(String filename, boolean outputDetail) {
+    public static TestResult cal(String path, String filename, boolean outputDetail) {
         TestResult testResult = new TestResult();
         int status = 0;
         double emptyPrice, tradeInPrice = 0.0, profit = 0.0, lineCount = 0;
@@ -19,7 +19,7 @@ public class ProfitCal {
         double totalProfit = 0.0, totalLoss = 0.0;
 
         PriorityQueue<SingleTrade> trades = new PriorityQueue<>();
-        try (BufferedReader reader = new BufferedReader(new FileReader(new File("Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(new File(path + "/Trade_" + filename + ".log"), StandardCharsets.UTF_8))) {
             String line;
             SingleTrade st = new SingleTrade("");
             while ((line = reader.readLine()) != null) {

@@ -17,4 +17,19 @@ public class StrategyOption {
     public static final int BollingerShortCoverByFallback = 223;
     public static final int BollingerShortCoverByLose = 224;
 
+    public static String getName(int option) {
+        switch (option) {
+            case StrategyOption.BollingerLongByDefault: return "B1";
+            case StrategyOption.BollingerLongByTail: return "B2";
+            case StrategyOption.BollingerLongCoverByFallback: return "LC1";
+            case StrategyOption.BollingerLongCoverByLose: return "LC2";
+            case StrategyOption.BollingerShortByDefault: return "S1";
+            case StrategyOption.BollingerShortByTail: return "S2";
+            case StrategyOption.BollingerShortCoverByFallback: return "SC1";
+            case StrategyOption.BollingerShortCoverByLose: return "SC2";
+            case StrategyOption.DefaultNST: return "NST";
+            default:
+                return "";
+        }
+    }
 }
