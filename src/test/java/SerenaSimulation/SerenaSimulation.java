@@ -264,7 +264,7 @@ public class SerenaSimulation {
                                         e.printStackTrace();
                                     }
                                     EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
-                                    newRes.setProfit(ProfitCal.cal(path, type, true));
+                                    newRes.setProfit(ProfitCal.cal(path, type, upSide & downSide));
                                     queue.add(newRes);
                                     try {
                                         Thread.sleep(500);
