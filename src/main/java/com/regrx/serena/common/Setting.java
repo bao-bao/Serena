@@ -111,6 +111,17 @@ public class Setting {
 
     public static double BOLLINGER_S_LOSE_LIMIT = 10;
 
+    // donchian golden settings
+    public static int DONCHIAN_GOLDEN_AGGREGATE_COUNT = 40;
+
+    public static double DONCHIAN_GOLDEN_PUT_THRESHOLD = 0.191;
+
+    public static double DONCHIAN_GOLDEN_PUT_EMPTY_THRESHOLD = 0.809;
+
+    public static double DONCHIAN_GOLDEN_SHORT_THRESHOLD = 0.809;
+
+    public static double DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD = 0.191;
+
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 
     // mouse control settings

@@ -2,6 +2,7 @@ package SerenaSimulation;
 
 import SerenaSimulation.profit.*;
 import SerenaSimulation.strategy.AbstractStrategy;
+import SerenaSimulation.strategy.DonchianGolden;
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
@@ -16,14 +17,15 @@ import java.util.*;
 
 // TODO: 加几个输出值
 public class SerenaSimulation {
-    public static String type = "IF9999";
+    public static String type = "IF0";
 
     public static void main(String[] args) {
 //        runner();
 //        simulation();
 //        findRunner();
 //        EMARunner();
-        BollingerRunner();
+//        BollingerRunner();
+        DonchianGoldenRunner();
     }
 
     public static void simulation(String path) {
@@ -34,11 +36,103 @@ public class SerenaSimulation {
         ControllerTest controller = new ControllerTest(path, type);
 
         controller.addDataTrack(IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_BOLLINGER, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_DONCHIAN_GOLDEN, IntervalEnum.MIN_1);
 
         controller.filename = path + "/find_percent_" + type + ".csv";
         controller.run();
         int i = 0;
+    }
+
+
+    public static void DonchianGoldenRunner() {
+        boolean outputDetails = false;
+
+        int[] N = genList(80,80,1);
+        double[] L1 = {0.191};
+        double[] LC1 = {0.809};
+        double[] S1 = {0.809};
+        double[] SC1 = {0.191};
+
+        // 下面代码不要动
+        int total = N.length * L1.length * LC1.length * S1.length * SC1.length;
+        System.out.println("Estimate running count is " + total + " ...");
+        PriorityQueue<DonchianGoldenCombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
+
+        // create file folder
+        String path = "./test_result/" + type + "_" + Calendar.getInstance().getTime().getTime();
+        File file = new File(path);
+        file.mkdir();
+
+        for (int cnt : N) {
+            for (double a : L1) {
+                for (double b : LC1) {
+                    for (double c : S1) {
+                        for (double d : SC1) {
+                            Setting.DONCHIAN_GOLDEN_AGGREGATE_COUNT = cnt;
+                            Setting.DONCHIAN_GOLDEN_PUT_THRESHOLD = a;
+                            Setting.DONCHIAN_GOLDEN_PUT_EMPTY_THRESHOLD = b;
+                            Setting.DONCHIAN_GOLDEN_SHORT_THRESHOLD = c;
+                            Setting.DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD = d;
+                            simulation(path);
+                            try {
+                                Thread.sleep(500);
+                                ControllerTest.stop();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                            DonchianGoldenCombination newRes = new DonchianGoldenCombination(cnt, a, b, c, d);
+                            newRes.setProfit(ProfitCal.cal(path, type, outputDetails));
+                            queue.add(newRes);
+                            try {
+                                Thread.sleep(500);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ArrayList<DonchianGoldenCombination> resList = new ArrayList<>();
+        System.out.println("\nTop Best Parameters: ");
+        for (int i = 0; i < 4000; i++) {
+            DonchianGoldenCombination candidate = queue.poll();
+            if (candidate != null) {
+                resList.add(candidate);
+            }
+        }
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tN\tL1\tLC1\tS1\tSC1");
+
+        for (DonchianGoldenCombination res : resList) {
+            System.out.print(res);
+        }
+
+        String filename = path + "/" + type + "_analyze_summary";
+        FileUtil.newFile(filename + ".csv");
+        try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            writer.append("Profit,")
+                    .append("Total Count,")
+                    .append("Win Rate,")
+                    .append("APPT,")
+                    .append("EVPT,")
+                    .append("EVUR,")
+                    .append("Kelly,")
+                    .append("Odds,")
+                    .append("Max Loss,")
+                    .append("Std Dev,")
+                    .append("Sharp Ratio,")
+                    .append("N,")
+                    .append("L1,")
+                    .append("LC1,")
+                    .append("S1,")
+                    .append("SC1\n");
+            for (DonchianGoldenCombination res : resList) {
+                writer.append(res.toString());
+            }
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -73,7 +167,7 @@ public class SerenaSimulation {
 
         // create file folder
         StringBuilder strategyName = new StringBuilder();
-        for(int option : options) {
+        for (int option : options) {
             strategyName.append(StrategyOption.getName(option));
         }
         String path = "./test_result/" + type + "_" + strategyName + "_" + Calendar.getInstance().getTime().getTime();
@@ -486,8 +580,8 @@ public class SerenaSimulation {
     }
 
     public static int[] genList(int start, int end, int step) {
-        int[] res = new int[((end-start) / step) + 1];
-        for(int i = 0; i <= (end-start) / step; i++) {
+        int[] res = new int[((end - start) / step) + 1];
+        for (int i = 0; i <= (end - start) / step; i++) {
             res[i] = start + (i * step);
         }
         return res;

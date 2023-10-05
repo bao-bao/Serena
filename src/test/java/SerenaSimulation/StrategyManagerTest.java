@@ -86,7 +86,10 @@ public class StrategyManagerTest {
                 break;
             case STRATEGY_BOLLINGER:
                 strategyList.put(strategy, new Bollinger(interval));
-
+                break;
+            case STRATEGY_DONCHIAN_GOLDEN:
+                strategyList.put(strategy, new DonchianGolden(interval));
+                break;
             default:
                 //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;
