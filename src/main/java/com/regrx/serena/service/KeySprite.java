@@ -6,6 +6,7 @@ import com.regrx.serena.common.utils.LogUtil;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class KeySprite implements Callable<Boolean> {
@@ -38,7 +39,7 @@ public class KeySprite implements Callable<Boolean> {
         try {
             Robot r = new Robot();
             // press input block
-            r.mouseMove(264, 846);
+            r.mouseMove(Setting.SELECT_POSITION_X, Setting.SELECT_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(20);
@@ -76,7 +77,7 @@ public class KeySprite implements Callable<Boolean> {
                 return false;
             }
             // press put buying
-            r.mouseMove(260, 900);
+            r.mouseMove(Setting.PUT_POSITION_X, Setting.PUT_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -99,7 +100,7 @@ public class KeySprite implements Callable<Boolean> {
                 return false;
             }
             // press put buying
-            r.mouseMove(370, 900);
+            r.mouseMove(Setting.SHORT_POSITION_X, Setting.SHORT_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -122,7 +123,7 @@ public class KeySprite implements Callable<Boolean> {
                 return false;
             }
             // press put buying
-            r.mouseMove(480, 900);
+            r.mouseMove(Setting.EMPTY_POSITION_X, Setting.EMPTY_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -145,12 +146,12 @@ public class KeySprite implements Callable<Boolean> {
         try {
             Robot r = new Robot();
             // select the possible stacked
-            r.mouseMove(610, 1001);
+            r.mouseMove(Setting.FOLLOW_SELECT_POSITION_X, Setting.FOLLOW_SELECT_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // press follow button
-            r.mouseMove(654, 1052);
+            r.mouseMove(Setting.FOLLOW_CLICK_POSITION_X, Setting.FOLLOW_CLICK_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -175,7 +176,7 @@ public class KeySprite implements Callable<Boolean> {
         try {
             Robot r = new Robot();
             // press warning
-            r.mouseMove(1040, 598);
+            r.mouseMove(Setting.CLOSE_WARNING_POSITION_X, Setting.CLOSE_WARNING_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (AWTException ignored) {
@@ -189,7 +190,7 @@ public class KeySprite implements Callable<Boolean> {
     private static boolean Confirm() {
         try {
             Robot r = new Robot();
-            r.mouseMove(960, 600);
+            r.mouseMove(Setting.CONFIRM_POSITION_X, Setting.CONFIRM_POSITION_Y);
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         } catch (AWTException ignored) {

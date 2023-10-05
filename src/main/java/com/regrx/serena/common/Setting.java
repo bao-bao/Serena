@@ -30,6 +30,31 @@ public class Setting {
     // repeat trade action
     public static final int TRADE_OPERATE_REPEAT = 3;
 
+    // trade action click position
+    public static final int SELECT_POSITION_X = 264;
+    public static final int SELECT_POSITION_Y = 846;
+
+    public static final int PUT_POSITION_X = 260;
+    public static final int PUT_POSITION_Y = 900;
+
+    public static final int SHORT_POSITION_X = 370;
+    public static final int SHORT_POSITION_Y = 900;
+
+    public static final int EMPTY_POSITION_X = 480;
+    public static final int EMPTY_POSITION_Y = 900;
+
+    public static final int FOLLOW_SELECT_POSITION_X = 610;
+    public static final int FOLLOW_SELECT_POSITION_Y = 1001;
+
+    public static final int FOLLOW_CLICK_POSITION_X = 654;
+    public static final int FOLLOW_CLICK_POSITION_Y = 1052;
+
+    public static final int CLOSE_WARNING_POSITION_X = 1040;
+    public static final int CLOSE_WARNING_POSITION_Y = 598;
+
+    public static final int CONFIRM_POSITION_X = 960;
+    public static final int CONFIRM_POSITION_Y = 600;
+
     //TODO: add final HERE
 
     public static double LOSS_LIMIT_THRESHOLD = 23;
