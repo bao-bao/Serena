@@ -6,7 +6,6 @@ import com.regrx.serena.common.utils.LogUtil;
 import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
-import java.util.Set;
 import java.util.concurrent.Callable;
 
 public class KeySprite implements Callable<Boolean> {
@@ -83,7 +82,7 @@ public class KeySprite implements Callable<Boolean> {
                 if (Confirm()) {
                     return false;
                 }
-                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
+                r.delay(Setting.OPERATION_RETRY_INTERVAL);
             }
             if (FollowNTime()) {
                 return false;
@@ -112,7 +111,7 @@ public class KeySprite implements Callable<Boolean> {
                 if (Confirm()) {
                     return false;
                 }
-                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
+                r.delay(Setting.OPERATION_RETRY_INTERVAL);
             }
             if (FollowNTime()) {
                 return false;
@@ -144,7 +143,7 @@ public class KeySprite implements Callable<Boolean> {
                 if (CloseWarning()) {
                     return false;
                 }
-                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
+                r.delay(Setting.OPERATION_RETRY_INTERVAL);
             }
             if (FollowNTime()) {
                 return false;
