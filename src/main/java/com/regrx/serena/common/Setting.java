@@ -30,6 +30,12 @@ public class Setting {
     // repeat trade action
     public static final int TRADE_OPERATE_REPEAT = 3;
 
+    public static final int OPERATION_RETRY_INTERVAL = 1000;   // unit is millisecond
+
+    public static int FOLLOW_OPERATE_REPEAT = 1;
+
+    public static final int FOLLOW_RETRY_INTERVAL = 5000;
+
     // trade action click position
     public static final int SELECT_POSITION_X = 264;
     public static final int SELECT_POSITION_Y = 846;
@@ -131,13 +137,7 @@ public class Setting {
     // mouse control settings
     public static final int OPERATION_SPEED_MULTIPLIER = 200;   // unit is millisecond
 
-    public static final int OPERATION_RETRY_INTERVAL = 1000;   // unit is millisecond
-
     public static final int MOUSE_CLICK_PRESS_TIME = 75; // release when pressed 75ms
-
-    public static int FOLLOW_TIME = 1;
-
-    public static final int FOLLOW_RETRY_INTERVAL = 5000;
 
     public static final int MAX_LENGTH = Integer.MAX_VALUE;
 

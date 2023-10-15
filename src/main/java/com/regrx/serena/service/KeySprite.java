@@ -216,7 +216,7 @@ public class KeySprite implements Callable<Boolean> {
 
     // consume n x (10s + 1.5s)
     private static boolean FollowNTime() {
-        for (int i = 0; i < Setting.FOLLOW_TIME; i++) {
+        for (int i = 0; i < Setting.FOLLOW_OPERATE_REPEAT; i++) {
             try {
                 Robot r = new Robot();
                 r.delay(Setting.FOLLOW_RETRY_INTERVAL);
