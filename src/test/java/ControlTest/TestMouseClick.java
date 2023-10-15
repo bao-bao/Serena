@@ -15,7 +15,8 @@ public class TestMouseClick {
         // S -> short selling
         // E -> empty
         // A -> empty + put buying
-        // B -> empty + short selling
+        // B -> empty + short sellingic
+
 
         char label = 'S';
         String type = "IC9999";

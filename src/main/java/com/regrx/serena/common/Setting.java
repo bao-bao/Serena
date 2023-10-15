@@ -122,6 +122,10 @@ public class Setting {
 
     public static double DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD = 0.191;
 
+    public static int DONCHIAN_GOLDEN_CONTINOUS_LOSS_LIMIT = 3;
+
+    public static double DONCHIAN_GOLDEN_LOSS_THRESHOLD = 12;
+
     //TODO: DONT TOUCH ANYTHING BELOW HERE!!!
 
     // mouse control settings
@@ -129,7 +133,7 @@ public class Setting {
 
     public static final int MOUSE_CLICK_PRESS_TIME = 75; // release when pressed 75ms
 
-    public static int FOLLOW_TIME = 3;
+    public static int FOLLOW_TIME = 1;
 
     public static final int FOLLOW_RETRY_INTERVAL = 5000;
 

@@ -21,18 +21,15 @@ public class KeySprite implements Callable<Boolean> {
 
     @Override
     public Boolean call() {
-        boolean res = false;
-        for(int i = 0; i < Setting.TRADE_OPERATE_REPEAT; i++) {
-            switch (operate) {
-                case 'P': res |= PutBuying();
-                case 'S': res |= ShortSelling();
-                case 'E': res |= Empty();
-                case 'A': res |= Empty() && PutBuying();
-                case 'B': res |= Empty() && ShortSelling();
-                default:
-            }
+        switch (operate) {
+            case 'P': return PutBuying();
+            case 'S': return ShortSelling();
+            case 'E': return Empty();
+            case 'A': return Empty() && PutBuying();
+            case 'B': return Empty() && ShortSelling();
+            default:
+                return false;
         }
-        return res;
     }
 
     private boolean Select() {
@@ -51,7 +48,7 @@ public class KeySprite implements Callable<Boolean> {
             r.keyRelease(KeyEvent.VK_BACK_SPACE);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // input new
-            for(char c : type.substring(0, 2).toCharArray()) {
+            for (char c : type.substring(0, 2).toCharArray()) {
                 r.keyPress(c);
                 r.keyRelease(c);
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
@@ -69,20 +66,26 @@ public class KeySprite implements Callable<Boolean> {
         }
     }
 
-    // consume 0.5s + (n x 11.5) s
+    // consume 1s
     public boolean PutBuying() {
         try {
             Robot r = new Robot();
-            if(!Select()) {
+            if (!Select()) {
                 return false;
             }
             // press put buying
-            r.mouseMove(Setting.PUT_POSITION_X, Setting.PUT_POSITION_Y);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            // press confirm and follow
-            if(Confirm() || FollowNTime()) {
+            for(int i = 0; i < Setting.TRADE_OPERATE_REPEAT; i++) {
+                r.mouseMove(Setting.PUT_POSITION_X, Setting.PUT_POSITION_Y);
+                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+                // press confirm and follow
+                if (Confirm()) {
+                    return false;
+                }
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
+            }
+            if (FollowNTime()) {
                 return false;
             }
         } catch (AWTException ignored) {
@@ -92,20 +95,26 @@ public class KeySprite implements Callable<Boolean> {
         return true;
     }
 
-    // consume 0.5s + (n x 11.5) s
+    // consume 1s
     public boolean ShortSelling() {
         try {
             Robot r = new Robot();
-            if(!Select()) {
+            if (!Select()) {
                 return false;
             }
-            // press put buying
-            r.mouseMove(Setting.SHORT_POSITION_X, Setting.SHORT_POSITION_Y);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            // press confirm and follow
-            if(Confirm() || FollowNTime()) {
+            // press short selling
+            for(int i = 0; i < Setting.TRADE_OPERATE_REPEAT; i++) {
+                r.mouseMove(Setting.SHORT_POSITION_X, Setting.SHORT_POSITION_Y);
+                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+                // press confirm and follow
+                if (Confirm()) {
+                    return false;
+                }
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
+            }
+            if (FollowNTime()) {
                 return false;
             }
         } catch (AWTException ignored) {
@@ -115,23 +124,29 @@ public class KeySprite implements Callable<Boolean> {
         return true;
     }
 
-    // consume 1s + (n x 11.5) s
+    // consume 1s
     public boolean Empty() {
         try {
             Robot r = new Robot();
-            if(!Select()) {
+            if (!Select()) {
                 return false;
             }
-            // press put buying
-            r.mouseMove(Setting.EMPTY_POSITION_X, Setting.EMPTY_POSITION_Y);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            if(Confirm()) {
-                return false;
+            // press empty
+            for(int i = 0; i < Setting.TRADE_OPERATE_REPEAT; i++) {
+                r.mouseMove(Setting.EMPTY_POSITION_X, Setting.EMPTY_POSITION_Y);
+                r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+                r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+                if (Confirm()) {
+                    return false;
+                }
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+                if (CloseWarning()) {
+                    return false;
+                }
+                r.delay(Setting.OPERATION_SPEED_MULTIPLIER * 5);
             }
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            if(CloseWarning() || FollowNTime()) {
+            if (FollowNTime()) {
                 return false;
             }
         } catch (AWTException ignored) {
@@ -156,12 +171,12 @@ public class KeySprite implements Callable<Boolean> {
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // press confirm
-            if(Confirm()) {
+            if (Confirm()) {
                 return false;
             }
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // try close warning
-            if(CloseWarning()) {
+            if (CloseWarning()) {
                 return false;
             }
         } catch (AWTException ignored) {
@@ -206,7 +221,7 @@ public class KeySprite implements Callable<Boolean> {
             try {
                 Robot r = new Robot();
                 r.delay(Setting.FOLLOW_RETRY_INTERVAL);
-                if(!Follow()) {
+                if (!Follow()) {
                     return true;
                 }
             } catch (AWTException ignored) {

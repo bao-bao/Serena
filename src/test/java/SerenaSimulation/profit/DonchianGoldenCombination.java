@@ -7,14 +7,16 @@ public class DonchianGoldenCombination implements Comparable<DonchianGoldenCombi
     double LC1;
     double S1;
     double SC1;
+    double C;
 
 
-    public DonchianGoldenCombination(int cnt, double a, double b, double c, double d) {
+    public DonchianGoldenCombination(int cnt, double a, double b, double c, double d, double e) {
         aggrCount = cnt;
         L1 = a;
         LC1 = b;
         S1 = c;
         SC1 = d;
+        C = e;
     }
 
     public void setProfit(TestResult profit) {
@@ -48,6 +50,7 @@ public class DonchianGoldenCombination implements Comparable<DonchianGoldenCombi
         sb.append(String.format("%.2f", LC1)).append(",");
         sb.append(String.format("%.2f", S1)).append(",");
         sb.append(String.format("%.2f", SC1)).append(",");
+        sb.append(String.format("%.2f", C)).append(",");
         sb.append("\n");
         return sb.toString();
     }

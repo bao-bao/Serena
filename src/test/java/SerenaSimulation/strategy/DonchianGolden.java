@@ -7,6 +7,7 @@ import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.data.base.ExPrice;
+import com.regrx.serena.data.base.Status;
 
 import java.util.LinkedList;
 import java.util.ListIterator;
@@ -24,6 +25,8 @@ public class DonchianGolden extends AbstractStrategy {
     private double oldTops;
     private double tradeBase; // need log
     private double tradeTops; // need log
+    private double continousLoss; // need log
+    private int continousLossLimit; // need log
 
     public DonchianGolden(IntervalEnum interval) {
         super(interval, Setting.DEFAULT_PRIORITY);
@@ -39,6 +42,8 @@ public class DonchianGolden extends AbstractStrategy {
         oldTops = 0;
         tradeBase = 0;
         tradeTops = 0;
+        continousLoss = 0;
+        continousLossLimit = 0;
     }
 
     @Override
@@ -49,7 +54,6 @@ public class DonchianGolden extends AbstractStrategy {
             return decision;
         }
 
-        ExPrice currPrice = prices.peekFirst();
         double base = Double.MAX_VALUE;
         double tops = 0;
         ListIterator<ExPrice> iterator = prices.listIterator(0);
@@ -63,11 +67,11 @@ public class DonchianGolden extends AbstractStrategy {
             oldTops = tops;
             return decision;
         }
-        if (currPrice.getLowest() == base && base < oldBase) {
+        if (price.getLowest() == base && base < oldBase) {
             upTrend = true;
             downTrend = false;
         }
-        if (currPrice.getHighest() == tops && tops > oldTops) {
+        if (price.getHighest() == tops && tops > oldTops) {
             downTrend = true;
             upTrend = false;
         }
@@ -79,7 +83,10 @@ public class DonchianGolden extends AbstractStrategy {
         double LC1Threshold = base + ((tops - base) * Setting.DONCHIAN_GOLDEN_PUT_EMPTY_THRESHOLD);
         double SC1Threshold = base + ((tops - base) * Setting.DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD);
 
-        if (!upActive && upTrend && currPrice.getPrice() > L1Threshold) {
+        if (!upActive && upTrend && price.getPrice() > L1Threshold && continousLossLimit < Setting.DONCHIAN_GOLDEN_CONTINOUS_LOSS_LIMIT) {
+            if (!isUp) {
+                continousLossLimit = 0;
+            }
             upActive = true;
             isUp = true;
             upTrend = false;
@@ -92,7 +99,11 @@ public class DonchianGolden extends AbstractStrategy {
             decision.make(TradingType.PUT_BUYING, "L1");
             return decision;
         }
-        if (!downActive && downTrend && currPrice.getPrice() < S1Threshold) {
+        if (!downActive && downTrend && price.getPrice() < S1Threshold && continousLossLimit > -Setting.DONCHIAN_GOLDEN_CONTINOUS_LOSS_LIMIT) {
+            if (isUp) {
+                continousLoss = 0;
+                continousLossLimit = 0;
+            }
             downActive = true;
             isUp = false;
             downTrend = false;
@@ -106,31 +117,46 @@ public class DonchianGolden extends AbstractStrategy {
             return decision;
         }
 
-        if (upActive && currPrice.getPrice() > LC1Threshold) {
+        if (upActive && price.getPrice() > LC1Threshold) {
             enableUpPL = true;
         }
-        if (enableUpPL && currPrice.getPrice() < LC1Threshold) {
+        if (enableUpPL && price.getPrice() < LC1Threshold) {
             donchianGoldenReset();
+            continousLossLimit += 1;
             decision.make(TradingType.EMPTY, "LC1");
             return decision;
         }
-        if (isUp && tradeBase > 0 && currPrice.getPrice() < tradeBase) {
+        if (isUp && tradeBase > 0 && price.getPrice() < tradeBase) {
             donchianGoldenReset();
+            continousLossLimit += 1;
             decision.make(TradingType.EMPTY, "LC2");
             return decision;
         }
-        if (downActive && currPrice.getPrice() < SC1Threshold) {
+        if (downActive && price.getPrice() < SC1Threshold) {
             enableDownPL = true;
         }
-        if (enableDownPL && currPrice.getPrice() > SC1Threshold) {
+        if (enableDownPL && price.getPrice() > SC1Threshold) {
             donchianGoldenReset();
+            continousLossLimit -= 1;
             decision.make(TradingType.EMPTY, "SC1");
             return decision;
         }
-        if (!isUp && tradeTops > 0 && currPrice.getPrice() > tradeTops) {
+        if (!isUp && tradeTops > 0 && price.getPrice() > tradeTops) {
             donchianGoldenReset();
+            continousLossLimit -= 1;
             decision.make(TradingType.EMPTY, "SC2");
             return decision;
+        }
+        Status status = Status.getInstance();
+        if (status.getStatus() != TradingType.EMPTY && status.getStatus() != TradingType.NO_ACTION) {
+            double sign = status.getStatus() == TradingType.PUT_BUYING ? 1 : -1;
+            double profit = sign * (price.getPrice() - status.getLastTradePrice());
+            if (profit < -Setting.DONCHIAN_GOLDEN_LOSS_THRESHOLD) {
+                donchianGoldenReset();
+                continousLossLimit += sign;
+                decision.make(TradingType.EMPTY, "C");
+                return decision;
+            }
         }
 
         return decision;

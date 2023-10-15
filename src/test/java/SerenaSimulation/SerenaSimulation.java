@@ -52,9 +52,10 @@ public class SerenaSimulation {
         double[] LC1 = {0.809};
         double[] S1 = {0.809};
         double[] SC1 = {0.191};
+        double[] C = {12};
 
         // 下面代码不要动
-        int total = N.length * L1.length * LC1.length * S1.length * SC1.length;
+        int total = N.length * L1.length * LC1.length * S1.length * SC1.length * C.length;
         System.out.println("Estimate running count is " + total + " ...");
         PriorityQueue<DonchianGoldenCombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
 
@@ -63,30 +64,43 @@ public class SerenaSimulation {
         File file = new File(path);
         file.mkdir();
 
+        int count = 1;
         for (int cnt : N) {
             for (double a : L1) {
                 for (double b : LC1) {
                     for (double c : S1) {
                         for (double d : SC1) {
-                            Setting.DONCHIAN_GOLDEN_AGGREGATE_COUNT = cnt;
-                            Setting.DONCHIAN_GOLDEN_PUT_THRESHOLD = a;
-                            Setting.DONCHIAN_GOLDEN_PUT_EMPTY_THRESHOLD = b;
-                            Setting.DONCHIAN_GOLDEN_SHORT_THRESHOLD = c;
-                            Setting.DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD = d;
-                            simulation(path);
-                            try {
-                                Thread.sleep(500);
-                                ControllerTest.stop();
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            DonchianGoldenCombination newRes = new DonchianGoldenCombination(cnt, a, b, c, d);
-                            newRes.setProfit(ProfitCal.cal(path, type, outputDetails));
-                            queue.add(newRes);
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
+                            for (double e : C) {
+                                System.out.println(
+                                        "current running: " + count++ + "/" + total + ", " +
+                                                "N: " + cnt + ", " +
+                                                "L1: " + a + ", " +
+                                                "LC1: " + b + ", " +
+                                                "S1: " + c + ", " +
+                                                "SC1: " + d + ", " +
+                                                "C: " + e
+                                );
+                                Setting.DONCHIAN_GOLDEN_AGGREGATE_COUNT = cnt;
+                                Setting.DONCHIAN_GOLDEN_PUT_THRESHOLD = a;
+                                Setting.DONCHIAN_GOLDEN_PUT_EMPTY_THRESHOLD = b;
+                                Setting.DONCHIAN_GOLDEN_SHORT_THRESHOLD = c;
+                                Setting.DONCHIAN_GOLDEN_SHORT_EMPTY_THRESHOLD = d;
+                                Setting.DONCHIAN_GOLDEN_LOSS_THRESHOLD = e;
+                                simulation(path);
+                                try {
+                                    Thread.sleep(500);
+                                    ControllerTest.stop();
+                                } catch (InterruptedException exception) {
+                                    exception.printStackTrace();
+                                }
+                                DonchianGoldenCombination newRes = new DonchianGoldenCombination(cnt, a, b, c, d, e);
+                                newRes.setProfit(ProfitCal.cal(path, type, outputDetails));
+                                queue.add(newRes);
+                                try {
+                                    Thread.sleep(500);
+                                } catch (InterruptedException exception) {
+                                    exception.printStackTrace();
+                                }
                             }
                         }
                     }
@@ -101,7 +115,7 @@ public class SerenaSimulation {
                 resList.add(candidate);
             }
         }
-        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tN\tL1\tLC1\tS1\tSC1");
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tN\tL1\tLC1\tS1\tSC1\tC");
 
         for (DonchianGoldenCombination res : resList) {
             System.out.print(res);
@@ -125,7 +139,8 @@ public class SerenaSimulation {
                     .append("L1,")
                     .append("LC1,")
                     .append("S1,")
-                    .append("SC1\n");
+                    .append("SC1,")
+                    .append("C\n");
             for (DonchianGoldenCombination res : resList) {
                 writer.append(res.toString());
             }
