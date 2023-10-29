@@ -11,6 +11,7 @@ import com.regrx.serena.data.base.Status;
 import com.regrx.serena.data.statistic.MovingAverage;
 
 import com.regrx.serena.service.DataServiceManager;
+import com.regrx.trade.util.Time;
 import org.apache.commons.io.input.ReversedLinesFileReader;
 
 import java.io.*;
@@ -64,6 +65,7 @@ public class FileUtil {
         // load interval and last trade price
         status.setInterval(IntervalEnum.fromInt(Integer.parseInt(lastHistory[7])));
         status.setLastTradePrice(Double.parseDouble(lastHistory[5]));
+        status.setLastTradeTime(TimeUtil.getBaseTime(TimeUtil.getDateFromString(lastHistory[2] + " " + lastHistory[3])));
 
         LogUtil.getInstance().info("Trading status loaded as " + status);
     }

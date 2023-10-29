@@ -1,9 +1,17 @@
 package com.regrx.serena.data.base;
 
+import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.constant.TrendType;
+import com.regrx.serena.common.utils.TimeUtil;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class Status {
     private boolean trading;        // 交易开关
@@ -14,6 +22,7 @@ public class Status {
     private IntervalEnum interval;  // 上次交易使用数据间隔
     private StrategyEnum strategy;  // 上次交易使用逻辑
     private double lastTradePrice;  // 上次交易价格
+    private Calendar lastTradeTime;
     private static Status stat;
 
     private Status() {
@@ -25,6 +34,7 @@ public class Status {
         interval = IntervalEnum.NULL;
         strategy = StrategyEnum.STRATEGY_NULL;
         lastTradePrice = 0;
+        lastTradeTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
     }
 
     public static Status getInstance() {
@@ -101,6 +111,23 @@ public class Status {
 
     public void setLastTradePrice(double lastTradePrice) {
         this.lastTradePrice = lastTradePrice;
+    }
+
+    public Calendar getLastTradTime() {
+        return lastTradeTime;
+    }
+
+    public void setLastTradeTime(Calendar lastTradeTime) {
+        this.lastTradeTime = lastTradeTime;
+    }
+
+    public void setLastTradeTime(String timeString) {
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.TIME_PATTERN);
+            lastTradeTime = TimeUtil.getBaseTime(simpleDateFormat.parse(timeString));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

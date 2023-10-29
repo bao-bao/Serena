@@ -10,7 +10,7 @@ import java.util.Date;
 
 public class TimeUtil {
 
-    private static Calendar getBaseTime(Date baseTime) {
+    public static Calendar getBaseTime(Date baseTime) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(baseTime);
         return calendar;

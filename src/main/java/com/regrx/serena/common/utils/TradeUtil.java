@@ -16,41 +16,50 @@ public class TradeUtil {
 
     private static final ExecutorService threadPool = Executors.newCachedThreadPool();
 
-    private TradeUtil() {}
+    private TradeUtil() {
+    }
 
     public static boolean trade(Decision decision, String type) {
         Status stat = Status.getInstance();
-        boolean result  = false;
+        boolean result = false;
         switch (decision.getTradingType()) {
             case PUT_BUYING:
-                if(stat.getStatus() == TradingType.SHORT_SELLING) {
-                    result = submit('A', type);
-                } else {
-                    result = submit('P', type);
+                if (stat.getStatus() == TradingType.SHORT_SELLING) {
+                    result = submit('E', type);
+                    if (result) {
+                        updateStatus(decision);
+                    }
+                }
+                result = submit('P', type);
+                if (result) {
+                    updateStatus(decision);
                 }
                 break;
             case SHORT_SELLING:
-                if(stat.getStatus() == TradingType.PUT_BUYING) {
-                    result = submit('B', type);
-                } else {
-                    result = submit('S', type);
+                if (stat.getStatus() == TradingType.PUT_BUYING) {
+                    result = submit('E', type);
+                    if (result) {
+                        updateStatus(decision);
+                    }
+                }
+                result = submit('S', type);
+
+                if (result) {
+                    updateStatus(decision);
                 }
                 break;
             case EMPTY:
-                result = submit('E', type); break;
-            case NO_ACTION: break;
+                result = submit('E', type);
+                break;
+            case NO_ACTION:
+                break;
         }
-        if(result) {
-            stat.setLastTradePrice(decision.getPrice().getPrice());
-            stat.setStatus(decision.getTradingType());
-            stat.setStrategy(decision.getSource());
-            stat.setInterval(decision.getInterval());
-        }
+
         return result;
     }
 
     private static boolean submit(char label, String type) {
-        if(!Setting.TEST_LABEL) {
+        if (!Setting.TEST_LABEL) {
             Future<Boolean> future = threadPool.submit(new KeySprite(label, type));
             try {
                 return future.get();
@@ -59,6 +68,15 @@ public class TradeUtil {
             }
         }
         return true;
+    }
+
+    private static void updateStatus(Decision decision) {
+        Status stat = Status.getInstance();
+        stat.setLastTradePrice(decision.getPrice().getPrice());
+        stat.setLastTradeTime(decision.getPrice().getTime());
+        stat.setStatus(decision.getTradingType());
+        stat.setStrategy(decision.getSource());
+        stat.setInterval(decision.getInterval());
     }
 
     public static void forceEmpty(String type) {

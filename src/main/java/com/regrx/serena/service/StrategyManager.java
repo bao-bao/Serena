@@ -21,6 +21,7 @@ public class StrategyManager {
         this.strategyList = new HashMap<>();
         this.forceTriggerStrategyList = new HashMap<>();
         this.afterCheckStrategyList = new ArrayList<>();
+        forceTriggerStrategyList.put(StrategyEnum.STRATEGY_CHECK_MAIN_CONTRACT, new CheckMainContract(IntervalEnum.MIN_1));
     }
 
     public static StrategyManager getInstance() {

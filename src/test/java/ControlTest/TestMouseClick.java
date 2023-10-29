@@ -1,6 +1,7 @@
 package ControlTest;
 
 import com.regrx.serena.common.utils.LogUtil;
+import com.regrx.serena.controller.Controller;
 import com.regrx.serena.service.KeySprite;
 
 import java.util.concurrent.ExecutionException;
@@ -17,10 +18,10 @@ public class TestMouseClick {
         // A -> empty + put buying
         // B -> empty + short selling
 
-
         char label = 'S';
         String type = "IF0";
 
+        Controller.getInstance(type);
         ExecutorService threadPool = Executors.newCachedThreadPool();
         Future<Boolean> future = threadPool.submit(new KeySprite(label, type));
         try {

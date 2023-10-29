@@ -2,6 +2,7 @@ package com.regrx.serena.service;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.utils.LogUtil;
+import com.regrx.serena.data.base.Status;
 import org.apache.commons.lang3.time.DateUtils;
 
 import java.awt.*;
@@ -33,7 +34,8 @@ public class KeySprite implements Callable<Boolean> {
             case 'S': return ShortSelling();
             case 'E': return Empty();
             case 'A': return Empty() && PutBuying();
-            case 'B': return Empty() && ShortSelling();
+            case 'B': return Empty()
+                    && ShortSelling();
             default:
                 return false;
         }
@@ -248,12 +250,22 @@ public class KeySprite implements Callable<Boolean> {
     }
 
     public static String getRealTypeString(String type) {
+        Date nextMonth;
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-        Date nextMonth = DateUtils.addMonths(currTime.getTime(), 1);
+        int currMonth = currTime.get(Calendar.MONTH);
+        int lastTradeMonth = Status.getInstance().getLastTradTime().get(Calendar.MONTH);
+        if (lastTradeMonth != currMonth) {
+            nextMonth =  Status.getInstance().getLastTradTime().getTime();
+        } else {
+            nextMonth = DateUtils.addMonths(currTime.getTime(), 1);
+        }
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMM");
+
         String realType = type.substring(0, 2) + simpleDateFormat.format(nextMonth);
         LogUtil.getInstance().info("Reset breed code as " + realType + "...");
         return realType;
+
+
     }
 
     public static void setTypeIntoClipboard(String type) {
