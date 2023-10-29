@@ -1,10 +1,10 @@
 package com.regrx.serena.common.utils;
 
 import com.regrx.serena.common.Setting;
+import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.data.base.Decision;
 import com.regrx.serena.service.KeySprite;
-import com.regrx.serena.data.base.ExPrice;
 import com.regrx.serena.data.base.Status;
 
 import java.util.concurrent.ExecutionException;
@@ -22,34 +22,43 @@ public class TradeUtil {
     public static boolean trade(Decision decision, String type) {
         Status stat = Status.getInstance();
         boolean result = false;
+        if (decision.getSource() == StrategyEnum.STRATEGY_CHECK_MAIN_CONTRACT) {
+            result = submit('E', type);
+            updateStatus(decision, result);
+            switch (decision.getTradingType()) {
+                case PUT_BUYING:
+                    result = submit('P', type);
+                    updateStatus(decision, result);
+                    break;
+                case SHORT_SELLING:
+                    result = submit('S', type);
+                    updateStatus(decision, result);
+                    break;
+                default:
+                    break;
+            }
+        }
         switch (decision.getTradingType()) {
             case PUT_BUYING:
                 if (stat.getStatus() == TradingType.SHORT_SELLING) {
                     result = submit('E', type);
-                    if (result) {
-                        updateStatus(decision);
-                    }
+                    updateStatus(decision, result);
                 }
                 result = submit('P', type);
-                if (result) {
-                    updateStatus(decision);
-                }
+                updateStatus(decision, result);
                 break;
             case SHORT_SELLING:
                 if (stat.getStatus() == TradingType.PUT_BUYING) {
                     result = submit('E', type);
-                    if (result) {
-                        updateStatus(decision);
-                    }
+                    updateStatus(decision, result);
                 }
                 result = submit('S', type);
 
-                if (result) {
-                    updateStatus(decision);
-                }
+                updateStatus(decision, result);
                 break;
             case EMPTY:
                 result = submit('E', type);
+                updateStatus(decision, result);
                 break;
             case NO_ACTION:
                 break;
@@ -70,13 +79,15 @@ public class TradeUtil {
         return true;
     }
 
-    private static void updateStatus(Decision decision) {
-        Status stat = Status.getInstance();
-        stat.setLastTradePrice(decision.getPrice().getPrice());
-        stat.setLastTradeTime(decision.getPrice().getTime());
-        stat.setStatus(decision.getTradingType());
-        stat.setStrategy(decision.getSource());
-        stat.setInterval(decision.getInterval());
+    private static void updateStatus(Decision decision, boolean result) {
+        if (result) {
+            Status stat = Status.getInstance();
+            stat.setLastTradePrice(decision.getPrice().getPrice());
+            stat.setLastTradeTime(decision.getPrice().getTime());
+            stat.setStatus(decision.getTradingType());
+            stat.setStrategy(decision.getSource());
+            stat.setInterval(decision.getInterval());
+        }
     }
 
     public static void forceEmpty(String type) {

@@ -32,8 +32,7 @@ public class CheckMainContract extends ForceTriggerStrategy {
             int currMonth = currTime.get(Calendar.MONTH);
 
             if (tradeMonth != currMonth) {
-                TradingType trade = status.getStatus() == TradingType.PUT_BUYING ? TradingType.SHORT_SELLING : TradingType.PUT_BUYING;
-                decision.make(trade, "main contract change");
+                decision.make(status.getStatus(), "main contract change");
             }
         }
 

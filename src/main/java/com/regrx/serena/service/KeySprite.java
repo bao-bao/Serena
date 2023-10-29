@@ -34,8 +34,7 @@ public class KeySprite implements Callable<Boolean> {
             case 'S': return ShortSelling();
             case 'E': return Empty();
             case 'A': return Empty() && PutBuying();
-            case 'B': return Empty()
-                    && ShortSelling();
+            case 'B': return Empty() && ShortSelling();
             default:
                 return false;
         }
@@ -255,7 +254,7 @@ public class KeySprite implements Callable<Boolean> {
         int currMonth = currTime.get(Calendar.MONTH);
         int lastTradeMonth = Status.getInstance().getLastTradTime().get(Calendar.MONTH);
         if (lastTradeMonth != currMonth) {
-            nextMonth =  Status.getInstance().getLastTradTime().getTime();
+            nextMonth =  DateUtils.addMonths(Status.getInstance().getLastTradTime().getTime(), 1);
         } else {
             nextMonth = DateUtils.addMonths(currTime.getTime(), 1);
         }
@@ -264,8 +263,6 @@ public class KeySprite implements Callable<Boolean> {
         String realType = type.substring(0, 2) + simpleDateFormat.format(nextMonth);
         LogUtil.getInstance().info("Reset breed code as " + realType + "...");
         return realType;
-
-
     }
 
     public static void setTypeIntoClipboard(String type) {
