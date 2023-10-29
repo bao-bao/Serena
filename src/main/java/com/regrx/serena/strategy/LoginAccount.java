@@ -32,8 +32,6 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
 
     private static final ArrayList<Pair<Integer, Integer>> POP_WINDOWS = new ArrayList<>(
             Arrays.asList(
-                    Pair.of(POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y),
-                    Pair.of(POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y),
                     Pair.of(POP_WINDOW_2_POS_X, POP_WINDOW_2_POS_Y),
                     Pair.of(POP_WINDOW_3_POS_X, POP_WINDOW_3_POS_Y),
                     Pair.of(POP_WINDOW_4_POS_X, POP_WINDOW_4_POS_Y)
@@ -92,6 +90,11 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
             r.delay(OP_INTERVAL);
             r.keyPress(KeyEvent.VK_ENTER);
             r.keyRelease(KeyEvent.VK_ENTER);
+
+            for(int i = 0; i < 2; i++) {
+                KeySprite.MouseClick(r, POP_WINDOW_1_POS_X, POP_WINDOW_1_POS_Y);    // first pop-window needs double-click
+                r.delay(20);
+            }
             for (Pair<Integer, Integer> pos : POP_WINDOWS) {
                 r.delay(OP_INTERVAL);
                 KeySprite.MouseClick(r, pos.getLeft(), pos.getRight());
