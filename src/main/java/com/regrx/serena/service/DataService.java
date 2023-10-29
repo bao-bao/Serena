@@ -51,6 +51,15 @@ public class DataService implements Runnable {
         // https://stock2.finance.sina.com.cn/futures/api/jsonp.php/var=/InnerFuturesNewService.getFewMinLine?symbol=RB0&type=15
         String url = "https://hq.sinajs.cn/list=nf_" + type;
 
+//        try {
+//            Thread.sleep(1000);
+//        } catch (Exception e) {
+//
+//        }
+//        ExPrice p = new ExPrice(5000, "2023-10-27 09:33:00");
+//        minutesData.update(p, type);
+//        callback(p);
+
         while (true) {
             if (!PreparationUtil.isTrading(breed)) {
                 try {

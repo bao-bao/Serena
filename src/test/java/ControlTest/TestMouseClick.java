@@ -21,7 +21,6 @@ public class TestMouseClick {
         char label = 'S';
         String type = "IF0";
 
-        Controller.getInstance(type);
         ExecutorService threadPool = Executors.newCachedThreadPool();
         Future<Boolean> future = threadPool.submit(new KeySprite(label, type));
         try {

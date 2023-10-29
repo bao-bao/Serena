@@ -61,12 +61,23 @@ public class KeySprite implements Callable<Boolean> {
             r.keyPress(KeyEvent.VK_V);
             r.keyRelease(KeyEvent.VK_V);
             r.keyRelease(KeyEvent.VK_CONTROL);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             // double-click enter to choose new item
             for (int i = 0; i < 2; i++) {
                 r.keyPress(KeyEvent.VK_ENTER);
                 r.keyRelease(KeyEvent.VK_ENTER);
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             }
+            // enter count
+            r.mouseMove(Setting.SELECT_COUNT_POSITION_X, Setting.SELECT_COUNT_POSITION_Y);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(20);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            r.keyPress(KeyEvent.VK_0 + Setting.TRADE_COUNT);
+            r.keyRelease(KeyEvent.VK_0 + Setting.TRADE_COUNT);
             return true;
         } catch (AWTException ignored) {
             LogUtil.getInstance().severe("AWT Error!");

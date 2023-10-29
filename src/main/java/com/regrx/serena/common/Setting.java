@@ -34,11 +34,16 @@ public class Setting {
 
     public static int FOLLOW_OPERATE_REPEAT = 1;
 
+    public static int TRADE_COUNT = 4;
+
     public static final int FOLLOW_RETRY_INTERVAL = 5000;
 
     // trade action click position
     public static final int SELECT_POSITION_X = 264;
     public static final int SELECT_POSITION_Y = 846;
+
+    public static final int SELECT_COUNT_POSITION_X = 356;
+    public static final int SELECT_COUNT_POSITION_Y = 846;
 
     public static final int PUT_POSITION_X = 260;
     public static final int PUT_POSITION_Y = 900;
