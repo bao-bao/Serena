@@ -37,6 +37,7 @@ public class TradeUtil {
                 default:
                     break;
             }
+            return result;
         }
         switch (decision.getTradingType()) {
             case PUT_BUYING:

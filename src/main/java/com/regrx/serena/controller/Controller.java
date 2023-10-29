@@ -31,7 +31,7 @@ public class Controller implements Runnable {
     }
 
     public static Controller getInstance(String type) {
-        if(controller == null) {
+        if (controller == null) {
             controller = new Controller(type);
         }
         return controller;
@@ -42,7 +42,7 @@ public class Controller implements Runnable {
     }
 
     private void init() {
-        if(Status.getInstance().getStatus() != TradingType.EMPTY) {
+        if (Status.getInstance().getStatus() != TradingType.EMPTY) {
             strategyMgr.changePriority(StrategyEnum.STRATEGY_LOSS_LIMIT, Setting.HIGH_LOSS_LIMIT_PRIORITY);
             strategyMgr.changePriority(StrategyEnum.STRATEGY_PROFIT_LIMIT, Setting.HIGH_PROFIT_LIMIT_PRIORITY);
         }
@@ -53,20 +53,22 @@ public class Controller implements Runnable {
         init();
         while (true) {
             synchronized (decisionQueue) {
-                while(decisionQueue.isEmpty()) {
+                while (decisionQueue.isEmpty()) {
                     try {
                         decisionQueue.notify();
                         LogUtil.getInstance().info("waiting for next decision...");
                         decisionQueue.wait();
-                    } catch (InterruptedException ignored) {}
+                    } catch (InterruptedException ignored) {
+                    }
                 }
                 Decision decision = decisionQueue.poll();
-                if(decision != null) {
+                if (decision != null) {
                     LogUtil.getInstance().info("Decision in this minute: " + decision);
-                    if(decision.isExecute()) {
+                    if (decision.isExecute()) {
                         LogUtil.getInstance().info("Perform trade... Decision: " + decision.getTradingType() + ", Current: " + Status.getInstance().getStatus());
-                        if((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
-                           (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING)) {
+                        if ((decision.getTradingType() == TradingType.PUT_BUYING && Status.getInstance().getStatus() == TradingType.SHORT_SELLING) ||
+                                (decision.getTradingType() == TradingType.SHORT_SELLING && Status.getInstance().getStatus() == TradingType.PUT_BUYING) ||
+                                decision.getSource() == StrategyEnum.STRATEGY_CHECK_MAIN_CONTRACT) {
                             Decision emptyDecision = new Decision();
                             emptyDecision.copy(decision);
                             emptyDecision.setTradingType(TradingType.EMPTY);
