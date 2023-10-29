@@ -15,11 +15,11 @@ public class TestMouseClick {
         // S -> short selling
         // E -> empty
         // A -> empty + put buying
-        // B -> empty + short sellingic
+        // B -> empty + short selling
 
 
         char label = 'S';
-        String type = "IC9999";
+        String type = "IF0";
 
         ExecutorService threadPool = Executors.newCachedThreadPool();
         Future<Boolean> future = threadPool.submit(new KeySprite(label, type));

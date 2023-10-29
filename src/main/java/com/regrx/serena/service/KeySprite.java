@@ -2,10 +2,18 @@ package com.regrx.serena.service;
 
 import com.regrx.serena.common.Setting;
 import com.regrx.serena.common.utils.LogUtil;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.datatransfer.Transferable;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.TimeZone;
 import java.util.concurrent.Callable;
 
 public class KeySprite implements Callable<Boolean> {
@@ -46,12 +54,12 @@ public class KeySprite implements Callable<Boolean> {
             r.keyPress(KeyEvent.VK_BACK_SPACE);
             r.keyRelease(KeyEvent.VK_BACK_SPACE);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            // input new
-            for (char c : type.substring(0, 2).toCharArray()) {
-                r.keyPress(c);
-                r.keyRelease(c);
-                r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            }
+            // input from clipboard
+            setTypeIntoClipboard(type);
+            r.keyPress(KeyEvent.VK_CONTROL);
+            r.keyPress(KeyEvent.VK_V);
+            r.keyRelease(KeyEvent.VK_V);
+            r.keyRelease(KeyEvent.VK_CONTROL);
             // double-click enter to choose new item
             for (int i = 0; i < 2; i++) {
                 r.keyPress(KeyEvent.VK_ENTER);
@@ -237,5 +245,20 @@ public class KeySprite implements Callable<Boolean> {
         r.delay(Setting.MOUSE_CLICK_PRESS_TIME);
         r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
         return true;
+    }
+
+    public static String getRealTypeString(String type) {
+        Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+        Date nextMonth = DateUtils.addMonths(currTime.getTime(), 1);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyMM");
+        String realType = type.substring(0, 2) + simpleDateFormat.format(nextMonth);
+        LogUtil.getInstance().info("Reset breed code as " + realType + "...");
+        return realType;
+    }
+
+    public static void setTypeIntoClipboard(String type) {
+        Clipboard clipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        Transferable transferable = new StringSelection(getRealTypeString(type));
+        clipboard.setContents(transferable, null);
     }
 }
