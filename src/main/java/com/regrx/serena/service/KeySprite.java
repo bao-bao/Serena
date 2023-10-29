@@ -76,8 +76,13 @@ public class KeySprite implements Callable<Boolean> {
             r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
             r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            r.keyPress(KeyEvent.VK_0 + Setting.TRADE_COUNT);
-            r.keyRelease(KeyEvent.VK_0 + Setting.TRADE_COUNT);
+            String countString = String.valueOf(Setting.TRADE_COUNT);
+            char[] chars = countString.toCharArray();
+            for (int i = 0; i < countString.length(); i++) {
+                r.keyPress(KeyEvent.VK_0 + (chars[i] - '0'));
+                r.keyRelease(KeyEvent.VK_0 + (chars[i] - '0'));
+            }
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             return true;
         } catch (AWTException ignored) {
             LogUtil.getInstance().severe("AWT Error!");
