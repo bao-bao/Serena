@@ -2,8 +2,7 @@ package SerenaSimulation.profit;
 
 
 import com.regrx.serena.common.utils.Calculator;
-import com.regrx.trade.util.Time;
-import org.apache.commons.lang3.tuple.Pair;
+import com.regrx.serena.common.utils.TimeUtil;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -112,12 +111,12 @@ public class ProfitCal {
         for (int i = 0; i < count; i++) {
             SingleTrade trade = trades.poll();
             if (trade != null) {
-                Calendar closeTime = Calendar.getInstance();
-                closeTime.setTime(Time.getDateFromString(trade.closeTime));
+                Calendar closeTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                closeTime.setTime(TimeUtil.getDateFromString(trade.closeTime));
                 // week setting
                 int week = closeTime.get(Calendar.WEEK_OF_YEAR);
                 int dayOfWeek = closeTime.get(Calendar.DAY_OF_WEEK);
-                Calendar firstDayOfWeek = Calendar.getInstance();
+                Calendar firstDayOfWeek = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
                 firstDayOfWeek.setTime(closeTime.getTime());
                 firstDayOfWeek.add(Calendar.DATE, (-1 * (dayOfWeek - 2)));
                 if (week != lastWeek && lastWeek != 0) {
@@ -129,7 +128,7 @@ public class ProfitCal {
                     weekSum += trade.profit;
                     weekCount += 1;
                 }
-                weekString = Time.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
+                weekString = TimeUtil.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
                 // month setting
                 int month = closeTime.get(Calendar.MONTH);
                 if (month != lastMonth && lastMonth != 0) {
@@ -141,7 +140,7 @@ public class ProfitCal {
                     monthSum += trade.profit;
                     monthCount += 1;
                 }
-                monthString = Time.getFormattedMonth(closeTime.getTime());
+                monthString = TimeUtil.getFormattedMonth(closeTime.getTime());
 
                 profitList.add(trade.profit);
                 if (outputDetail){

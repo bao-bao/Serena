@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class Time {
 
@@ -47,26 +48,26 @@ public class Time {
 
     public static String getFormattedDate(Date date) {
         String pattern = "yyyy-MM-dd";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
     public static String getFormattedMonth(Date date) {
         String pattern = "yyyy-MM";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
     public static String getFormattedTime(Date date) {
         String pattern = "yyyy-MM-dd HH:mm:ss";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
     public static Date getDateFromString(String dateString) {
         String pattern = "yyyy-MM-dd HH:mm:ss";
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
             return simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();

@@ -7,6 +7,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 public class TimeUtil {
 
@@ -46,19 +47,30 @@ public class TimeUtil {
         return calendar.getTime().getTime();
     }
 
+    public static String getFormattedDate(Date date) {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getFormattedMonth(Date date) {
+        String pattern = "yyyy-MM";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern, Locale.CHINA);
+        return simpleDateFormat.format(date);
+    }
 
     public static String getFormattedTime(Date date) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.TIME_PATTERN);
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.TIME_PATTERN, Locale.CHINA);
         return simpleDateFormat.format(date);
     }
 
     public static Date getDateFromString(String dateString) {
         try {
-            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.TIME_PATTERN);
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.TIME_PATTERN, Locale.CHINA);
             return simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new Date();
         }
     }
 
