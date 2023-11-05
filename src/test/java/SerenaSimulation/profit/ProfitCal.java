@@ -31,6 +31,7 @@ public class ProfitCal {
                     case "Empty":
                         emptyPrice = currPrice;
                         st.setCloseTime(lastHistory[2] + " " + lastHistory[3]);
+                        st.setCloseDate(lastHistory[2]);
                         st.setProfit(status == 1 ? (emptyPrice - tradeInPrice) : (tradeInPrice - emptyPrice));
                         st.setCloseReason(reason);
                         count++;
@@ -111,13 +112,13 @@ public class ProfitCal {
         for (int i = 0; i < count; i++) {
             SingleTrade trade = trades.poll();
             if (trade != null) {
-                Calendar closeTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-                closeTime.setTime(TimeUtil.getDateFromString(trade.closeTime));
+                Calendar closeDate = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                closeDate.setTime(TimeUtil.getDateFromDateString(trade.closeDate));
                 // week setting
-                int week = closeTime.get(Calendar.WEEK_OF_YEAR);
-                int dayOfWeek = closeTime.get(Calendar.DAY_OF_WEEK);
-                Calendar firstDayOfWeek = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
-                firstDayOfWeek.setTime(closeTime.getTime());
+                int week = closeDate.get(Calendar.WEEK_OF_YEAR);
+                int dayOfWeek = closeDate.get(Calendar.DAY_OF_WEEK);
+                Calendar firstDayOfWeek = (Calendar) closeDate.clone();
+                firstDayOfWeek.setTime(closeDate.getTime());
                 firstDayOfWeek.add(Calendar.DATE, (-1 * (dayOfWeek - 2)));
                 if (week != lastWeek && lastWeek != 0) {
                     testResult.profitByWeek.add(new WindowResult(weekString, weekSum, weekCount));
@@ -130,7 +131,7 @@ public class ProfitCal {
                 }
                 weekString = TimeUtil.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
                 // month setting
-                int month = closeTime.get(Calendar.MONTH);
+                int month = closeDate.get(Calendar.MONTH);
                 if (month != lastMonth && lastMonth != 0) {
                     testResult.profitByMonth.add(new WindowResult(monthString, monthSum, monthCount));
                     monthList.add(monthSum);
@@ -140,7 +141,7 @@ public class ProfitCal {
                     monthSum += trade.profit;
                     monthCount += 1;
                 }
-                monthString = TimeUtil.getFormattedMonth(closeTime.getTime());
+                monthString = TimeUtil.getFormattedMonth(closeDate.getTime());
 
                 profitList.add(trade.profit);
                 if (outputDetail){

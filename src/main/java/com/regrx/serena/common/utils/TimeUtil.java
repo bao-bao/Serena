@@ -74,6 +74,17 @@ public class TimeUtil {
         }
     }
 
+    public static Date getDateFromDateString(String dateString) {
+        try {
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat(Setting.DATE_PATTERN, Locale.CHINA);
+            return simpleDateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Date();
+        }
+    }
+
+
     public static String getClosetMinuteString(Date date) {
         Calendar calendar = getBaseTime(date);
         int second = calendar.get(Calendar.SECOND);

@@ -3,6 +3,7 @@ package SerenaSimulation.profit;
 public class SingleTrade implements Comparable<SingleTrade> {
     public String openTime;
     public String closeTime;
+    public String closeDate;
     public String tradeType;
     public String openReason;
     public String closeReason;
@@ -18,6 +19,10 @@ public class SingleTrade implements Comparable<SingleTrade> {
     @Override
     public int compareTo(SingleTrade o) {
         return closeTime.compareTo(o.closeTime);
+    }
+
+    public void setCloseDate(String closeDate) {
+        this.closeDate = closeDate;
     }
 
     public void setCloseTime(String closeTime) {

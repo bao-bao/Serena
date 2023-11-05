@@ -184,6 +184,8 @@ public class Setting {
     // Time pattern
     public static final String TIME_PATTERN = "yyyy-MM-dd HH:mm:ss";
 
+    public static final String DATE_PATTERN = "yyyy-MM-dd";
+
     public static final String STOCK_FUTURE_PRICE_DATA_TIME_PATTERN = "yyyy-MM-dd,HH:mm:ss";
 
     public static final String OTHER_FUTURE_PRICE_DATA_TIME_PATTERN = "yyyy-MM-dd HHmmss";
