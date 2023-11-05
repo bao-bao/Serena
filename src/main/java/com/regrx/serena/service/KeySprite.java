@@ -69,12 +69,8 @@ public class KeySprite implements Callable<Boolean> {
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             }
             // enter count
-            r.mouseMove(Setting.SELECT_COUNT_POSITION_X, Setting.SELECT_COUNT_POSITION_Y);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
-            r.delay(20);
-            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
-            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.keyPress(KeyEvent.VK_TAB);
+            r.keyRelease(KeyEvent.VK_TAB);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             String countString = String.valueOf(Setting.TRADE_COUNT);
             char[] chars = countString.toCharArray();
