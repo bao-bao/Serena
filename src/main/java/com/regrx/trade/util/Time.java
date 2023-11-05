@@ -45,6 +45,17 @@ public class Time {
         return calendar.getTime().getTime();
     }
 
+    public static String getFormattedDate(Date date) {
+        String pattern = "yyyy-MM-dd";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
+    }
+
+    public static String getFormattedMonth(Date date) {
+        String pattern = "yyyy-MM";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(pattern);
+        return simpleDateFormat.format(date);
+    }
 
     public static String getFormattedTime(Date date) {
         String pattern = "yyyy-MM-dd HH:mm:ss";
@@ -59,7 +70,7 @@ public class Time {
             return simpleDateFormat.parse(dateString);
         } catch (ParseException e) {
             e.printStackTrace();
-            return null;
+            return new Date();
         }
     }
 

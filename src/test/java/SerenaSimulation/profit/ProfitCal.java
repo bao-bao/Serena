@@ -1,13 +1,13 @@
 package SerenaSimulation.profit;
 
 
-import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.Calculator;
+import com.regrx.trade.util.Time;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class ProfitCal {
     public static TestResult cal(String path, String filename, boolean outputDetail) {
@@ -99,21 +99,65 @@ public class ProfitCal {
 
 
         ArrayList<Double> profitList = new ArrayList<>();
+        double weekSum = 0;
+        double monthSum = 0;
+        int lastWeek = 0;
+        int lastMonth = 0;
+        String weekString = "";
+        String monthString = "";
+        ArrayList<Double> weekList = new ArrayList<>();
+        ArrayList<Double> monthList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
             SingleTrade trade = trades.poll();
             if (trade != null) {
+                Calendar closeTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                closeTime.setTime(Time.getDateFromString(trade.closeTime));
+                // week setting
+                int week = closeTime.get(Calendar.WEEK_OF_YEAR);
+                int dayOfWeek = closeTime.get(Calendar.DAY_OF_WEEK);
+                Calendar firstDayOfWeek = (Calendar) closeTime.clone();
+                firstDayOfWeek.add(Calendar.DATE, (-1 * (dayOfWeek - 2)));
+                if (week != lastWeek && lastWeek != 0) {
+                    testResult.profitByWeek.add(Pair.of(weekString, weekSum));
+                    weekList.add(weekSum);
+                    weekSum = 0;
+                } else {
+                    weekSum += trade.profit;
+                }
+                weekString = Time.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
+                // month setting
+                int month = closeTime.get(Calendar.MONTH);
+                if (month != lastMonth && lastMonth != 0) {
+                    testResult.profitByMonth.add(Pair.of(monthString, monthSum));
+                    monthList.add(monthSum);
+                    monthSum = 0;
+                } else {
+                    monthSum += trade.profit;
+                }
+                monthString = Time.getFormattedMonth(closeTime.getTime());
+
                 profitList.add(trade.profit);
                 if (outputDetail){
                     System.out.println(trade.openTime + "," + trade.closeTime + "," +
                             trade.tradeType + "," + String.format("%.2f", trade.profit) +
                             ", openReason: " + trade.openReason + ", closeReason: " + trade.closeReason);
                 }
+                lastWeek = week;
+                lastMonth = month;
             }
         }
+        testResult.profitByWeek.add(Pair.of(weekString, weekSum));
+        weekList.add(weekSum);
+        testResult.profitByMonth.add(Pair.of(monthString, monthSum));
+        monthList.add(monthSum);
+
         double maxLoss = findMaxLoss(profitList);
 
         double ProfitStdDeviation = Calculator.standardDeviation(profitList);
         double SharpRatio = (EVPT - 0.045) / ProfitStdDeviation;
+
+        double weekVariance = Calculator.squareDeviation(weekList);
+        double monthVariance = Calculator.standardDeviation(monthList);
 
         System.out.println("Profit: " + String.format("%.2f", profit));
         if (outputDetail) {
@@ -137,6 +181,9 @@ public class ProfitCal {
             System.out.println("Max Loss: " +  String.format("%.2f", maxLoss));
             System.out.println("Std Dev: " + String.format("%.2f", ProfitStdDeviation));
             System.out.println("Sharp Ratio: " + String.format("%.2f", SharpRatio));
+
+            System.out.println("Week Variance: " + String.format("%.2f", weekVariance));
+            System.out.println("Month Variance: " + String.format("%.2f", monthVariance));
         }
         testResult.setTotalProfit(profit);
         testResult.setPutProfit(putProfitCount);
@@ -151,6 +198,8 @@ public class ProfitCal {
         testResult.setMaxLoss(maxLoss);
         testResult.setStdDev(ProfitStdDeviation);
         testResult.setSharpRatio(SharpRatio);
+        testResult.setVarianceByWeek(weekVariance);
+        testResult.setVarianceByMonth(monthVariance);
 
         return testResult;
     }

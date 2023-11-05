@@ -29,6 +29,9 @@ public class Calculator {
     }
 
     public static double squareDeviation(List<Double> list) {
+        if (list.isEmpty() || list.size() == 1) {
+            return 0;
+        }
         double avg = avgUtil(list);
         double squareDeviation = 0;
         for (Double val : list) {

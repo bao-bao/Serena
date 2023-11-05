@@ -1,5 +1,9 @@
 package SerenaSimulation.profit;
 
+import org.apache.commons.lang3.tuple.Pair;
+
+import java.util.ArrayList;
+
 public class TestResult implements Comparable<TestResult> {
     Double totalProfit;
     int pLoss;
@@ -16,6 +20,16 @@ public class TestResult implements Comparable<TestResult> {
     double StdDev;
     double SharpRatio;
     double maxLoss;
+
+    ArrayList<Pair<String, Double>> profitByMonth;
+    ArrayList<Pair<String, Double>> profitByWeek;
+    double varianceByMonth;
+    double varianceByWeek;
+
+    public TestResult() {
+        profitByMonth = new ArrayList<>();
+        profitByWeek = new ArrayList<>();
+    }
 
     public double getTotalProfit() {
         return totalProfit;
@@ -131,6 +145,30 @@ public class TestResult implements Comparable<TestResult> {
 
     public void setSharpRatio(double sharpRatio) {
         SharpRatio = sharpRatio;
+    }
+
+    public ArrayList<Pair<String, Double>> getProfitByMonth() {
+        return profitByMonth;
+    }
+
+    public ArrayList<Pair<String, Double>> getProfitByWeek() {
+        return profitByWeek;
+    }
+
+    public double getVarianceByMonth() {
+        return varianceByMonth;
+    }
+
+    public void setVarianceByMonth(double varianceByMonth) {
+        this.varianceByMonth = varianceByMonth;
+    }
+
+    public double getVarianceByWeek() {
+        return varianceByWeek;
+    }
+
+    public void setVarianceByWeek(double varianceByWeek) {
+        this.varianceByWeek = varianceByWeek;
     }
 
     @Override
