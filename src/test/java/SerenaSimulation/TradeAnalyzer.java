@@ -11,8 +11,7 @@ import java.io.IOException;
 public class TradeAnalyzer {
     public static void main(String[] args) {
         String type = "IC2212";
-        String path = "IC2212_1699164314192";
-        path = "test_result/" + path;
+        String path = "test_result/IC2212_1699164314192";   // use "." to analyze real trade log
         TestResult result = ProfitCal.cal(path, type, true);
         graphicDataOutput(result, path, type);
     }
