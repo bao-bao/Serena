@@ -120,7 +120,7 @@ public class ProfitCal {
                 if (week != lastWeek && lastWeek != 0) {
                     testResult.profitByWeek.add(Pair.of(weekString, weekSum));
                     weekList.add(weekSum);
-                    weekSum = 0;
+                    weekSum = trade.profit;
                 } else {
                     weekSum += trade.profit;
                 }
@@ -130,7 +130,7 @@ public class ProfitCal {
                 if (month != lastMonth && lastMonth != 0) {
                     testResult.profitByMonth.add(Pair.of(monthString, monthSum));
                     monthList.add(monthSum);
-                    monthSum = 0;
+                    monthSum = trade.profit;
                 } else {
                     monthSum += trade.profit;
                 }
