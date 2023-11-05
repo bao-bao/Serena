@@ -21,8 +21,8 @@ public class TestResult implements Comparable<TestResult> {
     double SharpRatio;
     double maxLoss;
 
-    ArrayList<Pair<String, Double>> profitByMonth;
-    ArrayList<Pair<String, Double>> profitByWeek;
+    ArrayList<WindowResult> profitByMonth;
+    ArrayList<WindowResult> profitByWeek;
     double varianceByMonth;
     double varianceByWeek;
 
@@ -147,11 +147,11 @@ public class TestResult implements Comparable<TestResult> {
         SharpRatio = sharpRatio;
     }
 
-    public ArrayList<Pair<String, Double>> getProfitByMonth() {
+    public ArrayList<WindowResult> getProfitByMonth() {
         return profitByMonth;
     }
 
-    public ArrayList<Pair<String, Double>> getProfitByWeek() {
+    public ArrayList<WindowResult> getProfitByWeek() {
         return profitByWeek;
     }
 

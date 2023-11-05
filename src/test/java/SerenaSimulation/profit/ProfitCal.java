@@ -101,6 +101,8 @@ public class ProfitCal {
         ArrayList<Double> profitList = new ArrayList<>();
         double weekSum = 0;
         double monthSum = 0;
+        int weekCount = 0;
+        int monthCount = 0;
         int lastWeek = 0;
         int lastMonth = 0;
         String weekString = "";
@@ -115,24 +117,29 @@ public class ProfitCal {
                 // week setting
                 int week = closeTime.get(Calendar.WEEK_OF_YEAR);
                 int dayOfWeek = closeTime.get(Calendar.DAY_OF_WEEK);
-                Calendar firstDayOfWeek = (Calendar) closeTime.clone();
+                Calendar firstDayOfWeek = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
+                firstDayOfWeek.setTime(closeTime.getTime());
                 firstDayOfWeek.add(Calendar.DATE, (-1 * (dayOfWeek - 2)));
                 if (week != lastWeek && lastWeek != 0) {
-                    testResult.profitByWeek.add(Pair.of(weekString, weekSum));
+                    testResult.profitByWeek.add(new WindowResult(weekString, weekSum, weekCount));
                     weekList.add(weekSum);
                     weekSum = trade.profit;
+                    weekCount = 1;
                 } else {
                     weekSum += trade.profit;
+                    weekCount += 1;
                 }
                 weekString = Time.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
                 // month setting
                 int month = closeTime.get(Calendar.MONTH);
                 if (month != lastMonth && lastMonth != 0) {
-                    testResult.profitByMonth.add(Pair.of(monthString, monthSum));
+                    testResult.profitByMonth.add(new WindowResult(monthString, monthSum, monthCount));
                     monthList.add(monthSum);
                     monthSum = trade.profit;
+                    monthCount = 1;
                 } else {
                     monthSum += trade.profit;
+                    monthCount += 1;
                 }
                 monthString = Time.getFormattedMonth(closeTime.getTime());
 
@@ -146,9 +153,9 @@ public class ProfitCal {
                 lastMonth = month;
             }
         }
-        testResult.profitByWeek.add(Pair.of(weekString, weekSum));
+        testResult.profitByWeek.add(new WindowResult(weekString, weekSum, weekCount));
         weekList.add(weekSum);
-        testResult.profitByMonth.add(Pair.of(monthString, monthSum));
+        testResult.profitByMonth.add(new WindowResult(monthString, monthSum, monthCount));
         monthList.add(monthSum);
 
         double maxLoss = findMaxLoss(profitList);

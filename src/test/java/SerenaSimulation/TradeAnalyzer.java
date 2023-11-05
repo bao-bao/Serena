@@ -2,8 +2,8 @@ package SerenaSimulation;
 
 import SerenaSimulation.profit.ProfitCal;
 import SerenaSimulation.profit.TestResult;
+import SerenaSimulation.profit.WindowResult;
 import com.regrx.serena.common.utils.FileUtil;
-import org.apache.commons.lang3.tuple.Pair;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -20,20 +20,28 @@ public class TradeAnalyzer {
         String filename = path + "/" + type + "_graphic_data";
         FileUtil.newFile(filename + ".csv");
         try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
-            for (Pair<String, Double> res : result.getProfitByMonth()) {
-                writer.append(res.getLeft()).append(",");
+            for (WindowResult res : result.getProfitByMonth()) {
+                writer.append(res.getName()).append(",");
             }
             writer.append("\n");
-            for (Pair<String, Double> res : result.getProfitByMonth()) {
-                writer.append(String.format("%.2f", res.getRight())).append(",");
+            for (WindowResult res : result.getProfitByMonth()) {
+                writer.append(String.format("%.2f", res.getProfit())).append(",");
             }
             writer.append("\n");
-            for (Pair<String, Double> res : result.getProfitByWeek()) {
-                writer.append(res.getLeft()).append(",");
+            for (WindowResult res : result.getProfitByMonth()) {
+                writer.append(String.format("%d", res.getCount())).append(",");
             }
             writer.append("\n");
-            for (Pair<String, Double> res : result.getProfitByWeek()) {
-                writer.append(String.format("%.2f", res.getRight())).append(",");
+            for (WindowResult res : result.getProfitByWeek()) {
+                writer.append(res.getName()).append(",");
+            }
+            writer.append("\n");
+            for (WindowResult res : result.getProfitByWeek()) {
+                writer.append(String.format("%.2f", res.getProfit())).append(",");
+            }
+            writer.append("\n");
+            for (WindowResult res : result.getProfitByWeek()) {
+                writer.append(String.format("%d", res.getCount())).append(",");
             }
             writer.flush();
         } catch (IOException e) {
