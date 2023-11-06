@@ -70,6 +70,7 @@ public class KeySprite implements Callable<Boolean> {
             }
             // enter count
             r.keyPress(KeyEvent.VK_TAB);
+            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             r.keyRelease(KeyEvent.VK_TAB);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             String countString = String.valueOf(Setting.TRADE_COUNT);
