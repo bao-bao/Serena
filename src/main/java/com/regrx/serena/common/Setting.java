@@ -45,6 +45,9 @@ public class Setting {
     public static final int SELECT_COUNT_POSITION_X = 356;
     public static final int SELECT_COUNT_POSITION_Y = 846;
 
+    public static final int NO_ACTION_POSITION_X = 600;
+    public static final int NO_ACTION_POSITION_Y = 800;
+
     public static final int PUT_POSITION_X = 260;
     public static final int PUT_POSITION_Y = 900;
 

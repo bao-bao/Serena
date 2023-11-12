@@ -69,9 +69,12 @@ public class KeySprite implements Callable<Boolean> {
                 r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             }
             // enter count
-            r.keyPress(KeyEvent.VK_TAB);
-            r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
-            r.keyRelease(KeyEvent.VK_TAB);
+            r.mouseMove(Setting.SELECT_COUNT_POSITION_X, Setting.SELECT_COUNT_POSITION_Y);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+            r.delay(20);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
             String countString = String.valueOf(Setting.TRADE_COUNT);
             char[] chars = countString.toCharArray();
@@ -80,6 +83,9 @@ public class KeySprite implements Callable<Boolean> {
                 r.keyRelease(KeyEvent.VK_0 + (chars[i] - '0'));
             }
             r.delay(Setting.OPERATION_SPEED_MULTIPLIER);
+            r.mouseMove(Setting.NO_ACTION_POSITION_X, Setting.NO_ACTION_POSITION_Y);
+            r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+            r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
             return true;
         } catch (AWTException ignored) {
             LogUtil.getInstance().severe("AWT Error!");
