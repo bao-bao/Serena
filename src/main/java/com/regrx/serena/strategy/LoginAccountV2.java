@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.*;
 
 public class LoginAccountV2 extends ForceTriggerStrategy implements Runnable {
-    private static final int OP_INTERVAL = 2000;     // ms
+    private static final int OP_INTERVAL = 60000;     // ms
 
     private static final int SHORTCUT_POS_X = 43;
     private static final int SHORTCUT_POS_Y = 26;
