@@ -4,14 +4,12 @@ import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.constant.StrategyEnum;
 import com.regrx.serena.controller.Controller;
 import com.regrx.serena.strategy.LoginAccount;
+import com.regrx.serena.strategy.LoginAccountV2;
 
 public class Serena {
     public static void main(String[] args) {
-        // TODO
-        // 3. 多品种并行
-        // 5. 交互界面
-        // 6. 极值点的分析(长期工作)
-        new Thread(new LoginAccount(9, 0)).start();
+        //new Thread(new LoginAccount(9, 0)).start();
+        new Thread(new LoginAccountV2(14, 48)).start();
 
         Controller controller = Controller.getInstance("IF0");
 

@@ -1,6 +1,7 @@
 package com.regrx.serena.strategy;
 
 import com.regrx.serena.common.Setting;
+import com.regrx.serena.common.constant.FutureType;
 import com.regrx.serena.common.constant.IntervalEnum;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.Decision;
@@ -11,13 +12,18 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.TimeZone;
+import java.util.*;
 
-public class LoginAccount extends ForceTriggerStrategy implements Runnable {
-    private static final int OP_INTERVAL = 60000;     // ms
+public class LoginAccountV2 extends ForceTriggerStrategy implements Runnable {
+    private static final int OP_INTERVAL = 2000;     // ms
+
+    private static final int SHORTCUT_POS_X = 43;
+    private static final int SHORTCUT_POS_Y = 26;
+
+    private static final int EXIT_POS_X = 1445;
+    private static final int EXIT_POS_Y = 18;
+    private static final int EXIT_CONFIRM_POS_X = 880;
+    private static final int EXIT_CONFIRM_POS_Y = 591;
 
     private static final int ACCOUNT_BUTT_POS_X = 1676;
     private static final int ACCOUNT_BUTT_POS_Y = 1063;
@@ -41,9 +47,9 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
 
     private static final String PASSWORD = "A12345";
 
-    public LoginAccount(int hour, int minute) {
+    public LoginAccountV2(int hour, int minute) {
         super(IntervalEnum.NULL);
-        super.setName("Login Account");
+        super.setName("Login Account V2");
         this.setTriggerTime(hour, minute);
     }
 
@@ -54,16 +60,15 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
         int minute = calendar.get(Calendar.MINUTE);
         if (!Setting.TEST_LABEL && this.isTriggered(hour, minute)) {
-            //if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
-            execOperation();
-            //}
-        }
-        if (!Setting.TEST_LABEL &&
-                (hour == Setting.SHUTDOWN_HOUR &&
-                        minute > Setting.SHUTDOWN_MINUTE &&
-                        minute < Setting.SHUTDOWN_MINUTE + 5)
-        ) {
             if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
+                execLoginOperation();
+            }
+        }
+        if (!Setting.TEST_LABEL && this.isTriggeredExit(hour, minute)) {
+            if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
+                execExitOperation();
+            }
+            if (weekday == Calendar.FRIDAY) {
                 try {
                     Runtime.getRuntime().exec("shutdown /s /t 0");
                 } catch (IOException e) {
@@ -79,10 +84,16 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         return hour == this.triggerHour && minute == this.triggerMinute;
     }
 
-    private void execOperation() {
+    private boolean isTriggeredExit(int hour, int minute) {
+        return hour == Setting.SHUTDOWN_HOUR && minute == Setting.SHUTDOWN_MINUTE;
+    }
+
+    private void execLoginOperation() {
         System.out.println("start login");
         try {
             Robot r = new Robot();
+            KeySprite.MouseDoubleClick(r, SHORTCUT_POS_X, SHORTCUT_POS_Y);
+            r.delay(OP_INTERVAL);
             KeySprite.MouseClick(r, ACCOUNT_BUTT_POS_X, ACCOUNT_BUTT_POS_Y);
             r.delay(OP_INTERVAL);
             for (char c : PASSWORD.toCharArray()) {
@@ -118,12 +129,23 @@ public class LoginAccount extends ForceTriggerStrategy implements Runnable {
         }
     }
 
+    private void execExitOperation() {
+        System.out.println("start exit");
+        try {
+            Robot r = new Robot();
+            KeySprite.MouseClick(r, EXIT_POS_X, EXIT_POS_Y);
+            r.delay(OP_INTERVAL);
+            KeySprite.MouseClick(r, EXIT_CONFIRM_POS_X, EXIT_CONFIRM_POS_Y);
+        } catch (AWTException ignored) {
+            LogUtil.getInstance().severe("AWT Error!");
+        }
+    }
     @Override
     public void run() {
         while (true) {
             try {
                 this.execute(null);
-                Thread.sleep(60000);
+                Thread.sleep(40000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

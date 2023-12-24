@@ -267,6 +267,18 @@ public class KeySprite implements Callable<Boolean> {
         return true;
     }
 
+    public static boolean MouseDoubleClick(Robot r, int x, int y) {
+        r.mouseMove(x, y);
+        r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        r.delay(Setting.MOUSE_CLICK_PRESS_TIME);
+        r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        r.delay(20);
+        r.mousePress(InputEvent.BUTTON1_DOWN_MASK);
+        r.delay(Setting.MOUSE_CLICK_PRESS_TIME);
+        r.mouseRelease(InputEvent.BUTTON1_DOWN_MASK);
+        return true;
+    }
+
     public static String getRealTypeString(String type) {
         Date nextMonth;
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
