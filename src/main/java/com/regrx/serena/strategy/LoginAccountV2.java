@@ -68,13 +68,13 @@ public class LoginAccountV2 extends ForceTriggerStrategy implements Runnable {
             if (weekday != Calendar.SATURDAY && weekday != Calendar.SUNDAY) {
                 execExitOperation();
             }
-            if (weekday == Calendar.FRIDAY) {
-                try {
-                    Runtime.getRuntime().exec("shutdown /s /t 0");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
+//            if (weekday == Calendar.FRIDAY) {
+//                try {
+//                    Runtime.getRuntime().exec("shutdown /s /t 0");
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
         }
         return null;
     }
