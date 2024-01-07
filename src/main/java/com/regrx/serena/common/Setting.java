@@ -84,7 +84,7 @@ public class Setting {
     public static int MA_MAX_AGGREGATE = 100;
 
     // exponential moving average settings ( should be falling within (0,1] )
-    public static double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0};
+    public static double[] EMA_ALPHA = {90.0, 280.0, 370.0, 390.0, 0, 0};
 
     public static double EMA_UP_PROFIT_THRESHOLD = 0.006;
 

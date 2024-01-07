@@ -8,6 +8,8 @@ public enum EMAEnum {
     UP_LONG_TERM_EMA(1),
     DOWN_SHORT_TERM_EMA(2),
     DOWN_LONG_TERM_EMA(3),
+    SINGLE_EMA_UP(4),
+    SINGLE_EMA_DOWN(5),
     EMA_NULL(-1);
 
     private final int value;

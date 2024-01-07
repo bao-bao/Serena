@@ -255,6 +255,77 @@ public class FileUtil {
         return new double[]{lastPrice, currPrice, profitMax};
     }
 
+    public static void singleEmaLog(String type, IntervalEnum interval, boolean isForUp, boolean isActive, double price, String time) {
+        String filename = "SINGLE_EMA_" + type + "_" + interval.getValue() + ".log";
+        try (FileWriter writer = new FileWriter(filename, true)) {
+            writer.append(time).append("--");
+            writer.append(isForUp ? "UP" : "DOWN").append("--");
+            writer.append(Boolean.toString(isActive)).append("--");
+            writer.append(String.format("%.2f", price)).append('\n');
+            writer.flush();
+        } catch (FileNotFoundException e) {
+            newFile(filename);
+            singleEmaLog(type, interval, isForUp, isActive, price, time);
+        } catch (IOException e) {
+            LogUtil.getInstance().severe("Error occurred when opening file \"" + filename);
+            System.exit(ErrorType.IO_ERROR_CODE.getCode());
+        }
+    }
+
+    public static double[] readSingleEmaLog(String type, IntervalEnum interval, boolean isForUp) {
+        double lastPrice = 0.0;
+        double profitMax = 0.0;
+        double currPrice = 0.0;
+        long crossTime = Calendar.getInstance().getTime().getTime();
+
+        String filename = "SINGLE_EMA_" + type + "_" + interval.getValue() + ".log";
+        List<String> revLog = readLastLine(new File(filename), Integer.MAX_VALUE);
+        for (String line : revLog) {
+            String[] parts = line.split("--");
+            if (isForUp && Objects.equals(parts[1], "UP")) {
+                if (Boolean.parseBoolean(parts[2])) {
+                    lastPrice = Double.parseDouble(parts[3]);
+                    crossTime = TimeUtil.getDateFromString(parts[0]).getTime();
+                }
+                break;
+            }
+            if (!isForUp && Objects.equals(parts[1], "DOWN")) {
+                if (Boolean.parseBoolean(parts[2])) {
+                    lastPrice = Double.parseDouble(parts[3]);
+                    crossTime = TimeUtil.getDateFromString(parts[0]).getTime();
+                }
+                break;
+            }
+        }
+        if (lastPrice == 0.0) {
+            return new double[]{lastPrice, 0.0, 0.0};
+        }
+
+        for (ExPrice price : DataServiceManager.getInstance().queryData(interval).getPrices()) {
+            if (TimeUtil.getDateFromString(price.getTime()).getTime() > crossTime) {
+                currPrice = price.getPrice();
+                if (isForUp) {
+                    profitMax = Math.max(profitMax, price.getPrice() - lastPrice);
+                } else {
+                    profitMax = Math.max(profitMax, lastPrice - price.getPrice());
+                }
+            }
+        }
+
+        Status status = Status.getInstance();
+        if (isForUp && status.getTrendEMA() == TrendType.NULL) {
+            status.setTrendEMA(TrendType.TREND_UP);
+        } else if (isForUp && status.getTrendEMA() == TrendType.TREND_DOWN) {
+            status.setTrendEMA(TrendType.TREND_BOTH);
+        } else if (!isForUp && status.getTrendEMA() == TrendType.NULL) {
+            status.setTrendEMA(TrendType.TREND_DOWN);
+        } else if (!isForUp && status.getTrendEMA() == TrendType.TREND_UP) {
+            status.setTrendEMA(TrendType.TREND_BOTH);
+        }
+
+        return new double[]{lastPrice, currPrice, profitMax};
+    }
+
     // time -- logType -- price
     public static double[] readBollingerLog(String type, IntervalEnum interval) {
         double isUp = 0.0;

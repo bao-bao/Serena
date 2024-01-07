@@ -70,6 +70,12 @@ public class StrategyManager {
             case STRATEGY_BASIC_EMA_FOR_DOWN:
                 strategyList.put(strategy, new BasicEMAForDown(interval));
                 break;
+            case STRATEGY_SINGLE_EMA_UP:
+                strategyList.put(strategy, new SingleEMAForUp(interval));
+                break;
+            case STRATEGY_SINGLE_EMA_DOWN:
+                strategyList.put(strategy, new SingleEMAForDown(interval));
+                break;
             case STRATEGY_EMA_520:
                 strategyList.put(strategy, new EMA520(interval));
                 break;

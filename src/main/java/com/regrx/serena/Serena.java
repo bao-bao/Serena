@@ -16,6 +16,8 @@ public class Serena {
         controller.addDataTrack(IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_UP, IntervalEnum.MIN_1);
         controller.addStrategy(StrategyEnum.STRATEGY_BASIC_EMA_FOR_DOWN, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_SINGLE_EMA_UP, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_SINGLE_EMA_DOWN, IntervalEnum.MIN_1);
         controller.run();
     }
 }
