@@ -132,7 +132,7 @@ public class ProfitCal {
                 weekString = TimeUtil.getFormattedDate(firstDayOfWeek.getTime());   // update after recording
                 // month setting
                 int month = closeDate.get(Calendar.MONTH);
-                if (month != lastMonth && lastMonth != 0) {
+                if (month != lastMonth && lastMonth != 12) {
                     testResult.profitByMonth.add(new WindowResult(monthString, monthSum, monthCount));
                     monthList.add(monthSum);
                     monthSum = trade.profit;
