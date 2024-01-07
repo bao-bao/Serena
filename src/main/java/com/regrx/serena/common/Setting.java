@@ -98,6 +98,19 @@ public class Setting {
 
     public static double EMA_DOWN_LOSS_LIMIT = 0.0075;
 
+    // single exponential moving average settings ( should be falling within (0,1] )
+    public static double SINGLE_EMA_UP_PROFIT_THRESHOLD = 0.006;
+
+    public static double SINGLE_EMA_UP_PROFIT_LIMIT = 0.7;
+
+    public static double SINGLE_EMA_UP_LOSS_LIMIT = 0.003;
+
+    public static double SINGLE_EMA_DOWN_PROFIT_THRESHOLD = 0.015;
+
+    public static double SINGLE_EMA_DOWN_PROFIT_LIMIT = 0.6;
+
+    public static double SINGLE_EMA_DOWN_LOSS_LIMIT = 0.0075;
+
     // bollinger settings
     public static MAEnum BOLLINGER_MA_BASE = MAEnum.MA30;
 

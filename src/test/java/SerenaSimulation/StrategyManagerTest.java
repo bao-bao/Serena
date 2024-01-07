@@ -90,6 +90,12 @@ public class StrategyManagerTest {
             case STRATEGY_DONCHIAN_GOLDEN:
                 strategyList.put(strategy, new DonchianGolden(interval));
                 break;
+            case STRATEGY_SINGLE_EMA_UP:
+                strategyList.put(strategy, new SingleEMAForUp(interval));
+                break;
+            case STRATEGY_SINGLE_EMA_DOWN:
+                strategyList.put(strategy, new SingleEMAForDown(interval));
+                break;
             default:
                 //LogUtil.getInstance().info("Fail to add strategy " + strategy + ", unknown strategy");
                 return false;

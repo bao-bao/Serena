@@ -25,30 +25,50 @@ public class EMACombination implements Comparable<EMACombination> {
 
     public static ArrayList<double[]> generateEMA(int lower, int upper, int step, boolean upSide, boolean downSide) {
         ArrayList<double[]> res = new ArrayList<>();
-        if(!upSide && downSide) {
-            for(int downLower = lower; downLower <= upper; downLower += step) {
+        if (!upSide && downSide) {
+            for (int downLower = lower; downLower <= upper; downLower += step) {
                 for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
                     res.add(new double[]{0, 0, downLower, downUpper});
                 }
             }
-        } else if(upSide && !downSide) {
-            for(int upLower = lower; upLower <= upper; upLower += step) {
+        } else if (upSide && !downSide) {
+            for (int upLower = lower; upLower <= upper; upLower += step) {
                 for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
-                        res.add(new double[]{upLower, upUpper, 0, 0});
-                    }
+                    res.add(new double[]{upLower, upUpper, 0, 0});
+                }
             }
-        } else if(!upSide) {
-            for(int upLower = lower; upLower <= upper; upLower += step) {
+        } else if (!upSide) {
+            for (int upLower = lower; upLower <= upper; upLower += step) {
                 for (int upUpper = upLower + step; upUpper <= upper; upUpper += step) {
-                        for(int downLower = lower; downLower <= upper; downLower += step) {
-                            for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
-                                res.add(new double[]{upLower, upUpper, downLower, downUpper});
-                            }
+                    for (int downLower = lower; downLower <= upper; downLower += step) {
+                        for (int downUpper = downLower + step; downUpper <= upper; downUpper += step) {
+                            res.add(new double[]{upLower, upUpper, downLower, downUpper});
                         }
+                    }
                 }
             }
         }
 
+        return res;
+    }
+
+    public static ArrayList<double[]> generateSingleEMA(int lower, int upper, int step, boolean upSide, boolean downSide) {
+        ArrayList<double[]> res = new ArrayList<>();
+        if (!upSide && downSide) {
+            for (int downLower = lower; downLower <= upper; downLower += step) {
+                res.add(new double[]{0, downLower});
+            }
+        } else if (upSide && !downSide) {
+            for (int upLower = lower; upLower <= upper; upLower += step) {
+                res.add(new double[]{upLower, 0});
+            }
+        } else if (!upSide) {
+            for (int upLower = lower; upLower <= upper; upLower += step) {
+                for (int downLower = lower; downLower <= upper; downLower += step) {
+                    res.add(new double[]{upLower, downLower});
+                }
+            }
+        }
         return res;
     }
 
@@ -79,7 +99,7 @@ public class EMACombination implements Comparable<EMACombination> {
         sb.append(String.format("%.2f", profit.getSharpRatio())).append(",");
 
         sb.append("[");
-        for(double val : EMA) {
+        for (double val : EMA) {
             sb.append(val).append(" ");
         }
         sb.setLength(sb.length() - 2);

@@ -23,9 +23,10 @@ public class SerenaSimulation {
 //        runner();
 //        simulation();
 //        findRunner();
-//        EMARunner();
+        //EMARunner();
+        SingleEMARunner();
 //        BollingerRunner();
-        DonchianGoldenRunner();
+//        DonchianGoldenRunner();
     }
 
     public static void simulation(String path) {
@@ -36,11 +37,143 @@ public class SerenaSimulation {
         ControllerTest controller = new ControllerTest(path, type);
 
         controller.addDataTrack(IntervalEnum.MIN_1);
-        controller.addStrategy(StrategyEnum.STRATEGY_DONCHIAN_GOLDEN, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_SINGLE_EMA_DOWN, IntervalEnum.MIN_1);
+        controller.addStrategy(StrategyEnum.STRATEGY_SINGLE_EMA_UP, IntervalEnum.MIN_1);
 
         controller.filename = path + "/find_percent_" + type + ".csv";
         controller.run();
         int i = 0;
+    }
+
+
+    public static void SingleEMARunner() {
+        boolean upSide = false; // 都是true为单测，都是false为两边同时测
+        boolean downSide = false;
+        int EMALowerBound = 10;
+        int EMAUpperBound = 500;
+        int step = 10;
+        double[] EMA_ALPHA = {10.0, 400.0, 0.0, 0.0};
+        double[] upProfitThreshold = {0.006};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] upProfitLimit = {0.7};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] upLossLimit = {0.003};           // 损失超过开仓时收盘价的 x% 就平仓
+        double[] downProfitThreshold = {0.015};     // 预期可以获得开仓时收盘价的 x% 收益 （0.5% 填写 0.005，下同）
+        double[] downProfitLimit = {0.6};          // 收益达到预期收益后，回落至历史最高收益的 x% 时平仓
+        double[] downLossLimit = {0.0075};           // 损失超过开仓时收盘价的 x% 就平仓
+        // 下面代码不要动
+        ArrayList<double[]> EMAs = new ArrayList<>();
+        if (upSide & downSide) {
+            EMAs.add(EMA_ALPHA);
+        } else {
+            EMAs = EMACombination.generateSingleEMA(EMALowerBound, EMAUpperBound, step, upSide, downSide);
+        }
+
+        double oneLevelCount = (double) (EMAUpperBound - EMALowerBound) / step;
+        int total;
+        if (!upSide && !downSide) {
+            total = (int) Math.pow((int)(((EMAUpperBound - EMALowerBound) / step) + 1), 2);
+        } else if (!(upSide & downSide)) {
+            total = ((EMAUpperBound - EMALowerBound) / step) + 1;
+        } else {
+            total = 1;
+        }
+        total *= upProfitThreshold.length * upProfitLimit.length * upLossLimit.length * downProfitThreshold.length * downProfitLimit.length * downLossLimit.length;
+        System.out.println("Estimate running count is " + total + " ...");
+        PriorityQueue<EMACombination> queue = new PriorityQueue<>(4000, Collections.reverseOrder());
+
+        // create file folder
+        String path = "./test_result/" + type + "_" + Calendar.getInstance().getTime().getTime();
+        File file = new File(path);
+        file.mkdir();
+
+        int count = 1;
+        for (double[] EMA : EMAs) {
+            for (double upPT : upProfitThreshold) {
+                for (double upPL : upProfitLimit) {
+                    for (double upLL : upLossLimit) {
+                        for (double downPT : downProfitThreshold) {
+                            for (double downPL : downProfitLimit) {
+                                for (double downLL : downLossLimit) {
+                                    System.out.println(
+                                            "current running: " + count++ + "/" + total + ", " +
+                                                    "EMA: [" + (int) EMA[0] + ", " + (int) EMA[1] + "], " +
+                                                    "upProfitThreshold: " + upPT + ", " +
+                                                    "upProfitLimit: " + upPL + ", " +
+                                                    "upLossLimit: " + upLL + ", " +
+                                                    "downProfitThreshold: " + downPT + ", " +
+                                                    "downProfitLimit: " + downPL + ", " +
+                                                    "downLossLimit: " + downLL
+                                    );
+                                    Setting.SINGLE_EMA_UP_PROFIT_THRESHOLD = upPT;
+                                    Setting.SINGLE_EMA_UP_PROFIT_LIMIT = upPL;
+                                    Setting.SINGLE_EMA_UP_LOSS_LIMIT = upLL;
+                                    Setting.SINGLE_EMA_DOWN_PROFIT_THRESHOLD = downPT;
+                                    Setting.SINGLE_EMA_DOWN_PROFIT_LIMIT = downPL;
+                                    Setting.SINGLE_EMA_DOWN_LOSS_LIMIT = downLL;
+                                    Setting.EMA_ALPHA = EMA;
+                                    simulation(path);
+                                    try {
+                                        Thread.sleep(500);
+                                        ControllerTest.stop();
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                    EMACombination newRes = new EMACombination(EMA, upPT, upPL, upLL, downPT, downPL, downLL);
+                                    newRes.setProfit(ProfitCal.cal(path, type, upSide & downSide));
+                                    queue.add(newRes);
+                                    try {
+                                        Thread.sleep(500);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        ArrayList<EMACombination> resList = new ArrayList<>();
+        System.out.println("\nTop Best Parameters: ");
+        for (int i = 0; i < 4000; i++) {
+            EMACombination candidate = queue.poll();
+            if (candidate != null) {
+                resList.add(candidate);
+            }
+        }
+        System.out.println("Profit\tTotal Count\tWin Rate\tAPPT\tEVPT\tEVUR\tKelly\tOdds\tMax Loss\tStd Dev\tSharp Ratio\tEMA\tUp Profit Threshold\tUp Profit Limit\tUp Loss Limit\tDown Profit Threshold\tDown Profit Limit\tDown Loss Limit");
+
+        for (EMACombination res : resList) {
+            System.out.print(res);
+        }
+
+        String filename = path + "/" + type + "_analyze_summary";
+        FileUtil.newFile(filename + ".csv");
+        try (FileWriter writer = new FileWriter(filename + ".csv", true)) {
+            writer.append("Profit,")
+                    .append("Total Count,")
+                    .append("Win Rate,")
+                    .append("APPT,")
+                    .append("EVPT,")
+                    .append("EVUR,")
+                    .append("Kelly,")
+                    .append("Odds,")
+                    .append("Max Loss,")
+                    .append("Std Dev,")
+                    .append("Sharp Ratio,")
+                    .append("EMA,")
+                    .append("Up Profit Threshold,")
+                    .append("Up Profit Limit,")
+                    .append("Up Loss Limit,")
+                    .append("Down Profit Threshold,")
+                    .append("Down Profit Limit,")
+                    .append("Down Loss Limit\n");
+            for (EMACombination res : resList) {
+                writer.append(res.toString());
+            }
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
