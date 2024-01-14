@@ -60,7 +60,7 @@ public class SingleEMAForUp extends AbstractStrategy {
             profit = price.getPrice() - lastTradePrice;
             profitMaximum = Math.max(profit, profitMaximum);
 
-            if (profit < 0 && Math.abs(profit) >= Setting.EMA_UP_LOSS_LIMIT * lastTradePrice) {
+            if (profit < 0 && Math.abs(profit) >= Setting.SINGLE_EMA_UP_LOSS_LIMIT * lastTradePrice) {
                 if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
                     decision.make(TradingType.SHORT_SELLING, "EMA up ends by loss limit");
                 }
@@ -75,7 +75,7 @@ public class SingleEMAForUp extends AbstractStrategy {
                 return decision;
             }
 
-            if (profitMaximum > Setting.EMA_UP_PROFIT_THRESHOLD * lastTradePrice && profit <= Setting.EMA_UP_PROFIT_LIMIT * profitMaximum) {
+            if (profitMaximum > Setting.SINGLE_EMA_UP_PROFIT_THRESHOLD * lastTradePrice && profit <= Setting.SINGLE_EMA_UP_PROFIT_LIMIT * profitMaximum) {
                 if(status.getTrendEMA() == TrendType.TREND_DOWN && status.getStatus() != TradingType.SHORT_SELLING) {
                     decision.make(TradingType.SHORT_SELLING, "EMA up ends by profit limit");
                 }
