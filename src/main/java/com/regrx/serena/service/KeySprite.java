@@ -1,6 +1,7 @@
 package com.regrx.serena.service;
 
 import com.regrx.serena.common.Setting;
+import com.regrx.serena.common.constant.TradingType;
 import com.regrx.serena.common.utils.LogUtil;
 import com.regrx.serena.data.base.Status;
 import org.apache.commons.lang3.time.DateUtils;
@@ -284,7 +285,8 @@ public class KeySprite implements Callable<Boolean> {
         Calendar currTime = Calendar.getInstance(TimeZone.getTimeZone("GMT+8"));
         int currMonth = currTime.get(Calendar.MONTH);
         int lastTradeMonth = Status.getInstance().getLastTradTime().get(Calendar.MONTH);
-        if (lastTradeMonth != currMonth) {
+        TradingType tradingType = Status.getInstance().getStatus();
+        if (lastTradeMonth != currMonth && tradingType != TradingType.EMPTY) {  // month changes & contract in hand -> empty the old one then open on new-month contract
             nextMonth =  DateUtils.addMonths(Status.getInstance().getLastTradTime().getTime(), 1);
         } else {
             nextMonth = DateUtils.addMonths(currTime.getTime(), 1);
