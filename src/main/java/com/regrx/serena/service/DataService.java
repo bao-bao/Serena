@@ -60,6 +60,7 @@ public class DataService implements Runnable {
 //        minutesData.update(p, type);
 //        callback(p);
 
+        int count = 0;
         while (true) {
             if (!PreparationUtil.isTrading(breed)) {
                 try {
@@ -71,6 +72,7 @@ public class DataService implements Runnable {
                     e.printStackTrace();
                 }
             } else {
+                count++;
                 // get the next fetch timing
                 long current = System.currentTimeMillis();
                 Date currentDate = new Date(current);
@@ -88,6 +90,10 @@ public class DataService implements Runnable {
                     try {
                         Thread.sleep((nextPoint - current) / 2);
                         lock.lockOn();
+                        if (count % 30 == 0) {
+                            HistoryDownloader.fetchHistoryData(type, interval, breed, false);
+                            this.minutesData = HistoryDownloader.getHistoryData(type, interval, breed);
+                        }
                         Thread.sleep((nextPoint - current) / 2);
                     } catch (InterruptedException e) {
                         e.printStackTrace();

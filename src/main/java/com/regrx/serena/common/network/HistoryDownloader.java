@@ -94,7 +94,7 @@ public class HistoryDownloader implements Runnable {
         return records;
     }
 
-    private static HistoryData[] fetchHistoryData(String type, IntervalEnum interval, FutureType breed, boolean isSpecial) {
+    public static HistoryData[] fetchHistoryData(String type, IntervalEnum interval, FutureType breed, boolean isSpecial) {
         String urlString = "https://stock2.finance.sina.com.cn/futures/api/jsonp.php" +
                 "/var%20list=" +
                 "/InnerFuturesNewService.getFewMinLine?" +
